@@ -1,0 +1,34 @@
+package de.rwth.ti;
+
+import java.util.List;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.net.wifi.ScanResult;
+
+public class WaviScanReceiver extends BroadcastReceiver {
+	Wavi wifiDemo;
+
+	public WaviScanReceiver(Wavi wifiDemo) {
+		super();
+		this.wifiDemo = wifiDemo;
+	}
+
+	@Override
+	public void onReceive(Context c, Intent intent) {
+		List<ScanResult> results = wifiDemo.wifi.getScanResults();
+		wifiDemo.textStatus.setText("Folgende Wifi's gefunden:\n");
+		if (results != null && !results.isEmpty()) {
+			for (ScanResult result : results) {
+				wifiDemo.textStatus.append(result.BSSID + "\t" + result.level
+						+ "\t" + result.frequency + "\n");
+				wifiDemo.getStorage().addAp(result.BSSID, result.level,
+						result.frequency);
+			}
+		} else {
+			wifiDemo.textStatus.append("keine");
+		}
+	}
+
+}

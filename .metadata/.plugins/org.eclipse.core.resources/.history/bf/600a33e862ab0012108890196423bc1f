@@ -1,0 +1,7 @@
+"Scan gestartet. Bitte warten...""Scan gestartet. Bitte warten...""Scan gestartet. Bitte warten...""Scan gestartet. Bitte warten...""Scan gestartet. Bitte warten...""Scan gestartet. Bitte warten...""Scan gestartet. Bitte warten...""Scan gestartet. Bitte warten..."Scan gestartet. Bitte warten...<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Wavi</string>
+    <string name="info_text">Bitte Scan drücken</string>
+    <string name="text_scan">Scan starten</string>
+    <string name="text_wait">Scan gestartet. Bitte warten...</string>
+</resources>

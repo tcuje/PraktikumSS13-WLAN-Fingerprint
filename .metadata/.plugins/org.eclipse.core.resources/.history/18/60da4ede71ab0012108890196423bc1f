@@ -1,0 +1,46 @@
+package de.rwth.ti.db;
+
+/** class that represents the table where measure data are stored */
+public class AP {
+
+	public static final String TABLE_NAME = "apps";
+	private static final String COLUMN_ID = "_id";
+	private static final String COLUMN_BSSID = "bssid";
+	private static final String COLUMN_LEVEL = "level";
+	private static final String COLUMN_FREQ = "freq";
+
+	public static final String DB_CREATE = "CREATE TABLE " + TABLE_NAME + "("
+			+ COLUMN_ID + " integer primary key autoincrement, " + COLUMN_BSSID
+			+ " text not null, " + COLUMN_LEVEL + " integer, " + COLUMN_FREQ
+			+ " integer);";
+	public static final String DB_DROP = "DROP TABLE IF EXISTS " + TABLE_NAME;
+
+	private String bssid;
+	private int level;
+	private int freq;
+
+	public String getBssid() {
+		return bssid;
+	}
+
+	public void setBssid(String bssid) {
+		this.bssid = bssid;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	public int getFreq() {
+		return freq;
+	}
+
+	public void setFreq(int freq) {
+		this.freq = freq;
+	}
+
+}
