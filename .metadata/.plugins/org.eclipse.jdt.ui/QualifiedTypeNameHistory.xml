@@ -16,6 +16,6 @@
 <fullyQualifiedTypeName name="android.database.SQLException"/>
 <fullyQualifiedTypeName name="android.content.ContentValues"/>
 <fullyQualifiedTypeName name="android.util.Log"/>
-<fullyQualifiedTypeName name="de.rwth.ti.db.AccessPoint"/>
 <fullyQualifiedTypeName name="de.rwth.ti.db.StorageHandler"/>
+<fullyQualifiedTypeName name="de.rwth.ti.db.AccessPoint"/>
 </qualifiedTypeNameHistroy>
