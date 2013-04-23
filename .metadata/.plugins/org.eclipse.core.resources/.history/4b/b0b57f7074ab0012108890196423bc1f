@@ -1,0 +1,64 @@
+package de.rwth.ti.db;
+
+/** class that represents the table where measure data are stored */
+public class AccessPoint {
+
+	public static final String TABLE_NAME = "apps";
+	public static final String COLUMN_ID = "_id";
+	public static final String COLUMN_BSSID = "bssid";
+	public static final String COLUMN_LEVEL = "level";
+	public static final String COLUMN_FREQ = "freq";
+
+	public static final String DB_CREATE = "CREATE TABLE " + TABLE_NAME + "("
+			+ COLUMN_ID + " integer primary key autoincrement, " + COLUMN_BSSID
+			+ " text not null, " + COLUMN_LEVEL + " integer, " + COLUMN_FREQ
+			+ " integer);";
+	public static final String DB_DROP = "DROP TABLE IF EXISTS " + TABLE_NAME;
+
+	private long id;
+	private long scan;
+	private String bssid;
+	private int level;
+	private int freq;
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getBssid() {
+		return bssid;
+	}
+
+	public void setBssid(String bssid) {
+		this.bssid = bssid;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	public int getFreq() {
+		return freq;
+	}
+
+	public void setFreq(int freq) {
+		this.freq = freq;
+	}
+
+	public long getScan() {
+		return scan;
+	}
+
+	public void setScan(long scan) {
+		this.scan = scan;
+	}
+
+}

@@ -1,0 +1,8 @@
+package de.rwth.ti.db;
+
+import android.database.sqlite.SQLiteDatabase;
+
+public interface WaviTable {
+
+	public static onCreate(SQLiteDatabase db);
+}

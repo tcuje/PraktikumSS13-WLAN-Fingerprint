@@ -1,0 +1,10 @@
+package de.rwth.ti.db;
+
+/** class that represents the table where measure data are stored */
+public class Apps {
+
+	private String bssid;
+	private int level;
+	private int freq;
+
+}

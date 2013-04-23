@@ -1,0 +1,51 @@
+package de.rwth.ti.db;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import de.rwth.ti.WaviStorage;
+
+public class ApHandler {
+
+	private static final String[] allColumns = { AP.COLUMN_ID, AP.COLUMN_BSSID,
+			AP.COLUMN_LEVEL, AP.COLUMN_FREQ };
+	private SQLiteDatabase db;
+	private WaviStorage storage;
+
+	public ApHandler(Context context) {
+		storage = new WaviStorage(context);
+	}
+
+	public void open() throws SQLException {
+		db = storage.getWritableDatabase();
+	}
+
+	public void close() {
+		storage.close();
+	}
+
+	/**
+	 * Add the ap to measurement database and return id for new ap
+	 * 
+	 * @return The id for the new access point
+	 */
+	public long createAp(String bssid, int level, int freq) {
+		ContentValues values = new ContentValues();
+		values.put(AP.COLUMN_BSSID, bssid);
+		values.put(AP.COLUMN_LEVEL, level);
+		values.put(AP.COLUMN_FREQ, freq);
+		long insertId = db.insert(AP.TABLE_NAME, null, values);
+		return insertId;
+	}
+
+	public AP cursorToAp(Cursor cursor) {
+		AP ap = new AP();
+		ap.setId(cursor.getLong(0));
+		ap.setBssid(cursor.getString(1));
+		ap.setLevel(cursor.getInt(2));
+		ap.setFreq(cursor.getInt(3));
+		return ap;
+	}
+}

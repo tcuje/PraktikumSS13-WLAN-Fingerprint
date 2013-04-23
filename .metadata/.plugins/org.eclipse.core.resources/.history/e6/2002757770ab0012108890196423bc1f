@@ -1,0 +1,7 @@
+package de.rwth.ti.db;
+
+
+/** class that represents the table where measure data are stored */
+public class Apps {
+
+}
