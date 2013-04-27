@@ -32,3 +32,7 @@
 1367098307789	Rename local variable 'scan'
 1367098313331	Rename local variable 'ap'
 1367098318353	Rename local variable 'scan'
+1367099799548	Rename local variable 'ap'
+1367103256570	Rename resource 'main.xml'
+1367103258384	Move file
+1367103260288	Delete element

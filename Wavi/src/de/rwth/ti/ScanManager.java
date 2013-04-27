@@ -115,7 +115,7 @@ public class ScanManager extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context c, Intent intent) {
-		List<ScanResult> results = app.scm.getScanResults();
+		List<ScanResult> results = app.getScanManager().getScanResults();
 		if (onlineMode == false) {
 			app.textStatus.setText("Folgende Wifi's gefunden:\n");
 			if (results != null && !results.isEmpty()) {

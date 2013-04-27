@@ -25,14 +25,17 @@ public class Storage extends SQLiteOpenHelper {
 		db.execSQL(AccessPoint.TABLE_CREATE);
 		db.execSQL(Scan.TABLE_CREATE);
 		db.execSQL(Checkpoint.TABLE_CREATE);
+		db.execSQL(Map.TABLE_CREATE);
 	}
 
 	/** Called when the database needs to be upgraded */
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		if (oldVersion < 8) {
+		if (oldVersion < 1) {
 			db.execSQL(AccessPoint.TABLE_DROP);
 			db.execSQL(Scan.TABLE_DROP);
+			db.execSQL(Checkpoint.TABLE_DROP);
+			db.execSQL(Map.TABLE_DROP);
 			onCreate(db);
 		}
 	}

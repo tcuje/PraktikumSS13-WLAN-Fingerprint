@@ -13,10 +13,12 @@ public class CompassManager implements SensorEventListener {
 	private Sensor magnet;
 	private float[] gravity;
 	private float[] geomagnetic;
-	private float azimut;
+	private double azimut;
 
 	public CompassManager(Wavi app) {
 		sensor = (SensorManager) app.getSystemService(Context.SENSOR_SERVICE);
+		accel = sensor.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		magnet = sensor.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 		azimut = 0;
 	}
 
@@ -48,12 +50,16 @@ public class CompassManager implements SensorEventListener {
 			if (success == true) {
 				float orientation[] = new float[3];
 				SensorManager.getOrientation(R, orientation);
-				azimut = orientation[0];
+				azimut = orientation[0] * 360 / (2 * Math.PI);
 			}
 		}
 	}
 
-	public float getAzimut() {
+	/**
+	 * 
+	 * @return Returns the last known azimut in degrees, initialized with zero
+	 */
+	public double getAzimut() {
 		return azimut;
 	}
 

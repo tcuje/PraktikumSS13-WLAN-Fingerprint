@@ -1,5 +1,8 @@
 package de.rwth.ti.db;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -59,6 +62,21 @@ public class StorageHandler {
 		return result;
 	}
 
+	public List<AccessPoint> getAllAccessPoints() {
+		List<AccessPoint> result = new ArrayList<AccessPoint>(
+				(int) countAccessPoints());
+		Cursor cursor = db.query(AccessPoint.TABLE_NAME,
+				AccessPoint.ALL_COLUMNS, null, null, null, null, null);
+		if (cursor.moveToFirst()) {
+			do {
+				AccessPoint ap = cursorToAp(cursor);
+				result.add(ap);
+			} while (cursor.moveToNext() == true);
+		}
+		cursor.close();
+		return result;
+	}
+
 	/**
 	 * 
 	 * @param cpid
@@ -89,6 +107,20 @@ public class StorageHandler {
 		result.setCpid(cursor.getLong(1));
 		result.setTime(cursor.getLong(2));
 		result.setCompass(cursor.getLong(3));
+		return result;
+	}
+
+	public List<Scan> getAllScans() {
+		List<Scan> result = new ArrayList<Scan>((int) countScans());
+		Cursor cursor = db.query(Scan.TABLE_NAME, Scan.ALL_COLUMNS, null, null,
+				null, null, null);
+		if (cursor.moveToFirst()) {
+			do {
+				Scan scan = cursorToScan(cursor);
+				result.add(scan);
+			} while (cursor.moveToNext() == true);
+		}
+		cursor.close();
 		return result;
 	}
 
@@ -124,6 +156,21 @@ public class StorageHandler {
 		result.setMid(cursor.getLong(1));
 		result.setPosx(cursor.getDouble(2));
 		result.setPosy(cursor.getDouble(3));
+		return result;
+	}
+
+	public List<Checkpoint> getAllCheckpoints() {
+		List<Checkpoint> result = new ArrayList<Checkpoint>(
+				(int) countCheckpoints());
+		Cursor cursor = db.query(Checkpoint.TABLE_NAME, Checkpoint.ALL_COLUMNS,
+				null, null, null, null, null);
+		if (cursor.moveToFirst()) {
+			do {
+				Checkpoint cp = cursorToCheckpoint(cursor);
+				result.add(cp);
+			} while (cursor.moveToNext() == true);
+		}
+		cursor.close();
 		return result;
 	}
 
@@ -163,6 +210,20 @@ public class StorageHandler {
 		return result;
 	}
 
+	public List<Map> getAllMaps() {
+		List<Map> result = new ArrayList<Map>((int) countMaps());
+		Cursor cursor = db.query(Map.TABLE_NAME, Map.ALL_COLUMNS, null, null,
+				null, null, null);
+		if (cursor.moveToFirst()) {
+			do {
+				Map map = cursorToMap(cursor);
+				result.add(map);
+			} while (cursor.moveToNext() == true);
+		}
+		cursor.close();
+		return result;
+	}
+
 	public long countScans() {
 		Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + Scan.TABLE_NAME,
 				null);
@@ -175,6 +236,24 @@ public class StorageHandler {
 	public long countAccessPoints() {
 		Cursor cursor = db.rawQuery("SELECT COUNT (*) FROM "
 				+ AccessPoint.TABLE_NAME, null);
+		cursor.moveToFirst();
+		long result = cursor.getLong(0);
+		cursor.close();
+		return result;
+	}
+
+	public long countCheckpoints() {
+		Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM "
+				+ Checkpoint.TABLE_NAME, null);
+		cursor.moveToFirst();
+		long result = cursor.getLong(0);
+		cursor.close();
+		return result;
+	}
+
+	public long countMaps() {
+		Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + Map.TABLE_NAME,
+				null);
 		cursor.moveToFirst();
 		long result = cursor.getLong(0);
 		cursor.close();

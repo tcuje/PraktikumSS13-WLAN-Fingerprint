@@ -14,8 +14,11 @@ public class Checkpoint {
 			+ TABLE_NAME;
 	public static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
-			+ COLUMN_MID + " integer, " + COLUMN_POS_X + " real, "
-			+ COLUMN_POS_Y + " real);";
+			+ COLUMN_MID + " integer REFERENCES " + Map.TABLE_NAME + "("
+			+ Map.COLUMN_ID + ") ON UPDATE CASCADE ON DELETE CASCADE, "
+			+ COLUMN_POS_X + " real, " + COLUMN_POS_Y + " real);";
+	public static final String TABLE_DROP = "DROP TABLE IF EXISTS "
+			+ TABLE_NAME;
 
 	private long id;
 	private long mid;
