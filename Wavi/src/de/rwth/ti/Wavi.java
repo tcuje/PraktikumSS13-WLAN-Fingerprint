@@ -1,20 +1,11 @@
 package de.rwth.ti;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.IntentFilter;
-import android.net.wifi.WifiManager;
-import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-import de.rwth.ti.R.string;
 import de.rwth.ti.db.StorageHandler;
 
 /**
@@ -25,11 +16,9 @@ import de.rwth.ti.db.StorageHandler;
  */
 public class Wavi extends Activity implements OnClickListener {
 
-	WifiManager wifi;
-	WifiLock wl;
-	BroadcastReceiver receiver;
-	AlertDialog.Builder builder;
+	ScanManager scm;
 	StorageHandler storage;
+	CompassManager cmgr;
 
 	TextView textStatus;
 	Button buttonScan;
@@ -45,35 +34,19 @@ public class Wavi extends Activity implements OnClickListener {
 		buttonScan = (Button) findViewById(R.id.buttonScan);
 		buttonScan.setOnClickListener(this);
 
-		// Setup WiFi
-		wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-		wl = wifi.createWifiLock("Wavi");
+		// Setup Wifi
+		if (scm == null) {
+			scm = new ScanManager(this);
+		}
 
-		// Register Broadcast Receiver
-		if (receiver == null) {
-			receiver = new WaviScanReceiver(this);
-		}
-		if (builder == null) {
-			builder = new AlertDialog.Builder(this);
-			android.content.DialogInterface.OnClickListener dialogOnClick = new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					switch (which) {
-					case DialogInterface.BUTTON_POSITIVE:
-						wifi.setWifiEnabled(true);
-						startScan();
-						break;
-					case DialogInterface.BUTTON_NEGATIVE:
-						break;
-					}
-				}
-			};
-			builder.setPositiveButton(string.text_yes, dialogOnClick);
-			builder.setNegativeButton(string.text_no, dialogOnClick);
-		}
+		// Setup database storage
 		if (storage == null) {
 			storage = new StorageHandler(this);
-			storage.open();
+		}
+
+		// Setup compass manager
+		if (cmgr == null) {
+			cmgr = new CompassManager(this);
 		}
 	}
 
@@ -81,9 +54,9 @@ public class Wavi extends Activity implements OnClickListener {
 	@Override
 	public void onStart() {
 		super.onStart();
-		registerReceiver(receiver, new IntentFilter(
-				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-		wl.acquire();
+		storage.onStart();
+		scm.onStart();
+		cmgr.onStart();
 		textStatus.setText("Scans: " + storage.countScans() + "\n");
 		textStatus.append("AccessPoints: " + storage.countAccessPoints());
 	}
@@ -92,33 +65,25 @@ public class Wavi extends Activity implements OnClickListener {
 	@Override
 	public void onStop() {
 		super.onStop();
-		try {
-			unregisterReceiver(receiver);
-		} catch (IllegalArgumentException ex) {
-			// just ignore it
-		}
-		wl.release();
+		storage.onStop();
+		scm.onStop();
+		cmgr.onStop();
 	}
 
 	@Override
 	public void onClick(View view) {
 		if (view.getId() == R.id.buttonScan) {
-			// check if wifi is enabled or not
-			if (wifi.isWifiEnabled() == false) {
-				builder.setMessage(string.text_wifistate).show();
-			} else {
-				startScan();
-			}
+			// FIXME get real data from gui
+			scm.startSingleScan(storage.addCheckpoint(0, 0, 0));
 		}
-	}
-
-	private void startScan() {
-		textStatus.setText("");
-		wifi.startScan();
-		Toast.makeText(this, string.text_wait, Toast.LENGTH_LONG).show();
 	}
 
 	public StorageHandler getStorage() {
 		return storage;
 	}
+
+	public CompassManager getCompassManager() {
+		return cmgr;
+	}
+
 }

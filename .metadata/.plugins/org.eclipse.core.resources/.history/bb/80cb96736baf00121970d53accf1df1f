@@ -1,0 +1,15 @@
+package de.rwth.ti;
+
+import android.content.BroadcastReceiver;
+import android.net.wifi.WifiManager.WifiLock;
+
+public class ScanManager {
+
+	WifiManager wifi;
+	WifiLock wl;
+	
+	public ScanManager() {
+		
+	}
+	
+}

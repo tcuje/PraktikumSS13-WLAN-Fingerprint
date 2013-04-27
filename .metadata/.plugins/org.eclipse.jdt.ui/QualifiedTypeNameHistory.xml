@@ -1,2 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<qualifiedTypeNameHistroy/>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="android.os.PowerManager.WakeLock"/>
+<fullyQualifiedTypeName name="android.os.PowerManager"/>
+<fullyQualifiedTypeName name="java.util.Timer"/>
+<fullyQualifiedTypeName name="java.util.TimerTask"/>
+<fullyQualifiedTypeName name="de.rwth.ti.R.id"/>
+</qualifiedTypeNameHistroy>

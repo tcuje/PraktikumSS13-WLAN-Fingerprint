@@ -1,0 +1,44 @@
+package de.rwth.ti;
+
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+
+public class CompassManager implements SensorEventListener {
+
+	private Wavi app;
+	private SensorManager sensor;
+	private Sensor accel;
+	private Sensor magnet;
+
+	public CompassManager(Wavi app) {
+		this.app = app;
+		sensor = (SensorManager) app.getSystemService(Context.SENSOR_SERVICE);
+	}
+
+	public void onStart() {
+		sensor.registerListener(this, accel, SensorManager.SENSOR_DELAY_UI);
+		sensor.registerListener(this, magnet, SensorManager.SENSOR_DELAY_UI);
+	}
+
+	public void onStop() {
+		sensor.unregisterListener(this);
+	}
+
+	@Override
+	public void onAccuracyChanged(Sensor arg0, int arg1) {
+	}
+
+	@Override
+	public void onSensorChanged(SensorEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public float getAzimut() {
+
+	}
+
+}

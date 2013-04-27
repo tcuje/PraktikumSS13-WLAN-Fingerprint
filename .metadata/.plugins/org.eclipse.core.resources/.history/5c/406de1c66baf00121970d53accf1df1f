@@ -1,0 +1,43 @@
+package de.rwth.ti;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.WifiLock;
+rt android.net.wifi.WifiManager.WifiLock;
+
+public class ScanManager {
+
+	WifiManager wifi;
+	WifiLock wl;
+	BroadcastReceiver receiver;
+
+	public ScanManager() {
+		// Setup WiFi
+		wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		wl = wifi.createWifiLock("Wavi");
+
+		// Register Broadcast Receiver
+		if (receiver == null) {
+			receiver = new ScanReceiver(this);
+		}
+
+	}
+	
+	public void start() {
+		registerReceiver(receiver, new IntentFilter(
+				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+		wl.acquire();
+	}
+	
+	public void stop() {
+		try {
+			unregisterReceiver(receiver);
+		} catch (IllegalArgumentException ex) {
+			// just ignore it
+		}
+		wl.release();
+	}
+
+}

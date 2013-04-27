@@ -1,0 +1,100 @@
+package de.rwth.ti;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.WifiLock;
+import de.rwth.ti.R.string;
+
+public class ScanManager {
+
+	private Wavi app;
+	private WifiManager wifi;
+	private WifiLock wl;
+	private BroadcastReceiver receiver;
+	private AlertDialog.Builder builder;
+	private Timer tim;
+	private TimerTask scantask;
+
+	public ScanManager(Wavi app) {
+		// Setup WiFi
+		wifi = (WifiManager) app.getSystemService(Context.WIFI_SERVICE);
+		wl = wifi.createWifiLock("Wavi");
+
+		// Register Broadcast Receiver
+		if (receiver == null) {
+			receiver = new ScanReceiver(app);
+		}
+
+		if (builder == null) {
+			builder = new AlertDialog.Builder(app);
+			android.content.DialogInterface.OnClickListener dialogOnClick = new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					switch (which) {
+					case DialogInterface.BUTTON_POSITIVE:
+						wifi.setWifiEnabled(true);
+						wifi.startScan();
+						break;
+					case DialogInterface.BUTTON_NEGATIVE:
+						break;
+					}
+				}
+			};
+			builder.setPositiveButton(string.text_yes, dialogOnClick);
+			builder.setNegativeButton(string.text_no, dialogOnClick);
+		}
+
+		// Setup auto scan timer
+		if (tim == null) {
+			tim = new Timer();
+		}
+		if (scantask == null) {
+			scantask = new TimerTask() {
+				@Override
+				public void run() {
+					wifi.startScan();
+				}
+			};
+		}
+	}
+
+	public void onStart() {
+		app.registerReceiver(receiver, new IntentFilter(
+				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+		wl.acquire();
+	}
+
+	public void destroy() {
+		try {
+			app.unregisterReceiver(receiver);
+		} catch (IllegalArgumentException ex) {
+			// just ignore it
+		}
+		wl.release();
+	}
+
+	public void startSingleScan() {
+		// check if wifi is enabled or not
+		if (wifi.isWifiEnabled() == false) {
+			builder.setMessage(string.text_wifistate).show();
+		} else {
+			wifi.startScan();
+		}
+	}
+
+	public void startAutoScan(int period) {
+		tim.schedule(scantask, 0, period);
+	}
+
+	public void stopAutoScan() {
+		tim.cancel();
+	}
+
+}

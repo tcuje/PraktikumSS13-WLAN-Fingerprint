@@ -12,8 +12,8 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class Storage extends SQLiteOpenHelper {
 
-	private final static String DB_NAME = "map";
-	private static final int DB_VERSION = 6;
+	private final static String DB_NAME = "local";
+	private static final int DB_VERSION = 1;
 
 	public Storage(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
@@ -24,22 +24,16 @@ public class Storage extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(AccessPoint.TABLE_CREATE);
 		db.execSQL(Scan.TABLE_CREATE);
+		db.execSQL(Checkpoint.TABLE_CREATE);
 	}
 
 	/** Called when the database needs to be upgraded */
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		if (oldVersion < 4) {
+		if (oldVersion < 8) {
 			db.execSQL(AccessPoint.TABLE_DROP);
 			db.execSQL(Scan.TABLE_DROP);
 			onCreate(db);
-		}
-		if (oldVersion < 5) {
-			db.execSQL("ALTER TABLE " + AccessPoint.TABLE_NAME
-					+ " ADD ssid string null");
-		}
-		if (oldVersion < 6) {
-			db.execSQL("ALTER TABLE " + Scan.TABLE_NAME + " ADD time integer");
 		}
 	}
 }

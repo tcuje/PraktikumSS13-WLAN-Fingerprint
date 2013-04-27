@@ -1,0 +1,9 @@
+package de.rwth.ti;
+
+public class WifiManager {
+
+	public WifiManager() {
+		
+	}
+	
+}

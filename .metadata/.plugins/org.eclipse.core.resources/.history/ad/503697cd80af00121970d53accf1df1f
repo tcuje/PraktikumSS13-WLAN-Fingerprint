@@ -1,0 +1,7 @@
+package de.rwth.ti.db;
+
+public class Map {
+
+	public static final String TABLE_NAME = "maps";
+
+}
