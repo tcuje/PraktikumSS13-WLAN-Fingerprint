@@ -59,10 +59,10 @@ public class StorageHandler {
 	public Scan addScan(long time) {
 		ContentValues values = new ContentValues();
 		values.put(Scan.COLUMN_NAME, "");
+		values.put(Scan.COLUMN_TIME, time);
 		long insertId = db.insert(Scan.TABLE_NAME, null, values);
 		Cursor cursor = db.query(Scan.TABLE_NAME, Scan.ALL_COLUMNS,
-				Scan.COLUMN_ID + " = " + insertId + ", " + Scan.COLUMN_TIME
-						+ " = " + time, null, null, null, null);
+				Scan.COLUMN_ID + " = " + insertId, null, null, null, null);
 		cursor.moveToFirst();
 		Scan scan = cursorToScan(cursor);
 		cursor.close();
