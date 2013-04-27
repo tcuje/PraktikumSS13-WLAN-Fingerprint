@@ -13,7 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class Storage extends SQLiteOpenHelper {
 
 	private final static String DB_NAME = "map";
-	private static final int DB_VERSION = 5;
+	private static final int DB_VERSION = 6;
 
 	public Storage(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
@@ -37,6 +37,9 @@ public class Storage extends SQLiteOpenHelper {
 		if (oldVersion < 5) {
 			db.execSQL("ALTER TABLE " + AccessPoint.TABLE_NAME
 					+ " ADD ssid string null");
+		}
+		if (oldVersion < 6) {
+			db.execSQL("ALTER TABLE " + Scan.TABLE_NAME + " ADD time integer");
 		}
 	}
 }

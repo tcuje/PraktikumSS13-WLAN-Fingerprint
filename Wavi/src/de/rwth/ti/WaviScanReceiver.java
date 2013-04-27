@@ -1,5 +1,6 @@
 package de.rwth.ti;
 
+import java.util.Date;
 import java.util.List;
 
 import android.content.BroadcastReceiver;
@@ -28,7 +29,8 @@ public class WaviScanReceiver extends BroadcastReceiver {
 		List<ScanResult> results = wifiDemo.wifi.getScanResults();
 		wifiDemo.textStatus.setText("Folgende Wifi's gefunden:\n");
 		if (results != null && !results.isEmpty()) {
-			Scan scan = wifiDemo.getStorage().addScan();
+			Date d = new Date();
+			Scan scan = wifiDemo.getStorage().addScan(d.getTime() / 1000);
 			for (ScanResult result : results) {
 				wifiDemo.textStatus
 						.append(result.BSSID + "\t" + result.level + "\t"

@@ -56,12 +56,13 @@ public class StorageHandler {
 		return ap;
 	}
 
-	public Scan addScan() {
+	public Scan addScan(long time) {
 		ContentValues values = new ContentValues();
 		values.put(Scan.COLUMN_NAME, "");
 		long insertId = db.insert(Scan.TABLE_NAME, null, values);
 		Cursor cursor = db.query(Scan.TABLE_NAME, Scan.ALL_COLUMNS,
-				Scan.COLUMN_ID + " = " + insertId, null, null, null, null);
+				Scan.COLUMN_ID + " = " + insertId + ", " + Scan.COLUMN_TIME
+						+ " = " + time, null, null, null, null);
 		cursor.moveToFirst();
 		Scan scan = cursorToScan(cursor);
 		cursor.close();
@@ -72,6 +73,7 @@ public class StorageHandler {
 		Scan scan = new Scan();
 		scan.setId(cursor.getLong(0));
 		scan.setName(cursor.getString(1));
+		scan.setTime(cursor.getLong(2));
 		return scan;
 	}
 
