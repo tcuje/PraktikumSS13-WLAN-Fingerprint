@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<workbench progressCount="14" version="2.0">
+<workbench progressCount="18" version="2.0">
 <workbenchAdvisor/>
 <window height="768" maximized="true" width="1024" x="175" y="175">
 <fastViewData fastViewLocation="1024"/>
@@ -38,18 +38,13 @@
 <folder appearance="1" expanded="2">
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
 <part id="0"/>
-<part id="1"/>
 </presentation>
 </folder>
 </info>
 </editorArea>
-<editor activePart="true" focus="true" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Wavi.java" partName="Wavi.java" path="D:/TISS13/Wavi/src/de/rwth/ti/Wavi.java" title="Wavi.java" tooltip="Wavi/src/de/rwth/ti/Wavi.java" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/Wavi/src/de/rwth/ti/Wavi.java"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="725" selectionTopPixel="1152"/>
-</editor>
-<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="WaviScanReceiver.java" partName="WaviScanReceiver.java" path="D:/TISS13/Wavi/src/de/rwth/ti/WaviScanReceiver.java" title="WaviScanReceiver.java" tooltip="Wavi/src/de/rwth/ti/WaviScanReceiver.java" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/Wavi/src/de/rwth/ti/WaviScanReceiver.java"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="555" selectionTopPixel="12"/>
+<editor activePart="true" focus="true" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="StorageHandler.java" partName="StorageHandler.java" path="D:/TISS13/Wavi/src/de/rwth/ti/db/StorageHandler.java" title="StorageHandler.java" tooltip="Wavi/src/de/rwth/ti/db/StorageHandler.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/Wavi/src/de/rwth/ti/db/StorageHandler.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="642" selectionTopPixel="3315"/>
 </editor>
 </editors>
 <views>
@@ -65,7 +60,18 @@
 <view id="org.eclipse.debug.ui.VariableView" partName="Variables">
 <viewState/>
 </view>
-<view id="org.eclipse.ui.views.TaskList" partName="Tasks"/>
+<view id="org.eclipse.ui.views.TaskList" partName="Tasks">
+<viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.completionField" categoryGroup="none" markerContentGenerator="org.eclipse.ui.ide.tasksGenerator" partName="Tasks">
+<columnWidths org.eclipse.ui.ide.completionField="40" org.eclipse.ui.ide.descriptionField="300" org.eclipse.ui.ide.locationField="90" org.eclipse.ui.ide.markerType="90" org.eclipse.ui.ide.pathField="120" org.eclipse.ui.ide.priorityField="30" org.eclipse.ui.ide.resourceField="90"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.completionField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.priorityField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.descriptionField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.resourceField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.pathField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.locationField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.markerType"/>
+</viewState>
+</view>
 <view id="org.eclipse.ui.views.ContentOutline" partName="Outline">
 <viewState/>
 </view>
@@ -78,9 +84,9 @@
 <view id="org.eclipse.ui.views.ProblemView" partName="Problems">
 <viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
 <expanded>
-<category IMemento.internal.id="Errors"/>
+<category IMemento.internal.id="Errors (1 item)"/>
 <category IMemento.internal.id="Warnings"/>
-<category IMemento.internal.id="Errors (14 items)"/>
+<category IMemento.internal.id="Errors"/>
 </expanded>
 <columnWidths org.eclipse.ui.ide.locationField="90" org.eclipse.ui.ide.markerType="90" org.eclipse.ui.ide.pathField="120" org.eclipse.ui.ide.resourceField="90" org.eclipse.ui.ide.severityAndDescriptionField="300"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
@@ -94,7 +100,7 @@
 <viewState/>
 </view>
 <view id="org.eclipse.jdt.ui.PackageExplorer" partName="Package Explorer">
-<viewState group_libraries="1" layout="2" linkWithEditor="1" rootMode="1" workingSetName="">
+<viewState group_libraries="1" layout="1" linkWithEditor="1" rootMode="1" workingSetName="">
 <customFilters userDefinedPatternsEnabled="false">
 <xmlDefinedFilters>
 <child filterId="org.eclipse.jdt.ui.PackageExplorer.LibraryFilter" isEnabled="false"/>
@@ -260,6 +266,7 @@
 <view id="org.eclipse.jdt.ui.SourceView"/>
 <view id="org.eclipse.ui.console.ConsoleView"/>
 <view id="com.android.ide.eclipse.ddms.views.LogCatView"/>
+<view id="org.eclipse.ui.views.TaskList"/>
 <view id="org.eclipse.ui.views.ContentOutline"/>
 <fastViewBars/>
 <layout>
@@ -285,13 +292,14 @@
 </folder>
 </info>
 <info part="org.eclipse.ui.editorss" ratio="0.25" ratioLeft="250" ratioRight="750" relationship="2" relative="left"/>
-<info folder="true" part="bottom" ratio="0.7496136" ratioLeft="485" ratioRight="162" relationship="4" relative="org.eclipse.ui.editorss">
+<info folder="true" part="bottom" ratio="0.7694064" ratioLeft="674" ratioRight="202" relationship="4" relative="org.eclipse.ui.editorss">
 <folder activePageID="com.android.ide.eclipse.ddms.views.LogCatView" appearance="2" expanded="2">
 <page content="org.eclipse.ui.views.ProblemView" label="Problems"/>
 <page content="org.eclipse.jdt.ui.JavadocView" label="Javadoc"/>
 <page content="org.eclipse.jdt.ui.SourceView" label="Declaration"/>
 <page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="com.android.ide.eclipse.ddms.views.LogCatView" label="LogCat"/>
+<page content="org.eclipse.ui.views.TaskList" label="Tasks"/>
 <page content="org.eclipse.search.ui.views.SearchView" label="LabelNotFound"/>
 <page content="org.eclipse.ui.views.BookmarkView" label="LabelNotFound"/>
 <page content="org.eclipse.ui.views.ProgressView" label="LabelNotFound"/>
@@ -302,10 +310,11 @@
 <part id="2"/>
 <part id="3"/>
 <part id="4"/>
+<part id="5"/>
 </presentation>
 </folder>
 </info>
-<info folder="true" part="right" ratio="0.7493333" ratioLeft="562" ratioRight="188" relationship="2" relative="org.eclipse.ui.editorss">
+<info folder="true" part="right" ratio="0.7401575" ratioLeft="752" ratioRight="264" relationship="2" relative="org.eclipse.ui.editorss">
 <folder activePageID="org.eclipse.ui.views.ContentOutline" appearance="2" expanded="2">
 <page content="org.eclipse.ui.views.ContentOutline" label="Outline"/>
 <page content="org.eclipse.ui.texteditor.TemplatesView" label="LabelNotFound"/>
@@ -453,134 +462,158 @@
 <workingSets/>
 <navigationHistory>
 <editors>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/Wavi/src/de/rwth/ti/db/Scan.java"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/Wavi/src/de/rwth/ti/Wavi.java"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.CommonXmlEditor" path="/Wavi/res/layout/main.xml"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.manifest.ManifestEditor" path="/Wavi/AndroidManifest.xml"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/Wavi/src/de/rwth/ti/CompassManager.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.CommonXmlEditor" path="/Wavi/res/menu/main.xml"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.CommonXmlEditor" path="/Wavi/res/values/strings.xml"/>
+<editor factoryID="org.eclipse.jdt.ui.ClassFileEditorInputFactory" id="org.eclipse.jdt.ui.ClassFileEditor" org.eclipse.jdt.ui.ClassFileIdentifier="=Wavi/C:\/Program Files\/Android\/adt-bundle-windows-x86_64\/sdk\/platforms\/android-17\/android.jar&lt;android.view(MenuInflater.class"/>
+<editor factoryID="org.eclipse.jdt.ui.ClassFileEditorInputFactory" id="org.eclipse.jdt.ui.ClassFileEditor" org.eclipse.jdt.ui.ClassFileIdentifier="=Wavi/C:\/Program Files\/Android\/adt-bundle-windows-x86_64\/sdk\/platforms\/android-17\/android.jar&lt;java.lang(ThreadGroup.class"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/Wavi/src/de/rwth/ti/db/AccessPoint.java"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/Wavi/src/de/rwth/ti/db/Storage.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/Wavi/src/de/rwth/ti/ScanManager.java"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/Wavi/src/de/rwth/ti/db/StorageHandler.java"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/Wavi/src/de/rwth/ti/WaviScanReceiver.java"/>
-<editor factoryID="org.eclipse.jdt.ui.ClassFileEditorInputFactory" id="org.eclipse.jdt.ui.ClassFileEditor" org.eclipse.jdt.ui.ClassFileIdentifier="=Wavi/C:\/Program Files\/Android\/adt-bundle-windows-x86_64\/sdk\/platforms\/android-17\/android.jar&lt;android.net.wifi(WifiManager$WifiLock.class"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/Wavi/src/de/rwth/ti/db/Checkpoint.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/Wavi/src/de/rwth/ti/db/Scan.java"/>
 </editors>
-<item historyLabel="Scan.java" index="0">
-<position info="not_deleted" x="147" y="0"/>
+<item historyLabel="strings.xml" index="3"/>
+<item historyLabel="Wavi.java" index="0">
+<position info="not_deleted" x="1926" y="0"/>
 </item>
-<item historyLabel="Wavi.java" index="1">
+<item historyLabel="Wavi.java" index="0">
+<position info="not_deleted" x="1684" y="0"/>
+</item>
+<item historyLabel="MenuInflater.class" index="4">
+<position/>
+</item>
+<item historyLabel="ThreadGroup.class" index="5">
 <position info="not_deleted" x="0" y="0"/>
 </item>
-<item historyLabel="Wavi.java" index="1">
-<position/>
-</item>
-<item historyLabel="Wavi.java" index="1">
-<position/>
-</item>
-<item historyLabel="Wavi.java" index="1">
-<position/>
-</item>
-<item historyLabel="Wavi.java" index="1">
-<position/>
-</item>
-<item historyLabel="Wavi.java" index="1">
-<position info="not_deleted" x="1280" y="0"/>
+<item historyLabel="Wavi.java" index="0">
+<position info="not_deleted" x="1468" y="0"/>
 </item>
 <item historyLabel="main.xml" index="2"/>
-<item historyLabel="Wavi.java" index="1">
-<position info="not_deleted" x="1379" y="0"/>
-</item>
-<item historyLabel="Scan.java" index="0">
-<position info="not_deleted" x="350" y="0"/>
-</item>
-<item historyLabel="Wavi.java" index="1">
-<position info="not_deleted" x="1379" y="0"/>
-</item>
-<item historyLabel="Wavi.java" index="1">
-<position/>
-</item>
-<item historyLabel="Wavi.java" index="1">
-<position info="not_deleted" x="760" y="0"/>
+<item historyLabel="Wavi.java" index="0">
+<position info="not_deleted" x="2452" y="0"/>
 </item>
 <item historyLabel="main.xml" index="2"/>
-<item historyLabel="Wavi.java" index="1">
-<position info="not_deleted" x="895" y="0"/>
+<item historyLabel="Wavi.java" index="0">
+<position info="not_deleted" x="2452" y="0"/>
 </item>
-<item historyLabel="Wavi Manifest" index="3"/>
-<item historyLabel="Wavi.java" index="1">
-<position info="not_deleted" x="895" y="0"/>
+<item historyLabel="Wavi.java" index="0">
+<position info="not_deleted" x="1566" y="0"/>
 </item>
-<item historyLabel="Wavi.java" index="1">
-<position info="not_deleted" x="3121" y="9"/>
-</item>
-<item historyLabel="Wavi.java" index="1">
+<item historyLabel="MenuInflater.class" index="4">
 <position/>
 </item>
-<item historyLabel="Wavi.java" index="1">
-<position info="not_deleted" x="2880" y="0"/>
+<item historyLabel="Wavi.java" index="0">
+<position info="not_deleted" x="1566" y="0"/>
 </item>
-<item historyLabel="Scan.java" index="0">
-<position info="not_deleted" x="442" y="0"/>
+<item historyLabel="Wavi.java" index="0">
+<position info="not_deleted" x="2469" y="0"/>
 </item>
-<item historyLabel="Storage.java" index="4">
+<item historyLabel="MenuInflater.class" index="4">
 <position info="not_deleted" x="0" y="0"/>
 </item>
-<item historyLabel="Scan.java" index="0">
-<position info="not_deleted" x="442" y="0"/>
+<item historyLabel="Wavi.java" index="0">
+<position info="not_deleted" x="1662" y="0"/>
 </item>
-<item historyLabel="StorageHandler.java" index="5">
+<item historyLabel="main.xml" index="2"/>
+<item historyLabel="Wavi.java" index="0">
+<position info="not_deleted" x="2452" y="0"/>
+</item>
+<item historyLabel="AccessPoint.java" index="6">
 <position/>
 </item>
-<item historyLabel="Scan.java" index="0">
-<position info="not_deleted" x="442" y="0"/>
+<item historyLabel="AccessPoint.java" index="6">
+<position/>
 </item>
-<item historyLabel="Wavi.java" index="1">
-<position info="not_deleted" x="2880" y="0"/>
+<item historyLabel="Wavi.java" index="0">
+<position info="not_deleted" x="1468" y="0"/>
 </item>
-<item historyLabel="WaviScanReceiver.java" index="6">
-<position info="not_deleted" x="859" y="0"/>
+<item historyLabel="Storage.java" index="7">
+<position info="not_deleted" x="982" y="0"/>
 </item>
-<item historyLabel="StorageHandler.java" index="5">
-<position info="not_deleted" x="1518" y="7"/>
+<item historyLabel="strings.xml" index="3"/>
+<item historyLabel="Storage.java" index="7">
+<position info="not_deleted" x="982" y="0"/>
 </item>
-<item historyLabel="StorageHandler.java" index="5">
-<position info="not_deleted" x="1653" y="0"/>
+<item historyLabel="CompassManager.java" index="1">
+<position info="not_deleted" x="1816" y="0"/>
 </item>
-<item historyLabel="StorageHandler.java" index="5">
-<position info="not_deleted" x="1824" y="0"/>
+<item historyLabel="Wavi.java" index="0">
+<position info="not_deleted" x="1468" y="0"/>
 </item>
-<item historyLabel="WaviScanReceiver.java" index="6">
-<position info="not_deleted" x="446" y="0"/>
+<item historyLabel="CompassManager.java" index="1">
+<position info="not_deleted" x="1762" y="0"/>
 </item>
-<item historyLabel="Wavi.java" index="1">
-<position info="not_deleted" x="653" y="0"/>
+<item historyLabel="Wavi.java" index="0">
+<position info="not_deleted" x="780" y="0"/>
 </item>
-<item historyLabel="WifiManager$WifiLock.class" index="7">
+<item historyLabel="Storage.java" index="7">
+<position info="not_deleted" x="982" y="0"/>
+</item>
+<item historyLabel="Wavi.java" index="0">
+<position info="not_deleted" x="780" y="0"/>
+</item>
+<item historyLabel="CompassManager.java" index="1">
+<position info="not_deleted" x="1762" y="0"/>
+</item>
+<item historyLabel="Wavi.java" index="0">
+<position info="not_deleted" x="780" y="0"/>
+</item>
+<item historyLabel="ScanManager.java" index="8">
+<position info="not_deleted" x="2922" y="0"/>
+</item>
+<item historyLabel="Wavi.java" index="0">
+<position info="not_deleted" x="780" y="0"/>
+</item>
+<item historyLabel="Wavi.java" index="0">
+<position info="not_deleted" x="2609" y="0"/>
+</item>
+<item historyLabel="ScanManager.java" index="8">
+<position info="not_deleted" x="2922" y="0"/>
+</item>
+<item historyLabel="Wavi.java" index="0">
+<position info="not_deleted" x="2609" y="0"/>
+</item>
+<item historyLabel="StorageHandler.java" index="9">
+<position info="not_deleted" x="376" y="0"/>
+</item>
+<item historyLabel="AccessPoint.java" index="6">
+<position/>
+</item>
+<item historyLabel="StorageHandler.java" index="9">
+<position info="not_deleted" x="376" y="0"/>
+</item>
+<item historyLabel="Checkpoint.java" index="10">
+<position/>
+</item>
+<item historyLabel="StorageHandler.java" index="9">
+<position info="not_deleted" x="376" y="0"/>
+</item>
+<item historyLabel="Scan.java" index="11">
+<position info="not_deleted" x="751" y="0"/>
+</item>
+<item historyLabel="Checkpoint.java" index="10">
+<position/>
+</item>
+<item historyLabel="Scan.java" index="11">
+<position info="not_deleted" x="751" y="0"/>
+</item>
+<item historyLabel="Checkpoint.java" index="10">
 <position info="not_deleted" x="0" y="0"/>
 </item>
-<item historyLabel="Wavi.java" index="1">
-<position info="not_deleted" x="653" y="0"/>
+<item historyLabel="Scan.java" index="11">
+<position info="not_deleted" x="751" y="0"/>
 </item>
-<item historyLabel="Wavi.java" index="1">
-<position/>
+<item historyLabel="StorageHandler.java" index="9">
+<position info="not_deleted" x="376" y="0"/>
 </item>
-<item historyLabel="Wavi.java" index="1">
-<position info="not_deleted" x="2253" y="0"/>
+<item historyLabel="AccessPoint.java" index="6">
+<position info="not_deleted" x="1070" y="0"/>
 </item>
-<item historyLabel="Wavi.java" index="1">
-<position info="not_deleted" x="3397" y="0"/>
-</item>
-<item historyLabel="Wavi.java" index="1">
-<position info="not_deleted" x="3031" y="0"/>
-</item>
-<item historyLabel="Wavi.java" index="1">
-<position/>
-</item>
-<item historyLabel="Wavi.java" index="1">
-<position info="not_deleted" x="2833" y="0"/>
-</item>
-<item historyLabel="WaviScanReceiver.java" index="6">
-<position info="not_deleted" x="555" y="0"/>
-</item>
-<item active="true" historyLabel="Wavi.java" index="1">
-<position info="not_deleted" x="2833" y="0"/>
+<item active="true" historyLabel="StorageHandler.java" index="9">
+<position info="not_deleted" x="376" y="0"/>
 </item>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
@@ -588,6 +621,12 @@
 <workbenchWindowAdvisor/>
 <actionBarAdvisor/>
 <trimLayout>
+<trimArea IMemento.internal.id="16384">
+<trimItem IMemento.internal.id="left"/>
+</trimArea>
+<trimArea IMemento.internal.id="131072">
+<trimItem IMemento.internal.id="right"/>
+</trimArea>
 <trimArea IMemento.internal.id="128">
 <trimItem IMemento.internal.id="org.eclipse.ui.internal.WorkbenchWindow.topBar"/>
 </trimArea>
@@ -596,33 +635,55 @@
 <trimItem IMemento.internal.id="org.eclipse.jface.action.StatusLineManager"/>
 <trimItem IMemento.internal.id="org.eclipse.ui.internal.HeapStatus"/>
 <trimItem IMemento.internal.id="org.eclipse.ui.internal.progress.ProgressRegion"/>
+<trimItem IMemento.internal.id="bottom"/>
 </trimArea>
 </trimLayout>
 </window>
 <mruList>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="WaviScanReceiver.java" tooltip="Wavi/src/de/rwth/ti/WaviScanReceiver.java">
-<persistable path="/Wavi/src/de/rwth/ti/WaviScanReceiver.java"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="AccessPoint.java" tooltip="Wavi/src/de/rwth/ti/db/AccessPoint.java">
+<persistable path="/Wavi/src/de/rwth/ti/db/AccessPoint.java"/>
 </file>
-<file factoryID="org.eclipse.jdt.ui.ClassFileEditorInputFactory" id="org.eclipse.jdt.ui.ClassFileEditor" name="WifiManager$WifiLock.class" tooltip="android.net.wifi.WifiManager$WifiLock">
-<persistable org.eclipse.jdt.ui.ClassFileIdentifier="=Wavi/C:\/Program Files\/Android\/adt-bundle-windows-x86_64\/sdk\/platforms\/android-17\/android.jar&lt;android.net.wifi(WifiManager$WifiLock.class"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Checkpoint.java" tooltip="Wavi/src/de/rwth/ti/db/Checkpoint.java">
+<persistable path="/Wavi/src/de/rwth/ti/db/Checkpoint.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Scan.java" tooltip="Wavi/src/de/rwth/ti/db/Scan.java">
+<persistable path="/Wavi/src/de/rwth/ti/db/Scan.java"/>
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="StorageHandler.java" tooltip="Wavi/src/de/rwth/ti/db/StorageHandler.java">
 <persistable path="/Wavi/src/de/rwth/ti/db/StorageHandler.java"/>
 </file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="ScanManager.java" tooltip="Wavi/src/de/rwth/ti/ScanManager.java">
+<persistable path="/Wavi/src/de/rwth/ti/ScanManager.java"/>
+</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Storage.java" tooltip="Wavi/src/de/rwth/ti/db/Storage.java">
 <persistable path="/Wavi/src/de/rwth/ti/db/Storage.java"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.manifest.ManifestEditor" name="AndroidManifest.xml" tooltip="Wavi/AndroidManifest.xml">
-<persistable path="/Wavi/AndroidManifest.xml"/>
+<file factoryID="org.eclipse.jdt.ui.ClassFileEditorInputFactory" id="org.eclipse.jdt.ui.ClassFileEditor" name="MenuInflater.class" tooltip="android.view.MenuInflater">
+<persistable org.eclipse.jdt.ui.ClassFileIdentifier="=Wavi/C:\/Program Files\/Android\/adt-bundle-windows-x86_64\/sdk\/platforms\/android-17\/android.jar&lt;android.view(MenuInflater.class"/>
+</file>
+<file factoryID="org.eclipse.jdt.ui.ClassFileEditorInputFactory" id="org.eclipse.jdt.ui.ClassFileEditor" name="ThreadGroup.class" tooltip="java.lang.ThreadGroup">
+<persistable org.eclipse.jdt.ui.ClassFileIdentifier="=Wavi/C:\/Program Files\/Android\/adt-bundle-windows-x86_64\/sdk\/platforms\/android-17\/android.jar&lt;java.lang(ThreadGroup.class"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.CommonXmlEditor" name="strings.xml" tooltip="Wavi/res/values/strings.xml">
+<persistable path="/Wavi/res/values/strings.xml"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.CommonXmlEditor" name="main.xml" tooltip="Wavi/res/menu/main.xml">
+<persistable path="/Wavi/res/menu/main.xml"/>
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.CommonXmlEditor" name="main.xml" tooltip="Wavi/res/layout/main.xml">
 <persistable path="/Wavi/res/layout/main.xml"/>
 </file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="CompassManager.java" tooltip="Wavi/src/de/rwth/ti/CompassManager.java">
+<persistable path="/Wavi/src/de/rwth/ti/CompassManager.java"/>
+</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Wavi.java" tooltip="Wavi/src/de/rwth/ti/Wavi.java">
 <persistable path="/Wavi/src/de/rwth/ti/Wavi.java"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Scan.java" tooltip="Wavi/src/de/rwth/ti/db/Scan.java">
-<persistable path="/Wavi/src/de/rwth/ti/db/Scan.java"/>
+<file factoryID="org.eclipse.jdt.ui.ClassFileEditorInputFactory" id="org.eclipse.jdt.ui.ClassFileEditor" name="SensorManager.class" tooltip="android.hardware.SensorManager">
+<persistable org.eclipse.jdt.ui.ClassFileIdentifier="=Wavi/C:\/Program Files\/Android\/adt-bundle-windows-x86_64\/sdk\/platforms\/android-17\/android.jar&lt;android.hardware(SensorManager.class"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.android.ide.eclipse.editors.manifest.ManifestEditor" name="AndroidManifest.xml" tooltip="Wavi/AndroidManifest.xml">
+<persistable path="/Wavi/AndroidManifest.xml"/>
 </file>
 </mruList>
 </workbench>

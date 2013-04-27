@@ -1,5 +1,5 @@
 breadcrumb.org.eclipse.jdt.ui.JavaPerspective=true
-content_assist_lru_history=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><history maxLHS\="100" maxRHS\="10"/>
+content_assist_lru_history=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><history maxLHS\="100" maxRHS\="10"><lhs name\="de.rwth.ti.ScanManager"><rhs name\="de.rwth.ti.ScanManager"/></lhs><lhs name\="de.rwth.ti.CompassManager"><rhs name\="de.rwth.ti.CompassManager"/></lhs><lhs name\="android.os.Parcelable"><rhs name\="android.content.ContentValues"/></lhs><lhs name\="de.rwth.ti.db.Checkpoint"><rhs name\="de.rwth.ti.db.Checkpoint"/></lhs><lhs name\="java.util.Collection"><rhs name\="java.util.ArrayList"/></lhs><lhs name\="java.lang.Iterable"><rhs name\="java.util.ArrayList"/></lhs><lhs name\="java.util.List"><rhs name\="java.util.ArrayList"/></lhs></history>
 content_assist_number_of_computers=12
 content_assist_proposals_background=255,255,255
 content_assist_proposals_foreground=0,0,0

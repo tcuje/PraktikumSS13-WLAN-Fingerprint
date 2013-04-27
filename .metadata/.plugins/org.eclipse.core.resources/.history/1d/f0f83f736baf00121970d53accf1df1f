@@ -1,9 +1,0 @@
-package de.rwth.ti;
-
-public class ScanManager {
-
-	public ScanManager() {
-		
-	}
-	
-}

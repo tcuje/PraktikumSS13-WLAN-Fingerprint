@@ -1,7 +1,0 @@
-package de.rwth.ti;
-
-import android.hardware.SensorEventListener;
-
-public class CompassManager implements SensorEventListener {
-
-}

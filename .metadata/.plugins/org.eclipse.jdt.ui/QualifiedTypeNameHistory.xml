@@ -3,6 +3,19 @@
 <fullyQualifiedTypeName name="android.os.PowerManager.WakeLock"/>
 <fullyQualifiedTypeName name="android.os.PowerManager"/>
 <fullyQualifiedTypeName name="java.util.Timer"/>
-<fullyQualifiedTypeName name="java.util.TimerTask"/>
 <fullyQualifiedTypeName name="de.rwth.ti.R.id"/>
+<fullyQualifiedTypeName name="java.util.TimerTask"/>
+<fullyQualifiedTypeName name="de.rwth.ti.CompassManager"/>
+<fullyQualifiedTypeName name="android.content.BroadcastReceiver"/>
+<fullyQualifiedTypeName name="android.hardware.SensorEventListener"/>
+<fullyQualifiedTypeName name="android.hardware.Sensor"/>
+<fullyQualifiedTypeName name="android.hardware.SensorManager"/>
+<fullyQualifiedTypeName name="android.content.ContentValues"/>
+<fullyQualifiedTypeName name="android.database.Cursor"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="de.rwth.ti.db.AccessPoint"/>
+<fullyQualifiedTypeName name="de.rwth.ti.db.Map"/>
+<fullyQualifiedTypeName name="de.rwth.ti.ScanManager"/>
+<fullyQualifiedTypeName name="de.rwth.ti.db.Checkpoint"/>
+<fullyQualifiedTypeName name="de.rwth.ti.db.Scan"/>
 </qualifiedTypeNameHistroy>
