@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Encapsulate field &apos;de.rwth.ti.db.AccessPoint.ssid&apos; in &apos;de.rwth.ti.db.AccessPoint&apos;&#x0D;&#x0A;- Original project: &apos;Wavi&apos;&#x0D;&#x0A;- Original element: &apos;de.rwth.ti.db.AccessPoint.ssid&apos;&#x0D;&#x0A;- Getter method name: &apos;getSsid&apos;&#x0D;&#x0A;- Setter method name: &apos;setSsid&apos;&#x0D;&#x0A;- Field visibility: &apos;public&apos;&#x0D;&#x0A;- Use getter and setter methods in declaring type" comments="false" declaring="true" description="Encapsulate field &apos;ssid&apos;" flags="589830" getter="getSsid" id="org.eclipse.jdt.ui.self.encapsulate" input="/src&lt;de.rwth.ti.db{AccessPoint.java[AccessPoint^ssid" insertion="9" setter="setSsid" stamp="1366717980663" version="1.0" visibility="1"/>
+</session>
