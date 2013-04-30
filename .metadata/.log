@@ -471,6 +471,7 @@ Java Model Exception: Java Model Status [Timed out while retrieving the attached
 	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
 !SUBENTRY 1 org.eclipse.jdt.core 4 1012 2013-04-27 20:17:03.788
 !MESSAGE Timed out while retrieving the attached javadoc for Timer [in Timer.class [in java.util [in C:\Program Files\Android\adt-bundle-windows-x86_64\sdk\platforms\android-17\android.jar]]] 
+<<<<<<< HEAD
 
 !ENTRY com.android.ide.eclipse.adt 4 0 2013-04-28 16:52:28.728
 !MESSAGE Unable to read C:\Users\Asia\Documents\GitHub\ti-projekt\Wavi\AndroidManifest.xml: org.eclipse.core.internal.resources.ResourceException: Resource is out of sync with the file system: '/Wavi/AndroidManifest.xml'.
@@ -658,3 +659,5 @@ user global configuration and to define the default location to store repositori
 not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
 EGit might behave differently since they see different configuration options.
 This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+=======
+>>>>>>> 54250cd8c955864c14c52cee12ac00793bd8c510

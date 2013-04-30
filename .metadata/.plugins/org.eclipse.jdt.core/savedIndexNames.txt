@@ -1,3 +1,9 @@
+<<<<<<< HEAD
 INDEX VERSION 1.126+C:\Users\Asia\Documents\GitHub\ti-projekt\.metadata\.plugins\org.eclipse.jdt.core
 3386392510.index
 1761952855.index
+=======
+INDEX VERSION 1.126+D:\TISS13\.metadata\.plugins\org.eclipse.jdt.core
+1761952855.index
+1669965025.index
+>>>>>>> 54250cd8c955864c14c52cee12ac00793bd8c510

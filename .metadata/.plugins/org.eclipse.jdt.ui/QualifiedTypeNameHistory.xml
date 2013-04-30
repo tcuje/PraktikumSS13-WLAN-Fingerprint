@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<<<<<<< HEAD
 <qualifiedTypeNameHistroy>
 <fullyQualifiedTypeName name="java.util.Date"/>
 </qualifiedTypeNameHistroy>
+=======
+<qualifiedTypeNameHistroy/>
+>>>>>>> 54250cd8c955864c14c52cee12ac00793bd8c510
