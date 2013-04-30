@@ -1,8 +1,0 @@
-package de.rwth.ti.db;
-
-public class Scan {
-
-	public static final String TABLE_NAME = "scans";
-	public static final String COLUMN_ID = "_id";
-
-}
