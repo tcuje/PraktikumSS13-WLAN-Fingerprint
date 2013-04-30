@@ -3,8 +3,6 @@ package de.rwth.ti.db;
 /**
  * This class represents the table where access points for each scan are stored
  * 
- * @author tcuje
- * 
  */
 public class AccessPoint {
 

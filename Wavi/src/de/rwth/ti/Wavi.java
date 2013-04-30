@@ -20,8 +20,6 @@ import de.rwth.ti.db.StorageHandler;
 /**
  * This is the main activity class
  * 
- * @author tcuje
- * 
  */
 public class Wavi extends Activity implements OnClickListener {
 

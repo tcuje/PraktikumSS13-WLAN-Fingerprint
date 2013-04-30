@@ -3,8 +3,6 @@ package de.rwth.ti.db;
 /**
  * This class represents the table where each scan is stored
  * 
- * @author tcuje
- * 
  */
 public class Scan {
 

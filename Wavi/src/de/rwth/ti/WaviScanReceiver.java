@@ -13,8 +13,6 @@ import de.rwth.ti.db.Scan;
  * This class gets activated when wifi scan results are available and stores
  * them into database
  * 
- * @author tcuje
- * 
  */
 public class WaviScanReceiver extends BroadcastReceiver {
 

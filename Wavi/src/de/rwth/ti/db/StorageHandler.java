@@ -9,8 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 /**
  * This class handles the database access
  * 
- * @author tcuje
- * 
  */
 public class StorageHandler {
 
