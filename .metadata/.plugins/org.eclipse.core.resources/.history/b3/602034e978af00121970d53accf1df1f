@@ -1,7 +1,0 @@
-package de.rwth.ti.db;
-
-public class Checkpoint {
-
-	public static final String TABLE_NAME = "measure"
-	
-}
