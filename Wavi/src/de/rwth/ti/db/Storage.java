@@ -7,13 +7,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  * This class is responsible for creating and upgrading the database
  * 
- * @author tcuje
- * 
  */
 public class Storage extends SQLiteOpenHelper {
 
 	private final static String DB_NAME = "map";
-	private static final int DB_VERSION = 4;
+	private static final int DB_VERSION = 1;
 
 	public Storage(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);

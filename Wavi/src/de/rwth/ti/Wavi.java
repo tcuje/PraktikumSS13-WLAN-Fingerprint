@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,12 +20,11 @@ import de.rwth.ti.db.StorageHandler;
 /**
  * This is the main activity class
  * 
- * @author tcuje
- * 
  */
 public class Wavi extends Activity implements OnClickListener {
 
 	WifiManager wifi;
+	WifiLock wl;
 	BroadcastReceiver receiver;
 	AlertDialog.Builder builder;
 	StorageHandler storage;
@@ -45,6 +45,7 @@ public class Wavi extends Activity implements OnClickListener {
 
 		// Setup WiFi
 		wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		wl = wifi.createWifiLock("Wavi");
 
 		// Register Broadcast Receiver
 		if (receiver == null) {
@@ -80,6 +81,7 @@ public class Wavi extends Activity implements OnClickListener {
 		super.onStart();
 		registerReceiver(receiver, new IntentFilter(
 				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+		wl.acquire();
 		textStatus.setText("Scans: " + storage.countScans() + "\n");
 		textStatus.append("AccessPoints: " + storage.countAccessPoints());
 	}
@@ -93,11 +95,13 @@ public class Wavi extends Activity implements OnClickListener {
 		} catch (IllegalArgumentException ex) {
 			// just ignore it
 		}
+		wl.release();
 	}
 
 	@Override
 	public void onClick(View view) {
 		if (view.getId() == R.id.buttonScan) {
+			// check if wifi is enabled or not
 			if (wifi.isWifiEnabled() == false) {
 				builder.setMessage(string.text_wifistate).show();
 			} else {

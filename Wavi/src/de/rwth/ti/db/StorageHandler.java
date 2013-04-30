@@ -9,8 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 /**
  * This class handles the database access
  * 
- * @author tcuje
- * 
  */
 public class StorageHandler {
 
@@ -34,12 +32,13 @@ public class StorageHandler {
 	 * 
 	 * @return The id for the new access point
 	 */
-	public long addAp(Scan scan, String bssid, int level, int freq) {
+	public long addAp(Scan scan, String bssid, int level, int freq, String ssid) {
 		ContentValues values = new ContentValues();
 		values.put(AccessPoint.COLUMN_SCAN, scan.getId());
 		values.put(AccessPoint.COLUMN_BSSID, bssid);
 		values.put(AccessPoint.COLUMN_LEVEL, level);
 		values.put(AccessPoint.COLUMN_FREQ, freq);
+		values.put(AccessPoint.COLUMN_SSID, ssid);
 		long insertId = db.insert(AccessPoint.TABLE_NAME, null, values);
 		return insertId;
 	}
@@ -51,12 +50,14 @@ public class StorageHandler {
 		ap.setBssid(cursor.getString(2));
 		ap.setLevel(cursor.getInt(3));
 		ap.setFreq(cursor.getInt(4));
+		ap.setSsid(cursor.getString(5));
 		return ap;
 	}
 
-	public Scan addScan() {
+	public Scan addScan(long time) {
 		ContentValues values = new ContentValues();
 		values.put(Scan.COLUMN_NAME, "");
+		values.put(Scan.COLUMN_TIME, time);
 		long insertId = db.insert(Scan.TABLE_NAME, null, values);
 		Cursor cursor = db.query(Scan.TABLE_NAME, Scan.ALL_COLUMNS,
 				Scan.COLUMN_ID + " = " + insertId, null, null, null, null);
@@ -70,6 +71,7 @@ public class StorageHandler {
 		Scan scan = new Scan();
 		scan.setId(cursor.getLong(0));
 		scan.setName(cursor.getString(1));
+		scan.setTime(cursor.getLong(2));
 		return scan;
 	}
 

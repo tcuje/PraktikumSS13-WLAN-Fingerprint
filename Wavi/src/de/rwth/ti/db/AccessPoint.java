@@ -3,8 +3,6 @@ package de.rwth.ti.db;
 /**
  * This class represents the table where access points for each scan are stored
  * 
- * @author tcuje
- * 
  */
 public class AccessPoint {
 
@@ -14,14 +12,16 @@ public class AccessPoint {
 	public static final String COLUMN_BSSID = "bssid";
 	public static final String COLUMN_LEVEL = "level";
 	public static final String COLUMN_FREQ = "freq";
+	public static final String COLUMN_SSID = "ssid";
 
 	public static final String[] ALL_COLUMNS = { COLUMN_ID, COLUMN_SCAN,
-			COLUMN_BSSID, COLUMN_LEVEL, COLUMN_FREQ };
+			COLUMN_BSSID, COLUMN_LEVEL, COLUMN_FREQ, COLUMN_SSID };
 
 	public static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
 			+ COLUMN_SCAN + " integer, " + COLUMN_BSSID + " text not null, "
-			+ COLUMN_LEVEL + " integer, " + COLUMN_FREQ + " integer);";
+			+ COLUMN_LEVEL + " integer, " + COLUMN_FREQ + " integer, "
+			+ COLUMN_SSID + " text null);";
 	public static final String TABLE_DROP = "DROP TABLE IF EXISTS "
 			+ TABLE_NAME;
 
@@ -30,6 +30,7 @@ public class AccessPoint {
 	private String bssid;
 	private int level;
 	private int freq;
+	private String ssid;
 
 	public long getId() {
 		return id;
@@ -69,6 +70,14 @@ public class AccessPoint {
 
 	public void setFreq(int freq) {
 		this.freq = freq;
+	}
+
+	public String getSsid() {
+		return ssid;
+	}
+
+	public void setSsid(String ssid) {
+		this.ssid = ssid;
 	}
 
 }
