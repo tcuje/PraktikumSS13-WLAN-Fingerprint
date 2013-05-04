@@ -8,18 +8,19 @@ public class AccessPoint {
 
 	public static final String TABLE_NAME = "apps";
 	public static final String COLUMN_ID = "_id";
-	public static final String COLUMN_SCAN = "scan";
+	public static final String COLUMN_SCAN = "scan";		//MP_ID
+	public static final String COLUMN_MP_ID = "mp_id";	
 	public static final String COLUMN_BSSID = "bssid";
 	public static final String COLUMN_LEVEL = "level";
 	public static final String COLUMN_FREQ = "freq";
 	public static final String COLUMN_SSID = "ssid";
 
-	public static final String[] ALL_COLUMNS = { COLUMN_ID, COLUMN_SCAN,
+	public static final String[] ALL_COLUMNS = { COLUMN_ID, COLUMN_SCAN,COLUMN_MP_ID,
 			COLUMN_BSSID, COLUMN_LEVEL, COLUMN_FREQ, COLUMN_SSID };
 
 	public static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
-			+ COLUMN_SCAN + " integer, " + COLUMN_BSSID + " text not null, "
+			+ COLUMN_SCAN + " integer, " + COLUMN_MP_ID + " integer, " + COLUMN_BSSID + " text not null, "
 			+ COLUMN_LEVEL + " integer, " + COLUMN_FREQ + " integer, "
 			+ COLUMN_SSID + " text null);";
 	public static final String TABLE_DROP = "DROP TABLE IF EXISTS "

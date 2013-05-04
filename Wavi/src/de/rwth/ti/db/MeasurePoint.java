@@ -10,7 +10,7 @@ public class MeasurePoint {
 	public static final String COLUMN_ID = "_id";
 	public static final String COLUMN_X = "x";
 	public static final String COLUMN_Y = "y";
-	public static final String COLUMN_MID = "kid";
+	public static final String COLUMN_MID = "map_id";			//"kid"->"map_id"
 
 	public static final String[] ALL_COLUMNS = { COLUMN_ID, COLUMN_X, COLUMN_Y,
 			COLUMN_MID };
