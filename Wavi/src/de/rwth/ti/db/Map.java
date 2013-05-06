@@ -1,25 +1,24 @@
 package de.rwth.ti.db;
 
-/**
- * This class represents a map or floor
- * 
- */
 public class Map {
 
-	public static final String TABLE_NAME = "map";
+	public static final String TABLE_NAME = "maps";
 	public static final String COLUMN_ID = "_id";
-	public static final String COLUMN_DATA = "data";
+	public static final String COLUMN_NAME = "name";
+	public static final String COLUMN_FILE = "file";
 
-	public static final String[] ALL_COLUMNS = { COLUMN_ID, COLUMN_DATA, };
+	public static final String[] ALL_COLUMNS = { COLUMN_ID, COLUMN_NAME,
+			COLUMN_FILE };
 
 	public static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
-			+ COLUMN_DATA + " text null,);";
+			+ COLUMN_NAME + " text null, " + COLUMN_FILE + " text null);";
 	public static final String TABLE_DROP = "DROP TABLE IF EXISTS "
 			+ TABLE_NAME;
 
 	private long id;
-	private String data;
+	private String name;
+	private String file;
 
 	public long getId() {
 		return id;
@@ -29,12 +28,20 @@ public class Map {
 		this.id = id;
 	}
 
-	public String getData() {
-		return data;
+	public String getName() {
+		return name;
 	}
 
-	public void setData(String data) {
-		this.data = data;
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getFile() {
+		return file;
+	}
+
+	public void setFile(String file) {
+		this.file = file;
 	}
 
 }

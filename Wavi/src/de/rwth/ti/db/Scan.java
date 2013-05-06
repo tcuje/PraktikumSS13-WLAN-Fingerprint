@@ -8,21 +8,28 @@ public class Scan {
 
 	public static final String TABLE_NAME = "scans";
 	public static final String COLUMN_ID = "_id";
-	public static final String COLUMN_NAME = "name";
+	public static final String COLUMN_CPID = "cpid";
 	public static final String COLUMN_TIME = "time";
+	public static final String COLUMN_COMPASS = "compass";
 
-	public static final String[] ALL_COLUMNS = { COLUMN_ID, COLUMN_NAME,
-			COLUMN_TIME };
+	public static final String[] ALL_COLUMNS = { COLUMN_ID, COLUMN_CPID,
+			COLUMN_TIME, COLUMN_COMPASS };
 
 	public static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
-			+ COLUMN_NAME + " text null, " + COLUMN_TIME + " integer);";
+			+ COLUMN_CPID + " integer REFERENCES " + Checkpoint.TABLE_NAME
+			+ "(" + Checkpoint.COLUMN_ID
+			+ ") ON UPDATE CASCADE ON DELETE CASCADE, " + COLUMN_TIME
+			+ " integer, " + COLUMN_COMPASS + " integer);";
+	// FIXME also delete accesspoints referencing this scan, better use
+	// constraints
 	public static final String TABLE_DROP = "DROP TABLE IF EXISTS "
 			+ TABLE_NAME;
 
 	private long id;
-	private String name;
+	private long cpid;
 	private long time;
+	private long compass;
 
 	public long getId() {
 		return id;
@@ -32,12 +39,12 @@ public class Scan {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public long getCpid() {
+		return cpid;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setCpid(long cpid) {
+		this.cpid = cpid;
 	}
 
 	public long getTime() {
@@ -46,6 +53,14 @@ public class Scan {
 
 	public void setTime(long time) {
 		this.time = time;
+	}
+
+	public long getCompass() {
+		return compass;
+	}
+
+	public void setCompass(long compass) {
+		this.compass = compass;
 	}
 
 }
