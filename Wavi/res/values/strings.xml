@@ -7,4 +7,5 @@
     <string name="text_wifistate">WLAN deaktiviert. Jetzt aktivieren?</string>
     <string name="text_yes">Ja</string>
     <string name="text_no">Nein</string>
+    <string name="text_debug">Rohdaten anzeigen</string>
 </resources>
