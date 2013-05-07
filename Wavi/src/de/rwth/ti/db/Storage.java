@@ -20,10 +20,11 @@ public class Storage extends SQLiteOpenHelper {
 	/** Called when the database is created for the first time. */
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL(AccessPoint.TABLE_CREATE);
-		db.execSQL(Scan.TABLE_CREATE);
-		db.execSQL(MeasurePoint.TABLE_CREATE);
+		db.execSQL(Building.TABLE_CREATE);
 		db.execSQL(Map.TABLE_CREATE);
+		db.execSQL(MeasurePoint.TABLE_CREATE);
+		db.execSQL(Scan.TABLE_CREATE);
+		db.execSQL(AccessPoint.TABLE_CREATE);
 	}
 
 	/** Called when the database needs to be upgraded */
@@ -34,6 +35,7 @@ public class Storage extends SQLiteOpenHelper {
 		db.execSQL(Scan.TABLE_DROP);
 		db.execSQL(MeasurePoint.TABLE_DROP);
 		db.execSQL(Map.TABLE_DROP);
+		db.execSQL(Building.TABLE_DROP);
 		onCreate(db);
 	}
 }

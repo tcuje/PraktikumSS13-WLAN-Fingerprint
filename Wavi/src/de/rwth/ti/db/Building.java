@@ -11,6 +11,7 @@ public class Building {
 	public static final String COLUMN_NAME = "name";
 
 	public static final String[] ALL_COLUMNS = { COLUMN_ID, COLUMN_NAME };
+
 	public static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
 			+ COLUMN_NAME + " text null);";
