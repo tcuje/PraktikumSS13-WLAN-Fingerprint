@@ -53,7 +53,7 @@ public interface IMeasureDataHandler extends IDataHandler {
 	/**
 	 * 
 	 * @param bssid
-	 * @return Returns a list with all entries for the mac
+	 * @return Returns a list with all entries for the bssid		//FIXME should return the list in descending order
 	 */
 	public List<AccessPoint> getAccessPoint(String bssid);
 

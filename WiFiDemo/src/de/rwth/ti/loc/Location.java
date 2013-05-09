@@ -3,7 +3,7 @@ package de.rwth.ti.loc;
 import java.util.List;
 import java.lang.Math;
 
-import android.R.bool;
+
 import android.net.wifi.ScanResult;
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
@@ -43,7 +43,6 @@ public class Location {
 		if (aps.isEmpty()) {
 			return null;
 		}
-		// FIXME just use the first one
 		String mac = aps.get(0).BSSID;
 		List<AccessPoint> entries = dataHandler.getAccessPoint(mac);
 		// FIXME just use the first one //FIXED if getAccessPoint returns list sorted by level descending
@@ -108,10 +107,9 @@ public class Location {
 		if (aps.isEmpty() || b == null) {
 			return null;
 		}
-		// FIXME just use the first one
 		String mac = aps.get(0).BSSID;
 		int levelOnline = aps.get(0).level;
-		List<AccessPoint> entries = dataHandler.getAccessPoint(mac);		//FIXME filter for mac AND building
+		List<AccessPoint> entries = dataHandler.getAccessPoint(mac);		//FIXME filter for mac AND building //TODO call getAccessPoint(mac, b)
 		AccessPoint closestAP = entries.get(0);
 		for (int i=1; i<entries.size(); i++){
 			if ((Math.abs(entries.get(i).getLevel()-levelOnline))<(Math.abs(closestAP.getLevel()-levelOnline))){
@@ -123,8 +121,6 @@ public class Location {
 		Scan scan = dataHandler.getScan(closestAP);
 		MeasurePoint mp = dataHandler.getMeasurePoint(scan);
 		Map map = dataHandler.getMap(mp);
-		//List<Map> maps = dataHandler.getMaps(b);
-		// FIXME just use the first one
 		return map;
 	}
 	
@@ -132,7 +128,7 @@ public class Location {
 		if (aps.isEmpty() || map==null){
 			return null;
 		}
-		List <Scan> scanEntries = dataHandler.getScans(map, compass);					//FIXME all scans on specified map
+		List <Scan> scanEntries = dataHandler.getScans(map, compass);					//FIXME all scans on specified map within 45deg of the compass reading
 		List <ScanError> errorList=null;
 		for (int j=0; j<scanEntries.size(); j++){
 			double errorValue=0;
