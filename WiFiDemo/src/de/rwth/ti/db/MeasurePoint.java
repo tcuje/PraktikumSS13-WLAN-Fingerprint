@@ -58,5 +58,12 @@ public class MeasurePoint {
 	public void setPosy(double posy) {
 		this.posy = posy;
 	}
+	public void setAll(long id, long mapId, double posx, double posy){
+		this.id=id;
+		this.mapId=mapId;
+		this.posx=posx;
+		this.posy=posy;
+			
+	}
 
 }

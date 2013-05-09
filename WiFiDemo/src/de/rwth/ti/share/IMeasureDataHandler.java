@@ -35,6 +35,13 @@ public interface IMeasureDataHandler extends IDataHandler {
 	 * @return Returns the Scan for the AccessPoint
 	 */
 	public Scan getScan(AccessPoint ap);
+	
+	/**
+	 * 
+	 * @param map, compass
+	 * @return Returns all Scans for the Map fitting the compass argument (compass+/-45°)
+	 */
+	public List<Scan> getScans(Map map, int compass);				//TODO
 
 	/**
 	 * 
