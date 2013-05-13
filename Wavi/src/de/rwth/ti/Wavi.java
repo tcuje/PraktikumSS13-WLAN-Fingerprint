@@ -1,5 +1,7 @@
 package de.rwth.ti;
 
+import java.io.IOException;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Map;
 import de.rwth.ti.db.MeasurePoint;
@@ -97,6 +100,17 @@ public class Wavi extends Activity implements OnClickListener {
 		switch (item.getItemId()) {
 		case R.id.menu_show_debug:
 			showDebug();
+			return true;
+		case R.id.menu_export:
+			try {
+				storage.exportDatabase("local.sqlite");
+				Toast.makeText(getBaseContext(),
+						"Datenbank erfolgreich exportiert", Toast.LENGTH_SHORT)
+						.show();
+			} catch (IOException e) {
+				Toast.makeText(getBaseContext(), e.toString(),
+						Toast.LENGTH_LONG).show();
+			}
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

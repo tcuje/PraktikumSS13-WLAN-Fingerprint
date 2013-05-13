@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content">
+    <item android:id="@+id/menu_export"
+          android:title="@string/menu_export" />
     <item android:id="@+id/menu_show_debug"
-          android:title="@string/text_debug" />
+          android:title="@string/menu_debug" />
 </menu>

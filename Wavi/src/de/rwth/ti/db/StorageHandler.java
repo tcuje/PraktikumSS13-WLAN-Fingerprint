@@ -1,5 +1,6 @@
 package de.rwth.ti.db;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,12 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 
 	public void onStop() {
 		storage.close();
+	}
+
+	public void exportDatabase(String filename) throws IOException {
+		db.close();
+		storage.exportDatabase(filename);
+		db = storage.getWritableDatabase();
 	}
 
 	@Override

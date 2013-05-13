@@ -1,8 +1,15 @@
 package de.rwth.ti.db;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 
 /**
  * This class is responsible for creating and upgrading the database
@@ -38,4 +45,22 @@ public class Storage extends SQLiteOpenHelper {
 		db.execSQL(Building.TABLE_DROP);
 		onCreate(db);
 	}
+
+	public void exportDatabase(String filename) throws IOException {
+		File sd = Environment.getExternalStorageDirectory();
+		File data = Environment.getDataDirectory();
+		String currentDBPath = "//data//" + "de.rwth.ti" + "//databases//"
+				+ DB_NAME;
+		// String backupDBPath = "/backup/" + filename;
+		String backupDBPath = "/" + filename;
+		File currentDB = new File(data, currentDBPath);
+		File backupDB = new File(sd, backupDBPath);
+
+		FileChannel src = new FileInputStream(currentDB).getChannel();
+		FileChannel dst = new FileOutputStream(backupDB).getChannel();
+		dst.transferFrom(src, 0, src.size());
+		src.close();
+		dst.close();
+	}
+
 }

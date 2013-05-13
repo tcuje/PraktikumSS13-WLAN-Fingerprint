@@ -122,7 +122,7 @@ public class ScanManager extends BroadcastReceiver {
 		List<ScanResult> results = app.getScanManager().getScanResults();
 		if (onlineMode == false) {
 			app.textStatus.setText("Folgende Wifi's gefunden:\n");
-			if (results != null && !results.isEmpty()) {
+			if (results != null && !results.isEmpty() && mpoint != null) {
 				Date d = new Date();
 				Scan scan = app.getStorage()
 						.createScan(mpoint, d.getTime() / 1000,
