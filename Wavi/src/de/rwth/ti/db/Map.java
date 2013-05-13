@@ -20,7 +20,7 @@ public class Map {
 	public static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
 			+ COLUMN_BID + " integer, " + COLUMN_NAME + " text null, "
-			+ COLUMN_FILE + " text null, " + COLUMN_LEVEL + " integer, "
+			+ COLUMN_FILE + " BLOB, " + COLUMN_LEVEL + " integer, "
 			+ COLUMN_NORTH + " integer);";
 	public static final String TABLE_DROP = "DROP TABLE IF EXISTS "
 			+ TABLE_NAME;
@@ -28,7 +28,7 @@ public class Map {
 	private long id;
 	private long bId;
 	private String name;
-	private String file;
+	private byte[] file;
 	private long level;
 	private long north; // angle pointing to north pole on this map
 
@@ -56,11 +56,11 @@ public class Map {
 		this.name = name;
 	}
 
-	public String getFile() {
+	public byte[] getFile() {
 		return file;
 	}
 
-	public void setFile(String file) {
+	public void setFile(byte[] file) {
 		this.file = file;
 	}
 
