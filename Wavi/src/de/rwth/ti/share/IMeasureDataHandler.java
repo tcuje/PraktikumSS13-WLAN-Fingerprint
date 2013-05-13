@@ -46,7 +46,7 @@ public interface IMeasureDataHandler extends IDataHandler {
 	/**
 	 * 
 	 * @param bssid
-	 * @return Returns a list with all entries for the mac
+	 * @return Returns a sorted list with all entries for the mac
 	 */
 	public List<AccessPoint> getAccessPoint(String bssid);
 
