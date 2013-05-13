@@ -45,11 +45,13 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 		values.put(AccessPoint.COLUMN_SSID, ssid);
 		values.put(AccessPoint.COLUMN_PROPS, props);
 		long insertId = db.insert(AccessPoint.TABLE_NAME, null, values);
-		Cursor cursor = db.query(Scan.TABLE_NAME, Scan.ALL_COLUMNS,
-				Scan.COLUMN_ID + "=?",
+		Cursor cursor = db.query(AccessPoint.TABLE_NAME,
+				AccessPoint.ALL_COLUMNS, AccessPoint.COLUMN_ID + "=?",
 				new String[] { String.valueOf(insertId) }, null, null, null);
-		cursor.moveToFirst();
-		AccessPoint result = cursorToAccessPoint(cursor);
+		AccessPoint result = null;
+		if (cursor.moveToFirst()) {
+			result = cursorToAccessPoint(cursor);
+		}
 		cursor.close();
 		return result;
 	}
@@ -116,8 +118,10 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 		Cursor cursor = db.query(Scan.TABLE_NAME, Scan.ALL_COLUMNS,
 				Scan.COLUMN_ID + "=?",
 				new String[] { String.valueOf(insertId) }, null, null, null);
-		cursor.moveToFirst();
-		Scan result = cursorToScan(cursor);
+		Scan result = null;
+		if (cursor.moveToFirst()) {
+			result = cursorToScan(cursor);
+		}
 		cursor.close();
 		return result;
 	}
@@ -173,15 +177,19 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 	@Override
 	public MeasurePoint createMeasurePoint(Map m, double x, double y) {
 		ContentValues values = new ContentValues();
-		values.put(MeasurePoint.COLUMN_MAPID, m.getId());
+		if (m != null) {
+			values.put(MeasurePoint.COLUMN_MAPID, m.getId());
+		}
 		values.put(MeasurePoint.COLUMN_POS_X, x);
 		values.put(MeasurePoint.COLUMN_POS_Y, y);
 		long insertId = db.insert(MeasurePoint.TABLE_NAME, null, values);
 		Cursor cursor = db.query(MeasurePoint.TABLE_NAME,
 				MeasurePoint.ALL_COLUMNS, MeasurePoint.COLUMN_ID + "=?",
 				new String[] { String.valueOf(insertId) }, null, null, null);
-		cursor.moveToFirst();
-		MeasurePoint result = cursorToMeasurePoint(cursor);
+		MeasurePoint result = null;
+		if (cursor.moveToFirst()) {
+			result = cursorToMeasurePoint(cursor);
+		}
 		cursor.close();
 		return result;
 	}
@@ -232,21 +240,25 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 	public Map createMap(Building b, String name, String file, long level,
 			long north) {
 		ContentValues values = new ContentValues();
+		if (b != null) {
+			values.put(Map.COLUMN_BID, b.getId());
+		}
 		if (name != null) {
 			values.put(Map.COLUMN_NAME, name);
 		}
 		if (file != null) {
 			values.put(Map.COLUMN_FILE, file);
 		}
-		if (values.size() == 0) {
-			return null;
-		}
+		values.put(Map.COLUMN_LEVEL, level);
+		values.put(Map.COLUMN_NORTH, north);
 		long insertId = db.insert(Map.TABLE_NAME, null, values);
 		Cursor cursor = db.query(Map.TABLE_NAME, Map.ALL_COLUMNS, Map.COLUMN_ID
 				+ "=?", new String[] { String.valueOf(insertId) }, null, null,
 				null);
-		cursor.moveToFirst();
-		Map result = cursorToMap(cursor);
+		Map result = null;
+		if (cursor.moveToFirst()) {
+			result = cursorToMap(cursor);
+		}
 		cursor.close();
 		return result;
 	}
@@ -254,8 +266,11 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 	private Map cursorToMap(Cursor cursor) {
 		Map result = new Map();
 		result.setId(cursor.getLong(0));
-		result.setName(cursor.getString(1));
-		result.setFile(cursor.getString(2));
+		result.setBId(cursor.getLong(1));
+		result.setName(cursor.getString(2));
+		result.setFile(cursor.getString(3));
+		result.setLevel(cursor.getLong(4));
+		result.setNorth(cursor.getLong(5));
 		return result;
 	}
 
@@ -311,8 +326,10 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 		Cursor cursor = db.query(Building.TABLE_NAME, Building.ALL_COLUMNS,
 				Building.COLUMN_ID + "=?",
 				new String[] { String.valueOf(insertId) }, null, null, null);
-		cursor.moveToFirst();
-		Building result = cursorToBuilding(cursor);
+		Building result = null;
+		if (cursor.moveToFirst()) {
+			result = cursorToBuilding(cursor);
+		}
 		cursor.close();
 		return result;
 	}

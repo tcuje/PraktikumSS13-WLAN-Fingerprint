@@ -99,8 +99,13 @@ public class ScanManager extends BroadcastReceiver {
 		}
 	}
 
+	/**
+	 * 
+	 * @param period
+	 *            Period in seconds between scans
+	 */
 	public void startAutoScan(int period) {
-		tim.schedule(scantask, 0, period);
+		tim.schedule(scantask, 0, period / 1000);
 	}
 
 	public void stopAutoScan() {
