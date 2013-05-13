@@ -19,16 +19,17 @@ public class Map {
 
 	public static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
-			+ COLUMN_BID + " integer, " + COLUMN_NAME + " text null, "
-			+ COLUMN_FILE + " BLOB, " + COLUMN_LEVEL + " integer, "
-			+ COLUMN_NORTH + " integer);";
+			+ COLUMN_BID + " integer REFERENCES " + Building.TABLE_NAME + "("
+			+ Building.COLUMN_ID + ") ON UPDATE CASCADE ON DELETE CASCADE, "
+			+ COLUMN_NAME + " text null, " + COLUMN_FILE + " blob, "
+			+ COLUMN_LEVEL + " integer, " + COLUMN_NORTH + " integer);";
 	public static final String TABLE_DROP = "DROP TABLE IF EXISTS "
 			+ TABLE_NAME;
 
 	private long id;
-	private long bId;
-	private String name;
-	private byte[] file;
+	private long bId; // building id
+	private String name; // name for this floor e.g. "Foyer"
+	private byte[] file; // byte array that describes layout file
 	private long level;
 	private long north; // angle pointing to north pole on this map
 
