@@ -1,8 +1,5 @@
 package de.rwth.ti;
 
-import java.io.IOException;
-import java.util.List;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,7 +9,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Map;
 import de.rwth.ti.db.MeasurePoint;
@@ -24,8 +20,6 @@ import de.rwth.ti.db.StorageHandler;
  * 
  */
 public class Wavi extends Activity implements OnClickListener {
-
-	public static final String PACKAGE_NAME = "de.rwth.ti";
 
 	private ScanManager scm;
 	private StorageHandler storage;
@@ -104,28 +98,6 @@ public class Wavi extends Activity implements OnClickListener {
 		case R.id.menu_show_debug:
 			showDebug();
 			return true;
-		case R.id.menu_export:
-			try {
-				storage.exportDatabase("local.sqlite");
-				Toast.makeText(getBaseContext(),
-						"Datenbank erfolgreich exportiert", Toast.LENGTH_SHORT)
-						.show();
-			} catch (IOException e) {
-				Toast.makeText(getBaseContext(), e.toString(),
-						Toast.LENGTH_LONG).show();
-			}
-			return true;
-		case R.id.menu_import:
-			try {
-				storage.importDatabase("local.sqlite");
-				Toast.makeText(getBaseContext(),
-						"Datenbank erfolgreich importiert", Toast.LENGTH_SHORT)
-						.show();
-			} catch (IOException e) {
-				Toast.makeText(getBaseContext(), e.toString(),
-						Toast.LENGTH_LONG).show();
-			}
-			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -163,19 +135,11 @@ public class Wavi extends Activity implements OnClickListener {
 		}
 		textStatus.append("\nAccessPoints: " + storage.countAccessPoints()
 				+ "\n");
-		List<AccessPoint> all = storage.getAllAccessPoints();
-		for (AccessPoint ap : all) {
+		for (AccessPoint ap : storage.getAllAccessPoints()) {
 			textStatus.append("AP\t" + ap.getId() + "\t" + ap.getScanId()
 					+ "\t" + ap.getBssid() + "\t" + ap.getLevel() + "\t"
 					+ ap.getFreq() + "\t'" + ap.getSsid() + "'\t"
 					+ ap.getProps() + "\n");
-		}
-		String bssid = all.get(0).getBssid();
-		List<AccessPoint> first = storage.getAccessPoint(bssid);
-		textStatus.append("\n" + bssid + "\n");
-		for (AccessPoint ap : first) {
-			textStatus.append("AP\t" + ap.getId() + "\t" + ap.getScanId()
-					+ "\t" + ap.getBssid() + "\t" + ap.getLevel() + "\n");
 		}
 	}
 

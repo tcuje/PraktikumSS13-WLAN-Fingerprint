@@ -1,6 +1,5 @@
 package de.rwth.ti.db;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,18 +34,6 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 		storage.close();
 	}
 
-	public void exportDatabase(String filename) throws IOException {
-		db.close();
-		storage.exportDatabase(filename);
-		db = storage.getWritableDatabase();
-	}
-
-	public void importDatabase(String filename) throws IOException {
-		db.close();
-		storage.importDatabase(filename);
-		db = storage.getWritableDatabase();
-	}
-
 	@Override
 	public AccessPoint createAccessPoint(Scan scan, String bssid, long level,
 			long freq, String ssid, String props) {
@@ -58,13 +45,11 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 		values.put(AccessPoint.COLUMN_SSID, ssid);
 		values.put(AccessPoint.COLUMN_PROPS, props);
 		long insertId = db.insert(AccessPoint.TABLE_NAME, null, values);
-		Cursor cursor = db.query(AccessPoint.TABLE_NAME,
-				AccessPoint.ALL_COLUMNS, AccessPoint.COLUMN_ID + "=?",
+		Cursor cursor = db.query(Scan.TABLE_NAME, Scan.ALL_COLUMNS,
+				Scan.COLUMN_ID + "=?",
 				new String[] { String.valueOf(insertId) }, null, null, null);
-		AccessPoint result = null;
-		if (cursor.moveToFirst()) {
-			result = cursorToAccessPoint(cursor);
-		}
+		cursor.moveToFirst();
+		AccessPoint result = cursorToAccessPoint(cursor);
 		cursor.close();
 		return result;
 	}
@@ -116,8 +101,7 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 	public List<AccessPoint> getAccessPoint(String bssid) {
 		Cursor cursor = db.query(AccessPoint.TABLE_NAME,
 				AccessPoint.ALL_COLUMNS, AccessPoint.COLUMN_BSSID + "=?",
-				new String[] { bssid }, null, null, AccessPoint.COLUMN_LEVEL
-						+ " DESC");
+				new String[] { bssid }, null, null, null);					//order by level descending
 		List<AccessPoint> result = cursorToAccessPoints(cursor);
 		return result;
 	}
@@ -132,10 +116,8 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 		Cursor cursor = db.query(Scan.TABLE_NAME, Scan.ALL_COLUMNS,
 				Scan.COLUMN_ID + "=?",
 				new String[] { String.valueOf(insertId) }, null, null, null);
-		Scan result = null;
-		if (cursor.moveToFirst()) {
-			result = cursorToScan(cursor);
-		}
+		cursor.moveToFirst();
+		Scan result = cursorToScan(cursor);
 		cursor.close();
 		return result;
 	}
@@ -191,19 +173,15 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 	@Override
 	public MeasurePoint createMeasurePoint(Map m, double x, double y) {
 		ContentValues values = new ContentValues();
-		if (m != null) {
-			values.put(MeasurePoint.COLUMN_MAPID, m.getId());
-		}
+		values.put(MeasurePoint.COLUMN_MAPID, m.getId());
 		values.put(MeasurePoint.COLUMN_POS_X, x);
 		values.put(MeasurePoint.COLUMN_POS_Y, y);
 		long insertId = db.insert(MeasurePoint.TABLE_NAME, null, values);
 		Cursor cursor = db.query(MeasurePoint.TABLE_NAME,
 				MeasurePoint.ALL_COLUMNS, MeasurePoint.COLUMN_ID + "=?",
 				new String[] { String.valueOf(insertId) }, null, null, null);
-		MeasurePoint result = null;
-		if (cursor.moveToFirst()) {
-			result = cursorToMeasurePoint(cursor);
-		}
+		cursor.moveToFirst();
+		MeasurePoint result = cursorToMeasurePoint(cursor);
 		cursor.close();
 		return result;
 	}
@@ -254,25 +232,21 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 	public Map createMap(Building b, String name, String file, long level,
 			long north) {
 		ContentValues values = new ContentValues();
-		if (b != null) {
-			values.put(Map.COLUMN_BID, b.getId());
-		}
 		if (name != null) {
 			values.put(Map.COLUMN_NAME, name);
 		}
 		if (file != null) {
 			values.put(Map.COLUMN_FILE, file);
 		}
-		values.put(Map.COLUMN_LEVEL, level);
-		values.put(Map.COLUMN_NORTH, north);
+		if (values.size() == 0) {
+			return null;
+		}
 		long insertId = db.insert(Map.TABLE_NAME, null, values);
 		Cursor cursor = db.query(Map.TABLE_NAME, Map.ALL_COLUMNS, Map.COLUMN_ID
 				+ "=?", new String[] { String.valueOf(insertId) }, null, null,
 				null);
-		Map result = null;
-		if (cursor.moveToFirst()) {
-			result = cursorToMap(cursor);
-		}
+		cursor.moveToFirst();
+		Map result = cursorToMap(cursor);
 		cursor.close();
 		return result;
 	}
@@ -280,11 +254,8 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 	private Map cursorToMap(Cursor cursor) {
 		Map result = new Map();
 		result.setId(cursor.getLong(0));
-		result.setBId(cursor.getLong(1));
-		result.setName(cursor.getString(2));
-		result.setFile(cursor.getBlob(3));
-		result.setLevel(cursor.getLong(4));
-		result.setNorth(cursor.getLong(5));
+		result.setName(cursor.getString(1));
+		result.setFile(cursor.getString(2));
 		return result;
 	}
 
@@ -327,121 +298,6 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 		return result;
 	}
 
-	public boolean changeMap(Map map) {
-		ContentValues values = new ContentValues();
-		if (map.getName() != null) {
-			values.put(Map.COLUMN_NAME, map.getName());
-		}
-		int result = db.update(Map.TABLE_NAME, values, Map.COLUMN_ID,
-				new String[] { String.valueOf(map.getId()) });
-		if (result == 1)
-			return true;
-		else
-			return false;
-	}
-
-	public boolean deleteMap(Map map) {
-		int result = db.delete(Map.TABLE_NAME, Map.COLUMN_ID,
-				new String[] { String.valueOf(map.getId()) });
-		if (result == 1)
-			return true;
-		else
-			return false;
-	}
-
-	public boolean changeBuilding(Building building) {
-		ContentValues values = new ContentValues();
-		if (building.getName() != null) {
-			values.put(Map.COLUMN_NAME, building.getName());
-		}
-		int result = db.update(Building.TABLE_NAME, values, Building.COLUMN_ID,
-				new String[] { String.valueOf(building.getId()) });
-		if (result == 1)
-			return true;
-		else
-			return false;
-	}
-
-	public boolean deleteBuilding(Building building) {
-		int result = db.delete(Building.TABLE_NAME, Building.COLUMN_ID,
-				new String[] { String.valueOf(building.getId()) });
-		if (result == 1)
-			return true;
-		else
-			return false;
-	}
-
-	public boolean changeAccessPoint(AccessPoint ap) {
-		ContentValues values = new ContentValues();
-		values.put(AccessPoint.COLUMN_SCANID, ap.getId());
-		values.put(AccessPoint.COLUMN_BSSID, ap.getBssid());
-		values.put(AccessPoint.COLUMN_LEVEL, ap.getLevel());
-		values.put(AccessPoint.COLUMN_FREQ, ap.getFreq());
-		values.put(AccessPoint.COLUMN_SSID, ap.getSsid());
-		values.put(AccessPoint.COLUMN_PROPS, ap.getSsid());
-		int result = db.update(AccessPoint.TABLE_NAME, values,
-				AccessPoint.COLUMN_ID,
-				new String[] { String.valueOf(ap.getId()) });
-		if (result == 1)
-			return true;
-		else
-			return false;
-	}
-
-	public boolean deleteAccessPoint(AccessPoint ap) {
-		int result = db.delete(AccessPoint.TABLE_NAME, AccessPoint.COLUMN_ID,
-				new String[] { String.valueOf(ap.getId()) });
-		if (result == 1)
-			return true;
-		else
-			return false;
-	}
-
-	public boolean changeMeasurePoint(MeasurePoint mp) {
-
-		ContentValues values = new ContentValues();
-		values.put(MeasurePoint.COLUMN_MAPID, mp.getId());
-		int result = db.update(AccessPoint.TABLE_NAME, values,
-				AccessPoint.COLUMN_ID,
-				new String[] { String.valueOf(mp.getId()) });
-		if (result == 1)
-			return true;
-		else
-			return false;
-	}
-
-	public boolean deleteMeasurePoint(MeasurePoint mp) {
-		int result = db.delete(MeasurePoint.TABLE_NAME, MeasurePoint.COLUMN_ID,
-				new String[] { String.valueOf(mp.getId()) });
-		if (result == 1)
-			return true;
-		else
-			return false;
-	}
-
-	public boolean changeScan(Scan sc) {
-		ContentValues values = new ContentValues();
-		values.put(Scan.COLUMN_MPID, sc.getId());
-		values.put(Scan.COLUMN_TIME, sc.getTime());
-		values.put(Scan.COLUMN_COMPASS, sc.getCompass());
-		int result = db.update(AccessPoint.TABLE_NAME, values,
-				AccessPoint.COLUMN_ID,
-				new String[] { String.valueOf(sc.getId()) });
-		if (result == 1)
-			return true;
-		else
-			return false;
-	}
-
-	public boolean deleteScan(Scan sc) {
-		int result = db.delete(Scan.TABLE_NAME, Scan.COLUMN_ID,
-				new String[] { String.valueOf(sc.getId()) });
-		if (result == 1)
-			return true;
-		else
-			return false;
-	}
-
 	@Override
 	public Building createBuilding(String name) {
 		ContentValues values = new ContentValues();
@@ -455,10 +311,8 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 		Cursor cursor = db.query(Building.TABLE_NAME, Building.ALL_COLUMNS,
 				Building.COLUMN_ID + "=?",
 				new String[] { String.valueOf(insertId) }, null, null, null);
-		Building result = null;
-		if (cursor.moveToFirst()) {
-			result = cursorToBuilding(cursor);
-		}
+		cursor.moveToFirst();
+		Building result = cursorToBuilding(cursor);
 		cursor.close();
 		return result;
 	}

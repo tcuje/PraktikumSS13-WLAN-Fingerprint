@@ -35,6 +35,13 @@ public interface IMeasureDataHandler extends IDataHandler {
 	 * @return Returns the Scan for the AccessPoint
 	 */
 	public Scan getScan(AccessPoint ap);
+	
+	/**
+	 * 
+	 * @param map, compass
+	 * @return Returns all Scans for the Map fitting the compass argument (compass+/-45°)
+	 */
+	public List<Scan> getScans(Map map, int compass);				//TODO
 
 	/**
 	 * 
@@ -46,7 +53,7 @@ public interface IMeasureDataHandler extends IDataHandler {
 	/**
 	 * 
 	 * @param bssid
-	 * @return Returns a sorted list with all entries for the mac
+	 * @return Returns a list with all entries for the bssid		//FIXME should return the list in descending order
 	 */
 	public List<AccessPoint> getAccessPoint(String bssid);
 
