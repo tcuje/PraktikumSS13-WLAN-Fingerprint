@@ -10,6 +10,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
+import de.rwth.ti.Wavi;
 
 /**
  * This class is responsible for creating and upgrading the database
@@ -49,18 +50,31 @@ public class Storage extends SQLiteOpenHelper {
 	public void exportDatabase(String filename) throws IOException {
 		File sd = Environment.getExternalStorageDirectory();
 		File data = Environment.getDataDirectory();
-		String currentDBPath = "//data//" + "de.rwth.ti" + "//databases//"
+		String srcDBPath = "//data//" + Wavi.PACKAGE_NAME + "//databases//"
 				+ DB_NAME;
-		// String backupDBPath = "/backup/" + filename;
-		String backupDBPath = "/" + filename;
-		File currentDB = new File(data, currentDBPath);
-		File backupDB = new File(sd, backupDBPath);
-
-		FileChannel src = new FileInputStream(currentDB).getChannel();
-		FileChannel dst = new FileOutputStream(backupDB).getChannel();
+		// String dstDBPath = "/backup/" + filename;
+		String dstDBPath = "/" + filename;
+		File srcDB = new File(data, srcDBPath);
+		File dstDB = new File(sd, dstDBPath);
+		FileChannel src = new FileInputStream(srcDB).getChannel();
+		FileChannel dst = new FileOutputStream(dstDB).getChannel();
 		dst.transferFrom(src, 0, src.size());
 		src.close();
 		dst.close();
 	}
 
+	public void importDatabase(String filename) throws IOException {
+		File sd = Environment.getExternalStorageDirectory();
+		File data = Environment.getDataDirectory();
+		String dstDBPath = "//data//" + Wavi.PACKAGE_NAME + "//databases//"
+				+ DB_NAME;
+		String srcDBPath = "/" + filename;
+		File dstDB = new File(data, dstDBPath);
+		File srcDB = new File(sd, srcDBPath);
+		FileChannel src = new FileInputStream(srcDB).getChannel();
+		FileChannel dst = new FileOutputStream(dstDB).getChannel();
+		dst.transferFrom(src, 0, src.size());
+		src.close();
+		dst.close();
+	}
 }

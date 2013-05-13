@@ -41,6 +41,12 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 		db = storage.getWritableDatabase();
 	}
 
+	public void importDatabase(String filename) throws IOException {
+		db.close();
+		storage.importDatabase(filename);
+		db = storage.getWritableDatabase();
+	}
+
 	@Override
 	public AccessPoint createAccessPoint(Scan scan, String bssid, long level,
 			long freq, String ssid, String props) {
@@ -320,50 +326,51 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 		return result;
 	}
 
-	public boolean changeMap(Map map){
+	public boolean changeMap(Map map) {
 		ContentValues values = new ContentValues();
 		if (map.getName() != null) {
 			values.put(Map.COLUMN_NAME, map.getName());
 		}
-		int result=db.update(Map.TABLE_NAME, values, Map.COLUMN_ID, new String[] { String.valueOf(map.getId())});
-		if (result==1)
+		int result = db.update(Map.TABLE_NAME, values, Map.COLUMN_ID,
+				new String[] { String.valueOf(map.getId()) });
+		if (result == 1)
 			return true;
-		else 
-			return false;
-	}
-	
-	
-	public boolean deleteMap(Map map){
-		int result= db.delete(Map.TABLE_NAME, Map.COLUMN_ID, new String[] { String.valueOf(map.getId())});
-				if (result==1)
-					return true;
-				else 
-					return false;
-	}
-	
-	
-	public boolean changeBuilding (Building building){
-		ContentValues values = new ContentValues();
-		if (building.getName()!= null) {
-			values.put(Map.COLUMN_NAME, building.getName());
-		}
-		int result=db.update(Building.TABLE_NAME, values, Building.COLUMN_ID, new String[] { String.valueOf(building.getId())});
-		if (result==1)
-			return true;
-		else 
-			return false;
-	}
-	
-	
-	public boolean deleteBuilding (Building building){
-		int result= db.delete(Building.TABLE_NAME, Building.COLUMN_ID, new String[] { String.valueOf(building.getId())});
-		if (result==1)
-			return true;
-		else 
+		else
 			return false;
 	}
 
-	public boolean changeAccessPoint (AccessPoint ap){
+	public boolean deleteMap(Map map) {
+		int result = db.delete(Map.TABLE_NAME, Map.COLUMN_ID,
+				new String[] { String.valueOf(map.getId()) });
+		if (result == 1)
+			return true;
+		else
+			return false;
+	}
+
+	public boolean changeBuilding(Building building) {
+		ContentValues values = new ContentValues();
+		if (building.getName() != null) {
+			values.put(Map.COLUMN_NAME, building.getName());
+		}
+		int result = db.update(Building.TABLE_NAME, values, Building.COLUMN_ID,
+				new String[] { String.valueOf(building.getId()) });
+		if (result == 1)
+			return true;
+		else
+			return false;
+	}
+
+	public boolean deleteBuilding(Building building) {
+		int result = db.delete(Building.TABLE_NAME, Building.COLUMN_ID,
+				new String[] { String.valueOf(building.getId()) });
+		if (result == 1)
+			return true;
+		else
+			return false;
+	}
+
+	public boolean changeAccessPoint(AccessPoint ap) {
 		ContentValues values = new ContentValues();
 		values.put(AccessPoint.COLUMN_SCANID, ap.getId());
 		values.put(AccessPoint.COLUMN_BSSID, ap.getBssid());
@@ -371,62 +378,69 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 		values.put(AccessPoint.COLUMN_FREQ, ap.getFreq());
 		values.put(AccessPoint.COLUMN_SSID, ap.getSsid());
 		values.put(AccessPoint.COLUMN_PROPS, ap.getSsid());
-		int result=db.update(AccessPoint.TABLE_NAME, values, AccessPoint.COLUMN_ID, new String[] { String.valueOf(ap.getId())});
-		if (result==1)
+		int result = db.update(AccessPoint.TABLE_NAME, values,
+				AccessPoint.COLUMN_ID,
+				new String[] { String.valueOf(ap.getId()) });
+		if (result == 1)
 			return true;
-		else 
+		else
 			return false;
 	}
-	
-	
-	public boolean deleteAccessPoint (AccessPoint ap){
-		int result= db.delete(AccessPoint.TABLE_NAME, AccessPoint.COLUMN_ID, new String[] { String.valueOf(ap.getId())});
-		if (result==1)
-			return true;
-		else 
-			return false;
-	}	
 
-	public boolean changeMeasurePoint (MeasurePoint mp){
-		
+	public boolean deleteAccessPoint(AccessPoint ap) {
+		int result = db.delete(AccessPoint.TABLE_NAME, AccessPoint.COLUMN_ID,
+				new String[] { String.valueOf(ap.getId()) });
+		if (result == 1)
+			return true;
+		else
+			return false;
+	}
+
+	public boolean changeMeasurePoint(MeasurePoint mp) {
+
 		ContentValues values = new ContentValues();
-			values.put(MeasurePoint.COLUMN_MAPID, mp.getId());
-		int result=db.update(AccessPoint.TABLE_NAME, values, AccessPoint.COLUMN_ID, new String[] { String.valueOf(mp.getId())});
-		if (result==1)
+		values.put(MeasurePoint.COLUMN_MAPID, mp.getId());
+		int result = db.update(AccessPoint.TABLE_NAME, values,
+				AccessPoint.COLUMN_ID,
+				new String[] { String.valueOf(mp.getId()) });
+		if (result == 1)
 			return true;
-		else 
+		else
 			return false;
 	}
-	
-	public boolean deleteMeasurePoint (MeasurePoint mp){
-		int result= db.delete(MeasurePoint.TABLE_NAME, MeasurePoint.COLUMN_ID, new String[] { String.valueOf(mp.getId())});
-		if (result==1)
+
+	public boolean deleteMeasurePoint(MeasurePoint mp) {
+		int result = db.delete(MeasurePoint.TABLE_NAME, MeasurePoint.COLUMN_ID,
+				new String[] { String.valueOf(mp.getId()) });
+		if (result == 1)
 			return true;
-		else 
-			return false;
-	}	
-	
-	public boolean changeScan (Scan sc){
-	ContentValues values = new ContentValues();
-	values.put(Scan.COLUMN_MPID, sc.getId());
-	values.put(Scan.COLUMN_TIME, sc.getTime());
-	values.put(Scan.COLUMN_COMPASS, sc.getCompass());
-	int result=db.update(AccessPoint.TABLE_NAME, values, AccessPoint.COLUMN_ID, new String[] { String.valueOf(sc.getId())});
-	if (result==1)
-		return true;
-	else 
-		return false;
-		}
-	
-	
-	public boolean deleteScan (Scan sc){
-		int result= db.delete(Scan.TABLE_NAME, Scan.COLUMN_ID, new String[] { String.valueOf(sc.getId())});
-		if (result==1)
-			return true;
-		else 
+		else
 			return false;
 	}
-	
+
+	public boolean changeScan(Scan sc) {
+		ContentValues values = new ContentValues();
+		values.put(Scan.COLUMN_MPID, sc.getId());
+		values.put(Scan.COLUMN_TIME, sc.getTime());
+		values.put(Scan.COLUMN_COMPASS, sc.getCompass());
+		int result = db.update(AccessPoint.TABLE_NAME, values,
+				AccessPoint.COLUMN_ID,
+				new String[] { String.valueOf(sc.getId()) });
+		if (result == 1)
+			return true;
+		else
+			return false;
+	}
+
+	public boolean deleteScan(Scan sc) {
+		int result = db.delete(Scan.TABLE_NAME, Scan.COLUMN_ID,
+				new String[] { String.valueOf(sc.getId()) });
+		if (result == 1)
+			return true;
+		else
+			return false;
+	}
+
 	@Override
 	public Building createBuilding(String name) {
 		ContentValues values = new ContentValues();
@@ -448,8 +462,6 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 		return result;
 	}
 
-
-	
 	private Building cursorToBuilding(Cursor cursor) {
 		Building result = new Building();
 		result.setId(cursor.getLong(0));

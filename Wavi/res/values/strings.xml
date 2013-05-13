@@ -9,4 +9,5 @@
     <string name="text_no">Nein</string>
     <string name="menu_debug">Rohdaten anzeigen</string>
     <string name="menu_export">Datenbank exportieren</string>
+    <string name="menu_import">Datenbank importieren</string>
 </resources>

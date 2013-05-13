@@ -24,6 +24,8 @@ import de.rwth.ti.db.StorageHandler;
  */
 public class Wavi extends Activity implements OnClickListener {
 
+	public static final String PACKAGE_NAME = "de.rwth.ti";
+
 	private ScanManager scm;
 	private StorageHandler storage;
 	private CompassManager cmgr;
@@ -106,6 +108,17 @@ public class Wavi extends Activity implements OnClickListener {
 				storage.exportDatabase("local.sqlite");
 				Toast.makeText(getBaseContext(),
 						"Datenbank erfolgreich exportiert", Toast.LENGTH_SHORT)
+						.show();
+			} catch (IOException e) {
+				Toast.makeText(getBaseContext(), e.toString(),
+						Toast.LENGTH_LONG).show();
+			}
+			return true;
+		case R.id.menu_import:
+			try {
+				storage.importDatabase("local.sqlite");
+				Toast.makeText(getBaseContext(),
+						"Datenbank erfolgreich importiert", Toast.LENGTH_SHORT)
 						.show();
 			} catch (IOException e) {
 				Toast.makeText(getBaseContext(), e.toString(),
