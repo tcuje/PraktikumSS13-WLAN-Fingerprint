@@ -268,7 +268,7 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 		result.setId(cursor.getLong(0));
 		result.setBId(cursor.getLong(1));
 		result.setName(cursor.getString(2));
-		result.setFile(cursor.getString(3));
+		result.setFile(cursor.getBlob(3));
 		result.setLevel(cursor.getLong(4));
 		result.setNorth(cursor.getLong(5));
 		return result;
