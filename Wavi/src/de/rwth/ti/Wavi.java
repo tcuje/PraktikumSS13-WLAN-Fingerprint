@@ -1,6 +1,7 @@
 package de.rwth.ti;
 
 import java.io.IOException;
+import java.util.List;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -162,11 +163,19 @@ public class Wavi extends Activity implements OnClickListener {
 		}
 		textStatus.append("\nAccessPoints: " + storage.countAccessPoints()
 				+ "\n");
-		for (AccessPoint ap : storage.getAllAccessPoints()) {
+		List<AccessPoint> all = storage.getAllAccessPoints();
+		for (AccessPoint ap : all) {
 			textStatus.append("AP\t" + ap.getId() + "\t" + ap.getScanId()
 					+ "\t" + ap.getBssid() + "\t" + ap.getLevel() + "\t"
 					+ ap.getFreq() + "\t'" + ap.getSsid() + "'\t"
 					+ ap.getProps() + "\n");
+		}
+		String bssid = all.get(0).getBssid();
+		List<AccessPoint> first = storage.getAccessPoint(bssid);
+		textStatus.append("\n" + bssid + "\n");
+		for (AccessPoint ap : first) {
+			textStatus.append("AP\t" + ap.getId() + "\t" + ap.getScanId()
+					+ "\t" + ap.getBssid() + "\t" + ap.getLevel() + "\n");
 		}
 	}
 

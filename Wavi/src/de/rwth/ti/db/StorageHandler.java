@@ -116,7 +116,8 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 	public List<AccessPoint> getAccessPoint(String bssid) {
 		Cursor cursor = db.query(AccessPoint.TABLE_NAME,
 				AccessPoint.ALL_COLUMNS, AccessPoint.COLUMN_BSSID + "=?",
-				new String[] { bssid }, null, null, AccessPoint.COLUMN_LEVEL + " ASC");
+				new String[] { bssid }, null, null, AccessPoint.COLUMN_LEVEL
+						+ " DESC");
 		List<AccessPoint> result = cursorToAccessPoints(cursor);
 		return result;
 	}
