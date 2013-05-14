@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">WPS</string><string name="app_description">WiFi Positioning System</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_section1">Gebäude 1 sehr langer Text, der größer ist als erwartet</string>
+    <string name="title_section2">Gebäude 2</string>
+    <string name="title_section3">Gebäude 3</string>
+    <string name="center_button_description">Centers to your Position.</string>
+    <string name="refresh_button_description">Refreshs your Position.</string>
+    <string name="action_localisation">Lokalisation</string>
+    <string name="action_new_map">Neue Karte</string>
+    <string name="action_measure">Messungen</string>
+    <string name="action_signal_dump">WiFi-Signale</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="building">Gebäude</string>
+
+    <string-array name="floors">
+        <item>Untergeschoss</item>
+        <item>Erdgeschoss</item>
+        <item>1. Obergeschoss</item>
+    </string-array>
+
+    <string name="title_activity_measure">MeasureActivity</string>
+    
+    <string name="activity_new_map_label">Neue Karte</string>
+    <string name="activity_new_map_button">Kartendatei auswählen</string>
+    <string name="activity_new_map_choose_map">Karte wählen</string>
+    <string name="activity_new_map_imageview_description">Kartenvorschau</string>
+
+</resources>

@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_localisation"
+        android:title="@string/action_localisation"/>
+    
+    <item
+        android:id="@+id/action_new_map"
+        android:title="@string/action_new_map"/>
+    
+    <item
+        android:id="@+id/action_measure"
+        android:title="@string/action_measure"/>
+    
+    <item
+        android:id="@+id/action_signal_dump"
+        android:title="@string/action_signal_dump"/>
+    
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_settings"/>
+
+</menu>
