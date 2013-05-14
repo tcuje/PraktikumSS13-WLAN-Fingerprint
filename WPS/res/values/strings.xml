@@ -25,7 +25,8 @@
     
     <string name="activity_new_map_label">Neue Karte</string>
     <string name="activity_new_map_button">Kartendatei auswählen</string>
-    <string name="activity_new_map_choose_map">Karte wählen</string>
+    <string name="activity_new_map_choose_map">Kartendatei wählen</string>
     <string name="activity_new_map_imageview_description">Kartenvorschau</string>
+    <string name="activity_new_map_create_map">Neue Karte erstellen</string>
 
 </resources>

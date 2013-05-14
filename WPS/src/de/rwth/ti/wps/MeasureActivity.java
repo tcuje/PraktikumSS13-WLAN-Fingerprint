@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.os.Bundle;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -82,14 +83,23 @@ public class MeasureActivity extends FragmentActivity implements
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.measure, menu);
+		getMenuInflater().inflate(R.menu.menu, menu);
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent = null;
 		switch (item.getItemId()) {
-		case android.R.id.home:
+			case R.id.action_localisation:	intent = new Intent(this, LocalisationActivity.class);
+											break;
+			case R.id.action_measure:		//intent = new Intent(this, MeasureActivity.class);
+											break;
+			case R.id.action_new_map:		intent = new Intent(this, NewMapActivity.class);
+											break;
+			case R.id.action_settings:		intent = new Intent(this, SettingsActivity.class);
+											break;
+			case android.R.id.home:
 			// This ID represents the Home or Up button. In the case of this
 			// activity, the Up button is shown. Use NavUtils to allow users
 			// to navigate up one level in the application structure. For
@@ -100,6 +110,9 @@ public class MeasureActivity extends FragmentActivity implements
 			NavUtils.navigateUpFromSameTask(this);
 			return true;
 		}
+	
+		if (intent != null)
+			startActivity(intent);
 		return super.onOptionsItemSelected(item);
 	}
 

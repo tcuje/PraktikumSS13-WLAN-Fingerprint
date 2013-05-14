@@ -9,10 +9,7 @@ import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 public class NewMapActivity extends Activity {
 	
@@ -22,9 +19,6 @@ public class NewMapActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_new_map);
-		
-		ImageView mapView = (ImageView) findViewById(R.id.mapView);
-		
 		
 		// Show the Up button in the action bar.
 		setupActionBar();
@@ -48,8 +42,17 @@ public class NewMapActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent = null;
 		switch (item.getItemId()) {
-		case android.R.id.home:
+			case R.id.action_localisation:	intent = new Intent(this, LocalisationActivity.class);
+											break;
+			case R.id.action_measure:		intent = new Intent(this, MeasureActivity.class);
+											break;
+			case R.id.action_new_map:		//intent = new Intent(this, NewMapActivity.class);
+											break;
+			case R.id.action_settings:		intent = new Intent(this, SettingsActivity.class);
+											break;
+			case android.R.id.home:
 			// This ID represents the Home or Up button. In the case of this
 			// activity, the Up button is shown. Use NavUtils to allow users
 			// to navigate up one level in the application structure. For
@@ -60,9 +63,15 @@ public class NewMapActivity extends Activity {
 			NavUtils.navigateUpFromSameTask(this);
 			return true;
 		}
+	
+		if (intent != null)
+			startActivity(intent);
 		return super.onOptionsItemSelected(item);
 	}
 	
+	public void createMap(View view) {
+		
+	}
 	
 	public void chooseMapFile(View view) {
 		Intent chooseMapIntent = new Intent();
@@ -86,8 +95,10 @@ public class NewMapActivity extends Activity {
 		            final String imageFilePath = cursor.getString(0);
 		            cursor.close();
 		            
-		            TextView textView = (TextView) findViewById(R.id.mapPath);
-		            textView.setText(imageFilePath);
+		            ImageView mapView = (ImageView) findViewById(R.id.mapView);
+		            mapView.setImageURI(mapUri);
+		            //TextView textView = (TextView) findViewById(R.id.mapPath);
+		            //textView.setText(imageFilePath);
 		        }
 			}
 		}
