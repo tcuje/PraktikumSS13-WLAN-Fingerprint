@@ -8,21 +8,28 @@ public class Scan {
 
 	public static final String TABLE_NAME = "scans";
 	public static final String COLUMN_ID = "_id";
-	public static final String COLUMN_NAME = "name";
+	public static final String COLUMN_MPID = "mpid";
 	public static final String COLUMN_TIME = "time";
+	public static final String COLUMN_COMPASS = "compass";
 
-	public static final String[] ALL_COLUMNS = { COLUMN_ID, COLUMN_NAME,
-			COLUMN_TIME };
+	public static final String[] ALL_COLUMNS = { COLUMN_ID, COLUMN_MPID,
+			COLUMN_TIME, COLUMN_COMPASS };
 
 	public static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
-			+ COLUMN_NAME + " text null, " + COLUMN_TIME + " integer);";
+			+ COLUMN_MPID + " integer REFERENCES " + MeasurePoint.TABLE_NAME
+			+ "(" + MeasurePoint.COLUMN_ID
+			+ ") ON UPDATE CASCADE ON DELETE CASCADE, " + COLUMN_TIME
+			+ " integer, " + COLUMN_COMPASS + " integer);";
+	// FIXME also delete accesspoints referencing this scan, better use
+	// constraints
 	public static final String TABLE_DROP = "DROP TABLE IF EXISTS "
 			+ TABLE_NAME;
 
 	private long id;
-	private String name;
+	private long mpid; // measure point id
 	private long time;
+	private long compass;
 
 	public long getId() {
 		return id;
@@ -32,12 +39,12 @@ public class Scan {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public long getMpid() {
+		return mpid;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setMpid(long mpid) {
+		this.mpid = mpid;
 	}
 
 	public long getTime() {
@@ -46,6 +53,14 @@ public class Scan {
 
 	public void setTime(long time) {
 		this.time = time;
+	}
+
+	public long getCompass() {
+		return compass;
+	}
+
+	public void setCompass(long compass) {
+		this.compass = compass;
 	}
 
 }

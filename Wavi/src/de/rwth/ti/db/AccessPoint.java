@@ -8,30 +8,33 @@ public class AccessPoint {
 
 	public static final String TABLE_NAME = "apps";
 	public static final String COLUMN_ID = "_id";
-	public static final String COLUMN_SCAN = "scan";		//MP_ID
-	public static final String COLUMN_MP_ID = "mp_id";	
+	public static final String COLUMN_SCANID = "scanid";
 	public static final String COLUMN_BSSID = "bssid";
 	public static final String COLUMN_LEVEL = "level";
 	public static final String COLUMN_FREQ = "freq";
 	public static final String COLUMN_SSID = "ssid";
+	public static final String COLUMN_PROPS = "props";
 
-	public static final String[] ALL_COLUMNS = { COLUMN_ID, COLUMN_SCAN,COLUMN_MP_ID,
-			COLUMN_BSSID, COLUMN_LEVEL, COLUMN_FREQ, COLUMN_SSID };
+	public static final String[] ALL_COLUMNS = { COLUMN_ID, COLUMN_SCANID,
+			COLUMN_BSSID, COLUMN_LEVEL, COLUMN_FREQ, COLUMN_SSID, COLUMN_PROPS };
 
 	public static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
-			+ COLUMN_SCAN + " integer, " + COLUMN_MP_ID + " integer, " + COLUMN_BSSID + " text not null, "
-			+ COLUMN_LEVEL + " integer, " + COLUMN_FREQ + " integer, "
-			+ COLUMN_SSID + " text null);";
+			+ COLUMN_SCANID + " integer REFERENCES " + Scan.TABLE_NAME + "("
+			+ Scan.COLUMN_ID + ") ON UPDATE CASCADE ON DELETE CASCADE, "
+			+ COLUMN_BSSID + " text not null, " + COLUMN_LEVEL + " integer, "
+			+ COLUMN_FREQ + " integer, " + COLUMN_SSID + " text null, "
+			+ COLUMN_PROPS + " text null);";
 	public static final String TABLE_DROP = "DROP TABLE IF EXISTS "
 			+ TABLE_NAME;
 
 	private long id;
-	private long scan;
+	private long scanId;
 	private String bssid;
 	private int level;
 	private int freq;
 	private String ssid;
+	private String props;
 
 	public long getId() {
 		return id;
@@ -41,12 +44,12 @@ public class AccessPoint {
 		this.id = id;
 	}
 
-	public long getScan() {
-		return scan;
+	public long getScanId() {
+		return scanId;
 	}
 
-	public void setScan(long scan) {
-		this.scan = scan;
+	public void setScanId(long scanId) {
+		this.scanId = scanId;
 	}
 
 	public String getBssid() {
@@ -79,6 +82,14 @@ public class AccessPoint {
 
 	public void setSsid(String ssid) {
 		this.ssid = ssid;
+	}
+
+	public String getProps() {
+		return props;
+	}
+
+	public void setProps(String props) {
+		this.props = props;
 	}
 
 }
