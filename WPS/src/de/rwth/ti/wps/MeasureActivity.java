@@ -85,7 +85,7 @@ public class MeasureActivity extends FragmentActivity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent intent = null;
 		switch (item.getItemId()) {
-			case R.id.action_localisation:	intent = new Intent(this, LocalisationActivity.class);
+			case R.id.action_localisation:	intent = new Intent(this, MainActivity.class);
 											break;
 			case R.id.action_measure:		//intent = new Intent(this, MeasureActivity.class);
 											break;

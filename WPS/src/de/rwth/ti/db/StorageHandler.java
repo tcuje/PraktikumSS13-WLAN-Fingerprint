@@ -35,12 +35,14 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 		storage.close();
 	}
 
+	// FIXME make this async
 	public void exportDatabase(String filename) throws IOException {
 		db.close();
 		storage.exportDatabase(filename);
 		db = storage.getWritableDatabase();
 	}
 
+	// FIXME make this async
 	public void importDatabase(String filename) throws IOException {
 		db.close();
 		storage.importDatabase(filename);
@@ -327,6 +329,7 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 		return result;
 	}
 
+	@Override
 	public boolean changeMap(Map map) {
 		ContentValues values = new ContentValues();
 		if (map.getName() != null) {
@@ -340,6 +343,7 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 			return false;
 	}
 
+	@Override
 	public boolean deleteMap(Map map) {
 		int result = db.delete(Map.TABLE_NAME, Map.COLUMN_ID,
 				new String[] { String.valueOf(map.getId()) });
@@ -349,6 +353,7 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 			return false;
 	}
 
+	@Override
 	public boolean changeBuilding(Building building) {
 		ContentValues values = new ContentValues();
 		if (building.getName() != null) {
@@ -362,6 +367,7 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 			return false;
 	}
 
+	@Override
 	public boolean deleteBuilding(Building building) {
 		int result = db.delete(Building.TABLE_NAME, Building.COLUMN_ID,
 				new String[] { String.valueOf(building.getId()) });
@@ -371,6 +377,7 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 			return false;
 	}
 
+	@Override
 	public boolean changeAccessPoint(AccessPoint ap) {
 		ContentValues values = new ContentValues();
 		values.put(AccessPoint.COLUMN_SCANID, ap.getId());
@@ -388,6 +395,7 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 			return false;
 	}
 
+	@Override
 	public boolean deleteAccessPoint(AccessPoint ap) {
 		int result = db.delete(AccessPoint.TABLE_NAME, AccessPoint.COLUMN_ID,
 				new String[] { String.valueOf(ap.getId()) });
@@ -397,6 +405,7 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 			return false;
 	}
 
+	@Override
 	public boolean changeMeasurePoint(MeasurePoint mp) {
 
 		ContentValues values = new ContentValues();
@@ -410,7 +419,8 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 			return false;
 	}
 
-	public boolean deleteMeasurePoint(MeasurePoint mp) {
+	@Override
+	public boolean deleteMea1surePoint(MeasurePoint mp) {
 		int result = db.delete(MeasurePoint.TABLE_NAME, MeasurePoint.COLUMN_ID,
 				new String[] { String.valueOf(mp.getId()) });
 		if (result == 1)
@@ -419,6 +429,7 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 			return false;
 	}
 
+	@Override
 	public boolean changeScan(Scan sc) {
 		ContentValues values = new ContentValues();
 		values.put(Scan.COLUMN_MPID, sc.getId());
@@ -433,6 +444,7 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 			return false;
 	}
 
+	@Override
 	public boolean deleteScan(Scan sc) {
 		int result = db.delete(Scan.TABLE_NAME, Scan.COLUMN_ID,
 				new String[] { String.valueOf(sc.getId()) });
@@ -470,6 +482,26 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 		return result;
 	}
 
+	private List<Building> cursorToBuildings(Cursor cursor) {
+		List<Building> result = new ArrayList<Building>(cursor.getCount());
+		if (cursor.moveToFirst()) {
+			do {
+				Building scan = cursorToBuilding(cursor);
+				result.add(scan);
+			} while (cursor.moveToNext() == true);
+		}
+		cursor.close();
+		return result;
+	}
+
+	@Override
+	public List<Building> getAllBuildings() {
+		Cursor cursor = db.query(Building.TABLE_NAME, Building.ALL_COLUMNS,
+				null, null, null, null, null);
+		List<Building> result = cursorToBuildings(cursor);
+		return result;
+	}
+
 	@Override
 	public Building getBuilding(Map map) {
 		Cursor cursor = db
@@ -504,7 +536,7 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 	}
 
 	@Override
-	public long countCheckpoints() {
+	public long countMeasurePoints() {
 		long result = countTable(MeasurePoint.TABLE_NAME);
 		return result;
 	}
