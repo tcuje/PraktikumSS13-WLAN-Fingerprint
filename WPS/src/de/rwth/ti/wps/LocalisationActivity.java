@@ -28,8 +28,8 @@ import de.rwth.ti.db.StorageHandler;
  * This is the main activity class
  * 
  */
-public class LocalisationActivity extends Activity
-	implements ActionBar.OnNavigationListener, OnClickListener {
+public class LocalisationActivity extends Activity implements
+		ActionBar.OnNavigationListener, OnClickListener {
 
 	/**
 	 * The serialization (saved instance state) Bundle key representing the
@@ -37,11 +37,11 @@ public class LocalisationActivity extends Activity
 	 */
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
 	public static final String PACKAGE_NAME = "de.rwth.ti.wps";
-	
+
 	private ScanManager scm;
 	private StorageHandler storage;
 	private CompassManager cmgr;
-	
+
 	// FIXME make this private and replace with usefull functions for the gui
 	TextView textStatus;
 	Button buttonScan;
@@ -51,7 +51,7 @@ public class LocalisationActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_localisation);
-		
+
 		// Set up the action bar to show a dropdown list.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowTitleEnabled(false);
@@ -66,12 +66,12 @@ public class LocalisationActivity extends Activity
 								getString(R.string.title_section1),
 								getString(R.string.title_section2),
 								getString(R.string.title_section3), }), this);
-		
+
 		// Setup UI
 		textStatus = (TextView) findViewById(R.id.textStatus);
 		buttonScan = (Button) findViewById(R.id.buttonScan);
 		buttonScan.setOnClickListener(this);
-		
+
 		// Setup Wifi
 		if (scm == null) {
 			scm = new ScanManager(this);
@@ -125,7 +125,7 @@ public class LocalisationActivity extends Activity
 		getMenuInflater().inflate(R.menu.menu, menu);
 		return true;
 	}
-	
+
 	/** Called when the activity is first created or restarted */
 	@Override
 	public void onStart() {
@@ -153,58 +153,67 @@ public class LocalisationActivity extends Activity
 			scm.startSingleScan(storage.createMeasurePoint(null, 0, 0));
 		}
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		//Start other Activities, when the related MenuItem is selected
-		//TextView textView = (TextView) findViewById(R.id.textStatus);
+		// Start other Activities, when the related MenuItem is selected
+		// TextView textView = (TextView) findViewById(R.id.textStatus);
 		String text;
-		text = item.getTitle() + "\n" + Integer.toString(item.getItemId()) + "\n";
-		
+		text = item.getTitle() + "\n" + Integer.toString(item.getItemId())
+				+ "\n";
+
 		Intent intent = null;
 		switch (item.getItemId()) {
-			case R.id.action_localisation:	text += "Lokalisation";
-											break;
-			case R.id.action_measure:		text += "Messung";
-											intent = new Intent(this, MeasureActivity.class);
-											break;
-			case R.id.action_new_map:		intent = new Intent(this, NewMapActivity.class);
-											break;
-			case R.id.action_settings:		intent = new Intent(this, SettingsActivity.class);
-											break;
-			case R.id.menu_show_debug:		showDebug();
-											return true;
-			case R.id.menu_export:			try {
-												storage.exportDatabase("local.sqlite");
-												Toast.makeText(getBaseContext(),
-														"Datenbank erfolgreich exportiert", Toast.LENGTH_SHORT)
-														.show();
-											} catch (IOException e) {
-												Toast.makeText(getBaseContext(), e.toString(),
-														Toast.LENGTH_LONG).show();
-											}
-											return true;
-			case R.id.menu_import:			try {
-												storage.importDatabase("local.sqlite");
-												Toast.makeText(getBaseContext(),
-														"Datenbank erfolgreich importiert", Toast.LENGTH_SHORT)
-														.show();
-											} catch (IOException e) {
-												Toast.makeText(getBaseContext(), e.toString(),
-														Toast.LENGTH_LONG).show();
-											}
-											return true;
-			default:						return super.onOptionsItemSelected(item);
+		case R.id.action_localisation:
+			text += "Lokalisation";
+			break;
+		case R.id.action_measure:
+			text += "Messung";
+			intent = new Intent(this, MeasureActivity.class);
+			break;
+		case R.id.action_new_map:
+			intent = new Intent(this, NewMapActivity.class);
+			break;
+		case R.id.action_settings:
+			intent = new Intent(this, SettingsActivity.class);
+			break;
+		case R.id.menu_show_debug:
+			showDebug();
+			return true;
+		case R.id.menu_export:
+			try {
+				storage.exportDatabase("local.sqlite");
+				Toast.makeText(getBaseContext(),
+						"Datenbank erfolgreich exportiert", Toast.LENGTH_SHORT)
+						.show();
+			} catch (IOException e) {
+				Toast.makeText(getBaseContext(), e.toString(),
+						Toast.LENGTH_LONG).show();
+			}
+			return true;
+		case R.id.menu_import:
+			try {
+				storage.importDatabase("local.sqlite");
+				Toast.makeText(getBaseContext(),
+						"Datenbank erfolgreich importiert", Toast.LENGTH_SHORT)
+						.show();
+			} catch (IOException e) {
+				Toast.makeText(getBaseContext(), e.toString(),
+						Toast.LENGTH_LONG).show();
+			}
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
 		}
-		
+
 		if (intent != null)
 			startActivity(intent);
-		
+
 		textStatus.setText(text);
-		//textView.setText("Gebäude " + Integer.toString(position));
+		// textView.setText("Gebäude " + Integer.toString(position));
 		return true;
 	}
-	
+
 	public ScanManager getScanManager() {
 		return scm;
 	}
@@ -244,12 +253,14 @@ public class LocalisationActivity extends Activity
 					+ ap.getFreq() + "\t'" + ap.getSsid() + "'\t"
 					+ ap.getProps() + "\n");
 		}
-		String bssid = all.get(0).getBssid();
-		List<AccessPoint> first = storage.getAccessPoint(bssid);
-		textStatus.append("\n" + bssid + "\n");
-		for (AccessPoint ap : first) {
-			textStatus.append("AP\t" + ap.getId() + "\t" + ap.getScanId()
-					+ "\t" + ap.getBssid() + "\t" + ap.getLevel() + "\n");
+		if (all.size() > 0) {
+			String bssid = all.get(0).getBssid();
+			List<AccessPoint> first = storage.getAccessPoint(bssid);
+			textStatus.append("\n" + bssid + "\n");
+			for (AccessPoint ap : first) {
+				textStatus.append("AP\t" + ap.getId() + "\t" + ap.getScanId()
+						+ "\t" + ap.getBssid() + "\t" + ap.getLevel() + "\n");
+			}
 		}
 	}
 
@@ -257,15 +268,15 @@ public class LocalisationActivity extends Activity
 	public boolean onNavigationItemSelected(int position, long id) {
 		// When the given dropdown item is selected, show its contents in the
 		// container view.
-		//TextView textView = (TextView) findViewById(R.id.textStatus);
+		// TextView textView = (TextView) findViewById(R.id.textStatus);
 		textStatus.setText("Gebäude " + Integer.toString(position));
-		
+
 		// Fragment fragment = new DummySectionFragment();
 		// Bundle args = new Bundle();
 		// args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
 		// fragment.setArguments(args);
 		// getSupportFragmentManager().beginTransaction()
-		// 		.replace(R.id.container, fragment).commit();
+		// .replace(R.id.container, fragment).commit();
 		return true;
 	}
 }
