@@ -278,4 +278,5 @@ public class MainActivity extends Activity implements
 		// .replace(R.id.container, fragment).commit();
 		return true;
 	}
+
 }
