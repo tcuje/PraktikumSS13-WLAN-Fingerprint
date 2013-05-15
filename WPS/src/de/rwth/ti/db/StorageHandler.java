@@ -35,14 +35,14 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 		storage.close();
 	}
 
-	// FIXME make this async
+	// TODO make this async
 	public void exportDatabase(String filename) throws IOException {
 		db.close();
 		storage.exportDatabase(filename);
 		db = storage.getWritableDatabase();
 	}
 
-	// FIXME make this async
+	// TODO make this async
 	public void importDatabase(String filename) throws IOException {
 		db.close();
 		storage.importDatabase(filename);

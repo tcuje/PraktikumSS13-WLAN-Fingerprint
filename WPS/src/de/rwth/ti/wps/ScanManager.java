@@ -89,7 +89,7 @@ public class ScanManager extends BroadcastReceiver {
 	}
 
 	public void startSingleScan(MeasurePoint mp) {
-		// TODO
+		// FIXME improve scan result handling
 		mpoint = mp;
 		// check if wifi is enabled or not
 		if (wifi.isWifiEnabled() == false) {
@@ -135,6 +135,7 @@ public class ScanManager extends BroadcastReceiver {
 							result.level, result.frequency, result.SSID,
 							result.capabilities);
 				}
+				mpoint = null;
 			} else {
 				app.textStatus.append("keine");
 			}

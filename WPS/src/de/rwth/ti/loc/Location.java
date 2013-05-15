@@ -40,10 +40,8 @@ public class Location {
 		if (aps.isEmpty()) {
 			return null;
 		}
-		// FIXME just use the first one
 		String mac = aps.get(0).BSSID;
 		List<AccessPoint> entries = dataHandler.getAccessPoint(mac);
-		// FIXME just use the first one
 		AccessPoint ap = entries.get(0);
 		Scan scan = dataHandler.getScan(ap);
 		MeasurePoint mp = dataHandler.getMeasurePoint(scan);
@@ -105,15 +103,12 @@ public class Location {
 		if (aps.isEmpty() || b == null) {
 			return null;
 		}
-		// FIXME just use the first one
 		String mac = aps.get(0).BSSID;
 		List<AccessPoint> entries = dataHandler.getAccessPoint(mac);
-		// FIXME just use the first one
 		AccessPoint ap = entries.get(0);
 		Scan scan = dataHandler.getScan(ap);
 		MeasurePoint mp = dataHandler.getMeasurePoint(scan);
 		List<Map> maps = dataHandler.getMaps(b);
-		// FIXME just use the first one
 		return maps.get(0);
 	}
 
