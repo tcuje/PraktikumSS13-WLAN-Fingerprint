@@ -5,10 +5,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
@@ -16,7 +14,6 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.Scan;
-import de.rwth.ti.wps.R.string;
 
 /**
  * This class handles wifi scanning, provides auto scanning and is activated if
@@ -25,39 +22,19 @@ import de.rwth.ti.wps.R.string;
  */
 public class ScanManager extends BroadcastReceiver {
 
-	private LocalisationActivity app;
+	private MainActivity app;
 	private WifiManager wifi;
 	private WifiLock wl;
-	private AlertDialog.Builder builder;
 	private Timer tim;
 	private TimerTask scantask;
 	private boolean onlineMode;
 	private MeasurePoint mpoint;
 
-	public ScanManager(LocalisationActivity app) {
+	public ScanManager(MainActivity app) {
 		this.app = app;
 		// Setup WiFi
 		wifi = (WifiManager) app.getSystemService(Context.WIFI_SERVICE);
 		wl = wifi.createWifiLock("Wavi");
-
-		if (builder == null) {
-			builder = new AlertDialog.Builder(app);
-			android.content.DialogInterface.OnClickListener dialogOnClick = new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					switch (which) {
-					case DialogInterface.BUTTON_POSITIVE:
-						wifi.setWifiEnabled(true);
-						wifi.startScan();
-						break;
-					case DialogInterface.BUTTON_NEGATIVE:
-						break;
-					}
-				}
-			};
-			builder.setPositiveButton(string.text_yes, dialogOnClick);
-			builder.setNegativeButton(string.text_no, dialogOnClick);
-		}
 
 		// Setup auto scan timer
 		if (tim == null) {
@@ -67,7 +44,9 @@ public class ScanManager extends BroadcastReceiver {
 			scantask = new TimerTask() {
 				@Override
 				public void run() {
-					wifi.startScan();
+					if (wifi.startScan() == false) {
+						// XXX handle error
+					}
 				}
 			};
 		}
@@ -88,61 +67,71 @@ public class ScanManager extends BroadcastReceiver {
 		wl.release();
 	}
 
-	public void startSingleScan(MeasurePoint mp) {
-		// TODO
+	/**
+	 * This activates wifi scanning to retrieve the data for a specified
+	 * measurepoint (offline mode). If wifi is disabled it is auto activated.
+	 * 
+	 * @param mp
+	 *            measurepoint where the user device is located
+	 * @return Returns <code>true</code> if the operation succeeded, i.e., the
+	 *         scan was initiated
+	 */
+	public boolean startSingleScan(MeasurePoint mp) {
 		mpoint = mp;
-		// check if wifi is enabled or not
-		if (wifi.isWifiEnabled() == false) {
-			builder.setMessage(string.text_wifistate).show();
-		} else {
-			wifi.startScan();
+		if (wifi.setWifiEnabled(true) == false) {
+			return false;
 		}
+		onlineMode = false;
+		return wifi.startScan();
 	}
 
 	/**
+	 * This activates wifi scanning for online navigation. If wifi is disabled
+	 * it is auto activated.
 	 * 
 	 * @param period
-	 *            Period in seconds between scans
+	 *            amount of time in milliseconds between scans.
+	 * @return Returns <code>true</code> if wifi is enabled, <code>false</code>
+	 *         otherwise
 	 */
-	public void startAutoScan(int period) {
-		tim.schedule(scantask, 0, period / 1000);
+	public boolean startAutoScan(int period) {
+		onlineMode = true;
+		if (wifi.setWifiEnabled(true) == false) {
+			return false;
+		}
+		tim.schedule(scantask, 0, period);
+		return true;
 	}
 
 	public void stopAutoScan() {
+		onlineMode = false;
 		tim.cancel();
-	}
-
-	public List<ScanResult> getScanResults() {
-		List<ScanResult> result = wifi.getScanResults();
-		return result;
 	}
 
 	@Override
 	public void onReceive(Context c, Intent intent) {
-		List<ScanResult> results = app.getScanManager().getScanResults();
+		List<ScanResult> results = wifi.getScanResults();
 		if (onlineMode == false) {
-			app.textStatus.setText("Folgende Wifi's gefunden:\n");
-			if (results != null && !results.isEmpty() && mpoint != null) {
-				Date d = new Date();
-				Scan scan = app.getStorage()
-						.createScan(mpoint, d.getTime() / 1000,
-								app.getCompassManager().getAzimut());
-				for (ScanResult result : results) {
-					app.textStatus.append(result.BSSID + "\t" + result.level
-							+ "\t" + result.frequency + "\t'" + result.SSID
-							+ "'\n");
-					app.getStorage().createAccessPoint(scan, result.BSSID,
-							result.level, result.frequency, result.SSID,
-							result.capabilities);
+			// measure mode, save the access points to database
+			if (results != null && !results.isEmpty()) {
+				if (mpoint != null) {
+					Date d = new Date();
+					Scan scan = app.getStorage().createScan(mpoint,
+							d.getTime() / 1000,
+							app.getCompassManager().getAzimut());
+					for (ScanResult result : results) {
+						app.getStorage().createAccessPoint(scan, result.BSSID,
+								result.level, result.frequency, result.SSID,
+								result.capabilities);
+					}
+					mpoint = null;
 				}
 			} else {
-				app.textStatus.append("keine");
+				// no access points found
 			}
+		} else {
+			// online mode
+			// TODO localisation
 		}
 	}
-
-	public void setOnlineMode(boolean state) {
-		onlineMode = state;
-	}
-
 }
