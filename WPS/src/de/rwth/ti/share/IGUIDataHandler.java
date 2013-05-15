@@ -95,4 +95,94 @@ public interface IGUIDataHandler extends IDataHandler {
 	public AccessPoint createAccessPoint(Scan scan, String bssid, long level,
 			long freq, String ssid, String props);
 
+	/**
+	 * Persist a changed <code>Map</code> object
+	 * 
+	 * @param map
+	 *            Changed object to be safed
+	 * @return true on success, false otherwise
+	 */
+	boolean changeMap(Map map);
+
+	/**
+	 * Delete a <code>Map</code> object
+	 * 
+	 * @param map
+	 *            Object to be deleted
+	 * @return true on success, false otherwise
+	 */
+	boolean deleteMap(Map map);
+
+	/**
+	 * Persist a changed <code>Building</code> object
+	 * 
+	 * @param building
+	 *            Changed object to be safed
+	 * @return true on success, false otherwise
+	 */
+	boolean changeBuilding(Building building);
+
+	/**
+	 * Delete a <code>Building</code> object
+	 * 
+	 * @param building
+	 *            Object to be deleted
+	 * @return true on success, false otherwise
+	 */
+	boolean deleteBuilding(Building building);
+
+	/**
+	 * Persist a changed <code>AccessPoint</code> object
+	 * 
+	 * @param ap
+	 *            Changed object to be safed
+	 * @return true on success, false otherwise
+	 */
+	boolean changeAccessPoint(AccessPoint ap);
+
+	/**
+	 * Delete a <code>AccessPoint</code> object
+	 * 
+	 * @param ap
+	 *            Object to be deleted
+	 * @return true on success, false otherwise
+	 */
+	boolean deleteAccessPoint(AccessPoint ap);
+
+	/**
+	 * Persist a changed <code>MeasurePoint</code> object
+	 * 
+	 * @param mp
+	 *            Changed object to be safed
+	 * @return true on success, false otherwise
+	 */
+	boolean changeMeasurePoint(MeasurePoint mp);
+
+	/**
+	 * Delete a <code>MeasurePoint</code> object
+	 * 
+	 * @param mp
+	 *            Object to be deleted
+	 * @return true on success, false otherwise
+	 */
+	boolean deleteMea1surePoint(MeasurePoint mp);
+
+	/**
+	 * Persist a changed <code>Scan</code> object
+	 * 
+	 * @param scan
+	 *            Changed object to be safed
+	 * @return true on success, false otherwise
+	 */
+	boolean changeScan(Scan scan);
+
+	/**
+	 * Delete a <code>Scan</code> object
+	 * 
+	 * @param scan
+	 *            Object to be deleted
+	 * @return true on success, false otherwise
+	 */
+	boolean deleteScan(Scan scan);
+
 }

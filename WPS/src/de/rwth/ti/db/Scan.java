@@ -21,8 +21,6 @@ public class Scan {
 			+ "(" + MeasurePoint.COLUMN_ID
 			+ ") ON UPDATE CASCADE ON DELETE CASCADE, " + COLUMN_TIME
 			+ " integer, " + COLUMN_COMPASS + " integer);";
-	// FIXME also delete accesspoints referencing this scan, better use
-	// constraints
 	public static final String TABLE_DROP = "DROP TABLE IF EXISTS "
 			+ TABLE_NAME;
 

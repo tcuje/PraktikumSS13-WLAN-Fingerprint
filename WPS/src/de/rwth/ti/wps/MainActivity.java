@@ -28,7 +28,7 @@ import de.rwth.ti.db.StorageHandler;
  * This is the main activity class
  * 
  */
-public class LocalisationActivity extends Activity implements
+public class MainActivity extends Activity implements
 		ActionBar.OnNavigationListener, OnClickListener {
 
 	/**
@@ -42,7 +42,6 @@ public class LocalisationActivity extends Activity implements
 	private StorageHandler storage;
 	private CompassManager cmgr;
 
-	// FIXME make this private and replace with usefull functions for the gui
 	TextView textStatus;
 	Button buttonScan;
 
@@ -136,7 +135,7 @@ public class LocalisationActivity extends Activity implements
 		storage.onStart();
 		scm.onStart();
 		cmgr.onStart();
-		// FIXME don't show debug info on startup
+		// TODO GUI don't show debug info on startup
 		showDebug();
 	}
 
@@ -152,7 +151,7 @@ public class LocalisationActivity extends Activity implements
 	@Override
 	public void onClick(View view) {
 		if (view.getId() == R.id.buttonScan) {
-			// FIXME get real data from gui
+			// FIXME GUI get real data from gui
 			scm.startSingleScan(storage.createMeasurePoint(null, 0, 0));
 		}
 	}
@@ -235,8 +234,8 @@ public class LocalisationActivity extends Activity implements
 			textStatus.append("Map\t" + m.getId() + "\t" + m.getName() + "\t "
 					+ m.getFile() + "\n");
 		}
-		textStatus
-				.append("\nCheckpoints: " + storage.countCheckpoints() + "\n");
+		textStatus.append("\nCheckpoints: " + storage.countMeasurePoints()
+				+ "\n");
 		for (MeasurePoint cp : storage.getAllMeasurePoints()) {
 			textStatus.append("Checkpoint\t" + cp.getId() + "\t"
 					+ cp.getMapId() + "\t" + cp.getPosx() + "\t" + cp.getPosy()
@@ -282,4 +281,5 @@ public class LocalisationActivity extends Activity implements
 		// .replace(R.id.container, fragment).commit();
 		return true;
 	}
+
 }
