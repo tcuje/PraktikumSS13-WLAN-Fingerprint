@@ -25,7 +25,7 @@ import de.rwth.ti.wps.R.string;
  */
 public class ScanManager extends BroadcastReceiver {
 
-	private LocalisationActivity app;
+	private MainActivity app;
 	private WifiManager wifi;
 	private WifiLock wl;
 	private AlertDialog.Builder builder;
@@ -34,7 +34,7 @@ public class ScanManager extends BroadcastReceiver {
 	private boolean onlineMode;
 	private MeasurePoint mpoint;
 
-	public ScanManager(LocalisationActivity app) {
+	public ScanManager(MainActivity app) {
 		this.app = app;
 		// Setup WiFi
 		wifi = (WifiManager) app.getSystemService(Context.WIFI_SERVICE);

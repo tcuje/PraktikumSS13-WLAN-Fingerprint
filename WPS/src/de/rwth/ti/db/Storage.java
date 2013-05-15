@@ -10,7 +10,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
-import de.rwth.ti.wps.LocalisationActivity;
+import de.rwth.ti.wps.MainActivity;
 
 /**
  * This class is responsible for creating and upgrading the database
@@ -50,7 +50,7 @@ public class Storage extends SQLiteOpenHelper {
 	public void exportDatabase(String filename) throws IOException {
 		File sd = Environment.getExternalStorageDirectory();
 		File data = Environment.getDataDirectory();
-		String srcDBPath = "//data//" + LocalisationActivity.PACKAGE_NAME + "//databases//"
+		String srcDBPath = "//data//" + MainActivity.PACKAGE_NAME + "//databases//"
 				+ DB_NAME;
 		// String dstDBPath = "/backup/" + filename;
 		String dstDBPath = "/" + filename;
@@ -66,7 +66,7 @@ public class Storage extends SQLiteOpenHelper {
 	public void importDatabase(String filename) throws IOException {
 		File sd = Environment.getExternalStorageDirectory();
 		File data = Environment.getDataDirectory();
-		String dstDBPath = "//data//" + LocalisationActivity.PACKAGE_NAME + "//databases//"
+		String dstDBPath = "//data//" + MainActivity.PACKAGE_NAME + "//databases//"
 				+ DB_NAME;
 		String srcDBPath = "/" + filename;
 		File dstDB = new File(data, dstDBPath);
