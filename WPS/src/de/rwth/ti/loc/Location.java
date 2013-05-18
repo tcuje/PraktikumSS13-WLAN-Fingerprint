@@ -112,4 +112,74 @@ public class Location {
 		return maps.get(0);
 	}
 
+	public MeasurePoint findMP(List<ScanResult> aps, Map map, int compass){
+		if (aps.isEmpty() || map==null){
+			return null;
+		}
+		List <Scan> scanEntries = dataHandler.getScans(map, compass);					//FIXME all scans on specified map within 45deg of the compass reading
+		List <ScanError> errorList=null;
+		for (int j=0; j<scanEntries.size(); j++){
+			double errorValue=0;
+			List <AccessPoint> entries = dataHandler.getAccessPoints(scanEntries.get(j));
+			for (int k=0; k<3; k++){
+				String mac = aps.get(k).BSSID;
+				int l;
+				boolean success=false;
+				for (l=0; l<entries.size();l++){
+					if (mac == entries.get(l).getBssid()){
+						success=true;
+						break;
+					}
+				}
+				if (success){
+					errorValue+=((100+aps.get(k).level)/100)*(Math.abs((aps.get(k).level)-entries.get(l).getLevel()));
+				}
+				else{
+					errorValue+=((100+aps.get(k).level)/100)*(Math.abs((aps.get(k).level)+100));
+				}
+				
+				
+				
+			}
+			ScanError scanErrorObject=null;
+			scanErrorObject.setScanError(scanEntries.get(j), errorValue);
+			errorList.add(scanErrorObject);		
+		}
+		errorList = sortScanError(errorList);
+		MeasurePoint returnObject=null;
+		double x=0;
+		double y=0;
+		double errorSum=0;
+		for (int h=0; h<errorList.size(); h++){
+			if (h>3){
+				break;
+			}
+			x+=(1/(errorList.get(h).getError()))*dataHandler.getMeasurePoint(errorList.get(h).getScan()).getPosx();
+			y+=(1/(errorList.get(h).getError()))*dataHandler.getMeasurePoint(errorList.get(h).getScan()).getPosy();
+			errorSum+=(1/(errorList.get(h).getError()));
+		}
+		x=x/errorSum;
+		y=y/errorSum;
+		returnObject.setMapId(map.getId());
+		returnObject.setPosx(x);
+		returnObject.setPosy(y);
+		return returnObject;
+		
+		}
+		
+		
+		
+	public List <ScanError> sortScanError(List <ScanError> scanErrorList){
+		for (int i=0; i<scanErrorList.size(); i++){
+			for (int j=0; j<scanErrorList.size()-1;j++){
+				if (scanErrorList.get(j).getError()>scanErrorList.get(j+1).getError()){
+					ScanError tempobject=scanErrorList.get(j);
+					scanErrorList.set(j, scanErrorList.get(j+1));
+					scanErrorList.set(j+1, tempobject);				
+				}
+			}
+		}
+		
+		return scanErrorList;
+	}
 }
