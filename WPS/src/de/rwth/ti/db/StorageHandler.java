@@ -2,6 +2,7 @@ package de.rwth.ti.db;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -248,6 +249,17 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 				null);
 		cursor.moveToFirst();
 		MeasurePoint result = cursorToMeasurePoint(cursor);
+		cursor.close();
+		return result;
+	}
+
+	@Override
+	public List<MeasurePoint> getMeasurePoints(Map map) {
+		Cursor cursor = db.query(MeasurePoint.TABLE_NAME,
+				MeasurePoint.ALL_COLUMNS, MeasurePoint.COLUMN_MAPID + "=?",
+				new String[] { String.valueOf(map.getId()) }, null, null, null);
+		cursor.moveToFirst();
+		List<MeasurePoint> result = cursorToMeasurePoints(cursor);
 		cursor.close();
 		return result;
 	}
@@ -550,6 +562,22 @@ public class StorageHandler implements IDataHandler, IGUIDataHandler,
 	@Override
 	public long countBuildings() {
 		long result = countTable(Building.TABLE_NAME);
+		return result;
+	}
+
+	@Override
+	public List<Scan> getScans(Map map, int compass) {
+		List<Scan> result = new LinkedList<Scan>();
+		List<MeasurePoint> mps = getMeasurePoints(map);
+		for (MeasurePoint mp : mps) {
+			List<Scan> scans = getScans(mp);
+			for (Scan scan : scans) {
+				if (scan.getCompass() > compass - 45
+						|| scan.getCompass() < compass + 45) {
+					result.add(scan);
+				}
+			}
+		}
 		return result;
 	}
 

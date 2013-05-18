@@ -18,6 +18,7 @@ public interface IMeasureDataHandler extends IDataHandler {
 	/**
 	 * 
 	 * @param b
+	 *            building
 	 * @return Returns all <code>Map</code>s for the <code>Building</code>
 	 */
 	public List<Map> getMaps(Building b);
@@ -25,6 +26,7 @@ public interface IMeasureDataHandler extends IDataHandler {
 	/**
 	 * 
 	 * @param mp
+	 *            map
 	 * @return Returns all <code>Scan</code>s for the <code>MeasurePoint</code>
 	 */
 	public List<Scan> getScans(MeasurePoint mp);
@@ -32,6 +34,7 @@ public interface IMeasureDataHandler extends IDataHandler {
 	/**
 	 * 
 	 * @param ap
+	 *            access point
 	 * @return Returns the Scan for the AccessPoint
 	 */
 	public Scan getScan(AccessPoint ap);
@@ -58,6 +61,13 @@ public interface IMeasureDataHandler extends IDataHandler {
 	public MeasurePoint getMeasurePoint(Scan scan);
 
 	/**
+	 * 
+	 * @param map
+	 * @return Returns all <code>MeasurePoint</code>s for the <code>Map</code>
+	 */
+	List<MeasurePoint> getMeasurePoints(Map map);
+
+	/**
 	 * @param mp
 	 * @return Returns the <code>Map</code> for the <code>MeasurePoint</code>
 	 */
@@ -69,5 +79,14 @@ public interface IMeasureDataHandler extends IDataHandler {
 	 * @return Returns the <code>Building</code> for the <code>Map</code>
 	 */
 	public Building getBuilding(Map map);
+
+	/**
+	 * 
+	 * @param map
+	 * @param azimuth
+	 * @return Returns a list of all <code>Scan</code>s on specified map within
+	 *         45deg of the compass reading
+	 */
+	public List<Scan> getScans(Map map, int azimuth);
 
 }
