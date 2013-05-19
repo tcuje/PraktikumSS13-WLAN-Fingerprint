@@ -1,12 +1,14 @@
 package de.rwth.ti.db;
 
+import java.util.Locale;
+
 /**
- * This class represents a map or level. Multiple objects represent a building
+ * This class represents a map or floor. Multiple objects represent a building
  * 
  */
-public class Map {
+public class Floor {
 
-	public static final String TABLE_NAME = "maps";
+	public static final String TABLE_NAME = "floors";
 	public static final String COLUMN_ID = "_id";
 	public static final String COLUMN_BID = "bid";
 	public static final String COLUMN_NAME = "name";
@@ -31,7 +33,7 @@ public class Map {
 	private String name; // name for this floor e.g. "Foyer"
 	private byte[] file; // byte array that describes layout file
 	private long level;
-	private long north; // angle pointing to north pole on this map
+	private long north; // angle pointing to north pole on this floor
 
 	public long getId() {
 		return id;
@@ -79,6 +81,18 @@ public class Map {
 
 	public void setNorth(long north) {
 		this.north = north;
+	}
+
+	/**
+	 * 
+	 * @param other
+	 * @return Returns true, if lower case names are equal
+	 */
+	public boolean compare(Floor other) {
+		String name1 = this.getName().toLowerCase(Locale.GERMAN);
+		String name2 = other.getName().toLowerCase(Locale.GERMAN);
+		boolean result = name1.equals(name2);
+		return result;
 	}
 
 }

@@ -1,5 +1,6 @@
 package de.rwth.ti.wps;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +21,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import de.rwth.ti.db.AccessPoint;
-import de.rwth.ti.db.Map;
+import de.rwth.ti.db.Building;
+import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.Scan;
 import de.rwth.ti.db.StorageHandler;
@@ -182,6 +185,7 @@ public class MainActivity extends Activity implements
 		case R.id.menu_export:
 			try {
 				storage.exportDatabase("local.sqlite");
+				// TODO GUI extract message
 				Toast.makeText(getBaseContext(),
 						"Datenbank erfolgreich exportiert", Toast.LENGTH_SHORT)
 						.show();
@@ -191,15 +195,13 @@ public class MainActivity extends Activity implements
 			}
 			return true;
 		case R.id.menu_import:
-			try {
-				storage.importDatabase("local.sqlite");
-				Toast.makeText(getBaseContext(),
-						"Datenbank erfolgreich importiert", Toast.LENGTH_SHORT)
-						.show();
-			} catch (IOException e) {
-				Toast.makeText(getBaseContext(), e.toString(),
-						Toast.LENGTH_LONG).show();
-			}
+			// FIXME GUI get user input for filename
+			storage.importDatabase(Environment.getDataDirectory()
+					+ File.separator + "local.sqlite");
+			// TODO GUI extract message
+			Toast.makeText(getBaseContext(),
+					"Datenbank erfolgreich importiert", Toast.LENGTH_SHORT)
+					.show();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -209,7 +211,6 @@ public class MainActivity extends Activity implements
 			startActivity(intent);
 
 		textStatus.setText(text);
-		// textView.setText("Gebäude " + Integer.toString(position));
 		return true;
 	}
 
@@ -226,17 +227,23 @@ public class MainActivity extends Activity implements
 	}
 
 	public void showDebug() {
-		textStatus.setText("Maps: " + storage.countMaps() + "\n");
-		for (Map m : storage.getAllMaps()) {
-			textStatus.append("Map\t" + m.getId() + "\t" + m.getName() + "\t "
+		textStatus.setText("Database:\n");
+		textStatus.append("\nBuildings: " + storage.countBuildings() + "\n");
+		for (Building b : storage.getAllBuildings()) {
+			textStatus.append("Building\t" + b.getId() + "\t" + b.getName()
+					+ "\n");
+		}
+		textStatus.append("\nMaps: " + storage.countFloors() + "\n");
+		for (Floor m : storage.getAllFloors()) {
+			textStatus.append("Map\t" + m.getId() + "\t" + m.getName() + "\t"
 					+ m.getFile() + "\n");
 		}
 		textStatus.append("\nCheckpoints: " + storage.countMeasurePoints()
 				+ "\n");
 		for (MeasurePoint cp : storage.getAllMeasurePoints()) {
 			textStatus.append("Checkpoint\t" + cp.getId() + "\t"
-					+ cp.getMapId() + "\t" + cp.getPosx() + "\t" + cp.getPosy()
-					+ "\n");
+					+ cp.getFloorId() + "\t" + cp.getPosx() + "\t"
+					+ cp.getPosy() + "\n");
 		}
 		textStatus.append("\nScans: " + storage.countScans() + "\n");
 		for (Scan scan : storage.getAllScans()) {
@@ -268,8 +275,7 @@ public class MainActivity extends Activity implements
 		// When the given dropdown item is selected, show its contents in the
 		// container view.
 		// TextView textView = (TextView) findViewById(R.id.textStatus);
-		textStatus.setText("Gebäude " + Integer.toString(position));
-
+		showDebug();
 		// Fragment fragment = new DummySectionFragment();
 		// Bundle args = new Bundle();
 		// args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);

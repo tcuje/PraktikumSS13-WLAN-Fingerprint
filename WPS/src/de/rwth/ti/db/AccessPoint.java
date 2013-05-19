@@ -1,5 +1,7 @@
 package de.rwth.ti.db;
 
+import java.util.Locale;
+
 /**
  * This class represents the table where access points for each scan are stored
  * 
@@ -92,4 +94,17 @@ public class AccessPoint {
 		this.props = props;
 	}
 
+	/**
+	 * 
+	 * @param other
+	 * @return Returns true, if bssid, frequency and level are equal
+	 */
+	public boolean compare(AccessPoint other) {
+		String bssid1 = this.getBssid().toLowerCase(Locale.GERMAN);
+		String bssid2 = other.getBssid().toLowerCase(Locale.GERMAN);
+		boolean bssid = bssid1.equals(bssid2);
+		boolean freq = this.getFreq() == other.getFreq();
+		boolean level = this.getLevel() == other.getLevel();
+		return bssid && freq && level;
+	}
 }
