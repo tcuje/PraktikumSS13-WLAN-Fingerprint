@@ -619,6 +619,14 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		db = storage.getWritableDatabase();
 	}
 
+	/**
+	 * Updates your local map information with the given database, including
+	 * import
+	 * 
+	 * @param filename
+	 *            full filepath for the import database
+	 * @return Returns an object containing import details
+	 */
 	// FIXME return ImportResult objectIOException
 	public Object importDatabase(String filename) {
 		// copy the database from sd card to internal storage
@@ -645,6 +653,8 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				if (loc.compare(bImp)) {
 					// building already exist local
 					bParent = loc;
+					// update local object
+					this.changeBuilding(bImp);
 					break;
 				}
 			}
@@ -663,7 +673,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 			for (Floor fImp : impFloors) {
 				Floor fParent = null;
 				for (Floor loc : locFloors) {
-					if (loc.isNew(fImp)) {
+					if (loc.compare(fImp)) {
 						// floor already exist local
 						fParent = loc;
 						break;
@@ -686,7 +696,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				for (MeasurePoint mpImp : impMeasurePoints) {
 					MeasurePoint mpParent = null;
 					for (MeasurePoint loc : locMeasurePoints) {
-						if (loc.isNew(mpImp)) {
+						if (loc.compare(mpImp)) {
 							// measure point already exist local
 							mpParent = loc;
 							break;
@@ -707,7 +717,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 					for (Scan scImp : impScans) {
 						Scan scParent = null;
 						for (Scan loc : locScans) {
-							if (loc.isNew(scImp)) {
+							if (loc.compare(scImp)) {
 								// scan already exist local
 								scParent = loc;
 								break;
@@ -729,7 +739,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 						for (AccessPoint apImp : impAPs) {
 							AccessPoint apParent = null;
 							for (AccessPoint loc : locAPs) {
-								if (loc.isNew(apImp)) {
+								if (loc.compare(apImp)) {
 									// access point already exist local
 									apParent = loc;
 									break;

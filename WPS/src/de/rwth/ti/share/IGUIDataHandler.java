@@ -24,20 +24,20 @@ public interface IGUIDataHandler extends IDataHandler {
 	public Building createBuilding(String name);
 
 	/**
-	 * Creates a new <code>Map</code>
+	 * Creates a new <code>Floor</code>
 	 * 
 	 * @param b
-	 *            <code>Building</code> where the new <code>Map</code> belongs
+	 *            <code>Building</code> where the new <code>Floor</code> belongs
 	 *            to
 	 * @param name
-	 *            Name for the new <code>Map</code>
+	 *            Name for the new <code>Floor</code>
 	 * @param file
-	 *            File with further <code>Map</code> layout information
+	 *            File with further <code>Floor</code> layout information
 	 * @param level
-	 *            Level of the <code>Map</code> inside the building
+	 *            Level of the <code>Floor</code> inside the building
 	 * @param north
 	 *            Angle pointing to north
-	 * @return Returns the new <code>Map</code> object on success,
+	 * @return Returns the new <code>Floor</code> object on success,
 	 *         <code>null</code> otherwise
 	 */
 	public Floor createFloor(Building b, String name, byte[] file, long level,
@@ -47,7 +47,7 @@ public interface IGUIDataHandler extends IDataHandler {
 	 * Creates a new <code>MeasurePoint</code>
 	 * 
 	 * @param m
-	 *            <code>Map</code> where the new <code>MeasurePoint</code>
+	 *            <code>Floor</code> where the new <code>MeasurePoint</code>
 	 *            belongs to
 	 * @param x
 	 *            x-coordinate
@@ -65,7 +65,7 @@ public interface IGUIDataHandler extends IDataHandler {
 	 *            <code>MeasurePoint</code> where the new <code>Scan</code>
 	 *            belongs to
 	 * @param time
-	 *            Time ellapsed in since 01.01.1970
+	 *            Time in seconds ellapsed since 01.01.1970
 	 * @param north
 	 *            Angle pointing to north
 	 * @return Returns the new <code>Scan</code> object on success,
@@ -96,22 +96,22 @@ public interface IGUIDataHandler extends IDataHandler {
 			long freq, String ssid, String props);
 
 	/**
-	 * Persist a changed <code>Map</code> object
+	 * Persist a changed <code>Floor</code> object
 	 * 
-	 * @param map
+	 * @param floor
 	 *            Changed object to be safed
 	 * @return true on success, false otherwise
 	 */
-	boolean changeFloor(Floor map);
+	boolean changeFloor(Floor floor);
 
 	/**
-	 * Delete a <code>Map</code> object
+	 * Delete a <code>Floor</code> object
 	 * 
-	 * @param map
+	 * @param floor
 	 *            Object to be deleted
 	 * @return true on success, false otherwise
 	 */
-	boolean deleteFloor(Floor map);
+	boolean deleteFloor(Floor floor);
 
 	/**
 	 * Persist a changed <code>Building</code> object

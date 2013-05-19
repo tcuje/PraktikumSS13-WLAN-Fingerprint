@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import de.rwth.ti.db.AccessPoint;
+import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.Scan;
@@ -184,6 +185,7 @@ public class MainActivity extends Activity implements
 		case R.id.menu_export:
 			try {
 				storage.exportDatabase("local.sqlite");
+				// TODO GUI extract message
 				Toast.makeText(getBaseContext(),
 						"Datenbank erfolgreich exportiert", Toast.LENGTH_SHORT)
 						.show();
@@ -196,6 +198,7 @@ public class MainActivity extends Activity implements
 			// FIXME GUI get user input for filename
 			storage.importDatabase(Environment.getDataDirectory()
 					+ File.separator + "local.sqlite");
+			// TODO GUI extract message
 			Toast.makeText(getBaseContext(),
 					"Datenbank erfolgreich importiert", Toast.LENGTH_SHORT)
 					.show();
@@ -208,7 +211,6 @@ public class MainActivity extends Activity implements
 			startActivity(intent);
 
 		textStatus.setText(text);
-		// textView.setText("Geb�ude " + Integer.toString(position));
 		return true;
 	}
 
@@ -225,9 +227,15 @@ public class MainActivity extends Activity implements
 	}
 
 	public void showDebug() {
-		textStatus.setText("Maps: " + storage.countFloors() + "\n");
+		textStatus.setText("Database:\n");
+		textStatus.append("\nBuildings: " + storage.countBuildings() + "\n");
+		for (Building b : storage.getAllBuildings()) {
+			textStatus.append("Building\t" + b.getId() + "\t" + b.getName()
+					+ "\n");
+		}
+		textStatus.append("\nMaps: " + storage.countFloors() + "\n");
 		for (Floor m : storage.getAllFloors()) {
-			textStatus.append("Map\t" + m.getId() + "\t" + m.getName() + "\t "
+			textStatus.append("Map\t" + m.getId() + "\t" + m.getName() + "\t"
 					+ m.getFile() + "\n");
 		}
 		textStatus.append("\nCheckpoints: " + storage.countMeasurePoints()
@@ -267,8 +275,7 @@ public class MainActivity extends Activity implements
 		// When the given dropdown item is selected, show its contents in the
 		// container view.
 		// TextView textView = (TextView) findViewById(R.id.textStatus);
-		textStatus.setText("Geb�ude " + Integer.toString(position));
-
+		showDebug();
 		// Fragment fragment = new DummySectionFragment();
 		// Bundle args = new Bundle();
 		// args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);

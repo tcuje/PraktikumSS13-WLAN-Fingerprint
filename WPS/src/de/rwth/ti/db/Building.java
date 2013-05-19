@@ -1,5 +1,7 @@
 package de.rwth.ti.db;
 
+import java.util.Locale;
+
 /**
  * This class represents a building or list of maps/floors
  * 
@@ -40,6 +42,18 @@ public class Building {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * 
+	 * @param other
+	 * @return Returns true, if lower case names are equal
+	 */
+	public boolean compare(Building other) {
+		String name1 = this.getName().toLowerCase(Locale.GERMAN);
+		String name2 = other.getName().toLowerCase(Locale.GERMAN);
+		boolean result = name1.equals(name2);
+		return result;
 	}
 
 }

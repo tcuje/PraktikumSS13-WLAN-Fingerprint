@@ -8,7 +8,7 @@ public class MeasurePoint {
 
 	public static final String TABLE_NAME = "measpts";
 	public static final String COLUMN_ID = "_id";
-	public static final String COLUMN_FLOORID = "mapid";
+	public static final String COLUMN_FLOORID = "floorid";
 	public static final String COLUMN_POS_X = "posx";
 	public static final String COLUMN_POS_Y = "posy";
 
@@ -23,7 +23,7 @@ public class MeasurePoint {
 			+ TABLE_NAME;
 
 	private long id;
-	private long mapId;
+	private long floorId;
 	private double posx;
 	private double posy;
 
@@ -36,11 +36,11 @@ public class MeasurePoint {
 	}
 
 	public long getFloorId() {
-		return mapId;
+		return floorId;
 	}
 
-	public void setFloorId(long mapId) {
-		this.mapId = mapId;
+	public void setFloorId(long floorId) {
+		this.floorId = floorId;
 	}
 
 	public double getPosx() {
@@ -57,6 +57,17 @@ public class MeasurePoint {
 
 	public void setPosy(double posy) {
 		this.posy = posy;
+	}
+
+	/**
+	 * 
+	 * @param other
+	 * @return Returns true, if both coordinates are equal
+	 */
+	public boolean compare(MeasurePoint other) {
+		boolean resultX = (this.getPosx() - other.getPosx()) < 2 * Float.MIN_NORMAL;
+		boolean resultY = (this.getPosy() - other.getPosy()) < 2 * Float.MIN_NORMAL;
+		return resultX && resultY;
 	}
 
 }

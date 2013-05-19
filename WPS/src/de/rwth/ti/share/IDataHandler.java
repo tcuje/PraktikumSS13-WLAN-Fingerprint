@@ -30,7 +30,7 @@ public interface IDataHandler {
 
 	/**
 	 * 
-	 * @return Returns a list with all maps from the database
+	 * @return Returns a list with all floors from the database
 	 */
 	List<Floor> getAllFloors();
 
@@ -60,7 +60,7 @@ public interface IDataHandler {
 
 	/**
 	 * 
-	 * @return Returns the number of maps stored in the database
+	 * @return Returns the number of floors stored in the database
 	 */
 	long countFloors();
 
