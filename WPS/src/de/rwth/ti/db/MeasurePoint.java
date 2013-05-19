@@ -8,22 +8,22 @@ public class MeasurePoint {
 
 	public static final String TABLE_NAME = "measpts";
 	public static final String COLUMN_ID = "_id";
-	public static final String COLUMN_MAPID = "mapid";
+	public static final String COLUMN_FLOORID = "floorid";
 	public static final String COLUMN_POS_X = "posx";
 	public static final String COLUMN_POS_Y = "posy";
 
-	public static final String[] ALL_COLUMNS = { COLUMN_ID, COLUMN_MAPID,
+	public static final String[] ALL_COLUMNS = { COLUMN_ID, COLUMN_FLOORID,
 			COLUMN_POS_X, COLUMN_POS_Y };
 	public static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
-			+ COLUMN_MAPID + " integer REFERENCES " + Map.TABLE_NAME + "("
-			+ Map.COLUMN_ID + ") ON UPDATE CASCADE ON DELETE CASCADE, "
+			+ COLUMN_FLOORID + " integer REFERENCES " + Floor.TABLE_NAME + "("
+			+ Floor.COLUMN_ID + ") ON UPDATE CASCADE ON DELETE CASCADE, "
 			+ COLUMN_POS_X + " real, " + COLUMN_POS_Y + " real);";
 	public static final String TABLE_DROP = "DROP TABLE IF EXISTS "
 			+ TABLE_NAME;
 
 	private long id;
-	private long mapId;
+	private long floorId;
 	private double posx;
 	private double posy;
 
@@ -35,12 +35,12 @@ public class MeasurePoint {
 		this.id = id;
 	}
 
-	public long getMapId() {
-		return mapId;
+	public long getFloorId() {
+		return floorId;
 	}
 
-	public void setMapId(long mapId) {
-		this.mapId = mapId;
+	public void setFloorId(long floorId) {
+		this.floorId = floorId;
 	}
 
 	public double getPosx() {
@@ -57,6 +57,17 @@ public class MeasurePoint {
 
 	public void setPosy(double posy) {
 		this.posy = posy;
+	}
+
+	/**
+	 * 
+	 * @param other
+	 * @return Returns true, if both coordinates are equal
+	 */
+	public boolean compare(MeasurePoint other) {
+		boolean resultX = (this.getPosx() - other.getPosx()) < 2 * Float.MIN_NORMAL;
+		boolean resultY = (this.getPosy() - other.getPosy()) < 2 * Float.MIN_NORMAL;
+		return resultX && resultY;
 	}
 
 }

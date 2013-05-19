@@ -26,7 +26,7 @@ public class Scan {
 
 	private long id;
 	private long mpid; // measure point id
-	private long time;
+	private long time; // time in
 	private long compass;
 
 	public long getId() {
@@ -59,6 +59,18 @@ public class Scan {
 
 	public void setCompass(long compass) {
 		this.compass = compass;
+	}
+
+	/**
+	 * 
+	 * @param other
+	 * @return Returns true, if both scans where made at the same time and
+	 *         compass
+	 */
+	public boolean compare(Scan other) {
+		boolean result = (this.getTime() == other.getTime())
+				&& (this.getCompass() == other.getCompass());
+		return result;
 	}
 
 }

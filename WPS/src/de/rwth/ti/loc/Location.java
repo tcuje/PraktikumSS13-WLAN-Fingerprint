@@ -6,7 +6,7 @@ import java.util.List;
 import android.net.wifi.ScanResult;
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
-import de.rwth.ti.db.Map;
+import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.Scan;
 import de.rwth.ti.share.IMeasureDataHandler;
@@ -46,7 +46,7 @@ public class Location {
 		AccessPoint ap = entries.get(0);
 		Scan scan = dataHandler.getScan(ap);
 		MeasurePoint mp = dataHandler.getMeasurePoint(scan);
-		Map map = dataHandler.getMap(mp);
+		Floor map = dataHandler.getFloor(mp);
 		Building result = dataHandler.getBuilding(map);
 		return result;
 	}
@@ -101,7 +101,7 @@ public class Location {
 	//
 	// return pos;
 	// }
-	public Map findMap(List<ScanResult> aps, Building b) {
+	public Floor findMap(List<ScanResult> aps, Building b) {
 		if (aps.isEmpty() || b == null) {
 			return null;
 		}
@@ -110,11 +110,11 @@ public class Location {
 		AccessPoint ap = entries.get(0);
 		Scan scan = dataHandler.getScan(ap);
 		MeasurePoint mp = dataHandler.getMeasurePoint(scan);
-		List<Map> maps = dataHandler.getMaps(b);
+		List<Floor> maps = dataHandler.getFloors(b);
 		return maps.get(0);
 	}
 
-	public LocationResult findMP(List<ScanResult> aps, Map map, int compass) {
+	public LocationResult findMP(List<ScanResult> aps, Floor map, int compass) {
 		if (aps.isEmpty() || map == null) {
 			return null;
 		}
