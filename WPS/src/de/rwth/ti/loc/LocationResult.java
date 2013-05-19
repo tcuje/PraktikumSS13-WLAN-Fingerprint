@@ -1,6 +1,6 @@
 package de.rwth.ti.loc;
 
-import de.rwth.ti.db.Map;
+import de.rwth.ti.db.Floor;
 
 /**
  * This class represents the result of a location process
@@ -8,17 +8,17 @@ import de.rwth.ti.db.Map;
  */
 public class LocationResult {
 
-	private Map map;
+	private Floor map;
 	private double x;
 	private double y;
 
-	public LocationResult(Map map, double x, double y) {
+	public LocationResult(Floor map, double x, double y) {
 		this.map = map;
 		this.x = x;
 		this.y = y;
 	}
 
-	public Map getMap() {
+	public Floor getMap() {
 		return map;
 	}
 

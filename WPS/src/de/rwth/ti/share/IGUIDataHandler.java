@@ -2,7 +2,7 @@ package de.rwth.ti.share;
 
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
-import de.rwth.ti.db.Map;
+import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.Scan;
 
@@ -40,7 +40,7 @@ public interface IGUIDataHandler extends IDataHandler {
 	 * @return Returns the new <code>Map</code> object on success,
 	 *         <code>null</code> otherwise
 	 */
-	public Map createMap(Building b, String name, String file, long level,
+	public Floor createFloor(Building b, String name, byte[] file, long level,
 			long north);
 
 	/**
@@ -56,7 +56,7 @@ public interface IGUIDataHandler extends IDataHandler {
 	 * @return Returns the new <code>MeasurePoint</code> object on success,
 	 *         <code>null</code> otherwise
 	 */
-	public MeasurePoint createMeasurePoint(Map m, double x, double y);
+	public MeasurePoint createMeasurePoint(Floor m, double x, double y);
 
 	/**
 	 * Creates a new <code>Scan</code>
@@ -102,7 +102,7 @@ public interface IGUIDataHandler extends IDataHandler {
 	 *            Changed object to be safed
 	 * @return true on success, false otherwise
 	 */
-	boolean changeMap(Map map);
+	boolean changeFloor(Floor map);
 
 	/**
 	 * Delete a <code>Map</code> object
@@ -111,7 +111,7 @@ public interface IGUIDataHandler extends IDataHandler {
 	 *            Object to be deleted
 	 * @return true on success, false otherwise
 	 */
-	boolean deleteMap(Map map);
+	boolean deleteFloor(Floor map);
 
 	/**
 	 * Persist a changed <code>Building</code> object

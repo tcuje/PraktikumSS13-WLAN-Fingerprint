@@ -4,7 +4,7 @@ import java.util.List;
 
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
-import de.rwth.ti.db.Map;
+import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.Scan;
 
@@ -21,7 +21,7 @@ public interface IMeasureDataHandler extends IDataHandler {
 	 *            building
 	 * @return Returns all <code>Map</code>s for the <code>Building</code>
 	 */
-	public List<Map> getMaps(Building b);
+	public List<Floor> getFloors(Building b);
 
 	/**
 	 * 
@@ -65,20 +65,20 @@ public interface IMeasureDataHandler extends IDataHandler {
 	 * @param map
 	 * @return Returns all <code>MeasurePoint</code>s for the <code>Map</code>
 	 */
-	List<MeasurePoint> getMeasurePoints(Map map);
+	List<MeasurePoint> getMeasurePoints(Floor map);
 
 	/**
 	 * @param mp
 	 * @return Returns the <code>Map</code> for the <code>MeasurePoint</code>
 	 */
-	public Map getMap(MeasurePoint mp);
+	public Floor getFloor(MeasurePoint mp);
 
 	/**
 	 * 
 	 * @param map
 	 * @return Returns the <code>Building</code> for the <code>Map</code>
 	 */
-	public Building getBuilding(Map map);
+	public Building getBuilding(Floor map);
 
 	/**
 	 * 
@@ -87,6 +87,6 @@ public interface IMeasureDataHandler extends IDataHandler {
 	 * @return Returns a list of all <code>Scan</code>s on specified map within
 	 *         45deg of the compass reading
 	 */
-	public List<Scan> getScans(Map map, int azimuth);
+	public List<Scan> getScans(Floor map, int azimuth);
 
 }

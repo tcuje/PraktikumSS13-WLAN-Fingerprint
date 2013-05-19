@@ -21,6 +21,11 @@ public class Building {
 	private long id;
 	private String name;
 
+	public boolean equals(Building other) {
+		boolean result = this.getName().equals(other.getName());
+		return result;
+	}
+
 	public long getId() {
 		return id;
 	}

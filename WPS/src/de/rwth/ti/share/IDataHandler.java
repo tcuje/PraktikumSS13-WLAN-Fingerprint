@@ -4,7 +4,7 @@ import java.util.List;
 
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
-import de.rwth.ti.db.Map;
+import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.Scan;
 
@@ -32,7 +32,7 @@ public interface IDataHandler {
 	 * 
 	 * @return Returns a list with all maps from the database
 	 */
-	List<Map> getAllMaps();
+	List<Floor> getAllFloors();
 
 	/**
 	 * 
@@ -62,7 +62,7 @@ public interface IDataHandler {
 	 * 
 	 * @return Returns the number of maps stored in the database
 	 */
-	long countMaps();
+	long countFloors();
 
 	/**
 	 * 
