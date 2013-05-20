@@ -285,12 +285,8 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 			return null;
 		}
 		values.put(Floor.COLUMN_BID, b.getId());
-		if (name != null) {
-			values.put(Floor.COLUMN_NAME, name);
-		}
-		if (file != null) {
-			values.put(Floor.COLUMN_FILE, file);
-		}
+		values.put(Floor.COLUMN_NAME, name);
+		values.put(Floor.COLUMN_FILE, file);
 		values.put(Floor.COLUMN_LEVEL, level);
 		values.put(Floor.COLUMN_NORTH, north);
 		long insertId = db.insert(Floor.TABLE_NAME, null, values);
@@ -359,10 +355,9 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	@Override
 	public boolean changeFloor(Floor floor) {
 		ContentValues values = new ContentValues();
-		if (floor.getName() != null) {
-			values.put(Floor.COLUMN_NAME, floor.getName());
-		}
-		int result = db.update(Floor.TABLE_NAME, values, Floor.COLUMN_ID,
+		values.put(Floor.COLUMN_NAME, floor.getName());
+		int result = db.update(Floor.TABLE_NAME, values,
+				Floor.COLUMN_ID + "=?",
 				new String[] { String.valueOf(floor.getId()) });
 		if (result == 1)
 			return true;
@@ -383,11 +378,9 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	@Override
 	public boolean changeBuilding(Building building) {
 		ContentValues values = new ContentValues();
-		if (building.getName() != null) {
-			values.put(Floor.COLUMN_NAME, building.getName());
-		}
-		int result = db.update(Building.TABLE_NAME, values, Building.COLUMN_ID,
-				new String[] { String.valueOf(building.getId()) });
+		values.put(Floor.COLUMN_NAME, building.getName());
+		int result = db.update(Building.TABLE_NAME, values, Building.COLUMN_ID
+				+ "=?", new String[] { String.valueOf(building.getId()) });
 		if (result == 1)
 			return true;
 		else
@@ -412,9 +405,9 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		values.put(AccessPoint.COLUMN_LEVEL, ap.getLevel());
 		values.put(AccessPoint.COLUMN_FREQ, ap.getFreq());
 		values.put(AccessPoint.COLUMN_SSID, ap.getSsid());
-		values.put(AccessPoint.COLUMN_PROPS, ap.getSsid());
+		values.put(AccessPoint.COLUMN_PROPS, ap.getProps());
 		int result = db.update(AccessPoint.TABLE_NAME, values,
-				AccessPoint.COLUMN_ID,
+				AccessPoint.COLUMN_ID + "=?",
 				new String[] { String.valueOf(ap.getId()) });
 		if (result == 1)
 			return true;
@@ -434,11 +427,10 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean changeMeasurePoint(MeasurePoint mp) {
-
 		ContentValues values = new ContentValues();
 		values.put(MeasurePoint.COLUMN_FLOORID, mp.getId());
-		int result = db.update(AccessPoint.TABLE_NAME, values,
-				AccessPoint.COLUMN_ID,
+		int result = db.update(MeasurePoint.TABLE_NAME, values,
+				MeasurePoint.COLUMN_ID + "=?",
 				new String[] { String.valueOf(mp.getId()) });
 		if (result == 1)
 			return true;
@@ -462,8 +454,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		values.put(Scan.COLUMN_MPID, sc.getId());
 		values.put(Scan.COLUMN_TIME, sc.getTime());
 		values.put(Scan.COLUMN_COMPASS, sc.getCompass());
-		int result = db.update(AccessPoint.TABLE_NAME, values,
-				AccessPoint.COLUMN_ID,
+		int result = db.update(Scan.TABLE_NAME, values, Scan.COLUMN_ID + "=?",
 				new String[] { String.valueOf(sc.getId()) });
 		if (result == 1)
 			return true;
@@ -484,12 +475,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	@Override
 	public Building createBuilding(String name) {
 		ContentValues values = new ContentValues();
-		if (name != null) {
-			values.put(Building.COLUMN_NAME, name);
-		}
-		if (values.size() == 0) {
-			return null;
-		}
+		values.put(Building.COLUMN_NAME, name);
 		long insertId = db.insert(Building.TABLE_NAME, null, values);
 		Cursor cursor = db.query(Building.TABLE_NAME, Building.ALL_COLUMNS,
 				Building.COLUMN_ID + "=?",
@@ -644,6 +630,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 //		dst.close();
 		// open import database
 		StorageHandler temp = new StorageHandler(context, filename);
+		temp.onStart();
 		// import buildings
 		List<Building> impBuildings = temp.getAllBuildings();
 		List<Building> locBuildings = this.getAllBuildings();
@@ -654,6 +641,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 					// building already exist local
 					bParent = loc;
 					// update local object
+					bImp.setId(loc.getId());
 					this.changeBuilding(bImp);
 					break;
 				}
@@ -676,6 +664,9 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 					if (loc.compare(fImp)) {
 						// floor already exist local
 						fParent = loc;
+						// update local object
+						fImp.setId(loc.getId());
+						this.changeFloor(fImp);
 						break;
 					}
 				}
@@ -699,6 +690,9 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 						if (loc.compare(mpImp)) {
 							// measure point already exist local
 							mpParent = loc;
+							// update local object
+							mpImp.setId(loc.getId());
+							this.changeMeasurePoint(mpImp);
 							break;
 						}
 					}
@@ -720,6 +714,9 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 							if (loc.compare(scImp)) {
 								// scan already exist local
 								scParent = loc;
+								// update local object
+								scImp.setId(loc.getId());
+								this.changeScan(scImp);
 								break;
 							}
 						}
@@ -742,6 +739,9 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 								if (loc.compare(apImp)) {
 									// access point already exist local
 									apParent = loc;
+									// update local object
+									apImp.setId(loc.getId());
+									this.changeAccessPoint(apImp);
 									break;
 								}
 							}
@@ -759,6 +759,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				}
 			}
 		}
+		temp.onStop();
 		return null;
 	}
 }
