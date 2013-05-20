@@ -152,7 +152,17 @@ public class MainActivity extends Activity implements
 	public void onClick(View view) {
 		if (view.getId() == R.id.buttonScan) {
 			// FIXME GUI get real data from gui
-			scm.startSingleScan(storage.createMeasurePoint(null, 0, 0));
+			Building b = storage.createBuilding("Haus "
+					+ (storage.countBuildings() + 1));
+			Floor f = storage.createFloor(b, "Ebene "
+					+ (storage.countFloors() + 1), null,
+					(storage.countFloors() + 1), 15);
+			MeasurePoint mp = storage.createMeasurePoint(f, 0, 0);
+			boolean check = scm.startSingleScan(mp);
+			if (check == false) {
+				Toast.makeText(this, "Fehler beim Scanstart", Toast.LENGTH_LONG)
+						.show();
+			}
 		}
 	}
 
@@ -196,7 +206,7 @@ public class MainActivity extends Activity implements
 			return true;
 		case R.id.menu_import:
 			// FIXME GUI get user input for filename
-			storage.importDatabase(Environment.getDataDirectory()
+			storage.importDatabase(Environment.getExternalStorageDirectory()
 					+ File.separator + "local.sqlite");
 			// TODO GUI extract message
 			Toast.makeText(getBaseContext(),
