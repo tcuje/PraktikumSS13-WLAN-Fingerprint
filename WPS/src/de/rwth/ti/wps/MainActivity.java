@@ -46,7 +46,7 @@ public class MainActivity extends Activity implements
 	Button buttonScan;
 
 	/** Called when the activity is first created. */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
