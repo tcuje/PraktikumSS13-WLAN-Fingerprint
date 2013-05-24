@@ -22,12 +22,52 @@
             android:ems="10"
             android:hint="@string/building" />
 
+        <Button
+            android:id="@+id/Button01"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:layout_weight="1"
+            android:onClick="chooseMapFile"
+            android:text="@string/activity_new_map_create_building" />
+
         <Spinner
-            android:id="@+id/floorSelectSpinner"
+            android:id="@+id/buildingSelectSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <EditText
+            android:id="@+id/floorLevelEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:entries="@array/floors" />
+            android:ems="10"
+            android:hint="@string/activity_new_map_floorlevel"
+            android:inputType="numberSigned"
+            android:maxLength="6" />
+
+        <EditText
+            android:id="@+id/floorNameEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/activity_new_map_floorname" />
+
+        <TextView
+            android:id="@+id/mapPathView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_weight="1"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:hint="@string/activity_new_map_mappath"
+            android:longClickable="false"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Button
             android:id="@+id/button1"
@@ -35,7 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="chooseMapFile"
-            android:text="@string/activity_new_map_button" />
+            android:text="@string/activity_new_map_choose_map" />
 
         <Button
             android:id="@+id/button2"
@@ -44,16 +84,6 @@
             android:layout_weight="1"
             android:onClick="createMap"
             android:text="@string/activity_new_map_create_map" />
-
-        <ImageView
-            android:id="@+id/mapView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/activity_new_map_imageview_description"
-            android:scaleType="centerInside"
-            android:src="@drawable/dummy_map" />
 
     </LinearLayout>
 
