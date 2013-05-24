@@ -110,7 +110,6 @@ public class Location {
 		AccessPoint ap = entries.get(0);
 		Scan scan = dataHandler.getScan(ap);
 		MeasurePoint mp = dataHandler.getMeasurePoint(scan);
-<<<<<<< HEAD
 		List<Map> maps = dataHandler.getMaps(b);
 		return maps.get(0);
 	}
@@ -183,7 +182,6 @@ public class Location {
 			}
 		}
 		
-=======
 		List<Floor> maps = dataHandler.getFloors(b);
 		return maps.get(0);
 	}
@@ -257,7 +255,7 @@ public class Location {
 			}
 		}
 
->>>>>>> origin/dev
+
 		return scanErrorList;
 	}
 }
