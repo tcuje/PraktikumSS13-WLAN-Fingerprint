@@ -6,7 +6,6 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -33,7 +32,7 @@ import de.rwth.ti.db.StorageHandler;
  * 
  */
 public class MainActivity extends SuperActivity implements
-		ActionBar.OnNavigationListener, OnClickListener {
+	OnClickListener {
 
 	/**
 	 * The serialization (saved instance state) Bundle key representing the
@@ -50,7 +49,7 @@ public class MainActivity extends SuperActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_localisation);
-
+		
 		// Setup UI
 		textStatus = (TextView) findViewById(R.id.textStatus);
 		buttonScan = (Button) findViewById(R.id.buttonScan);
@@ -112,6 +111,7 @@ public class MainActivity extends SuperActivity implements
 
 	@Override
 	public void onClick(View view) {
+		//if (true) {
 		if (view.getId() == R.id.buttonScan) {
 			// FIXME GUI get real data from gui
 			Building b = storage.createBuilding("Haus "
@@ -216,6 +216,7 @@ public class MainActivity extends SuperActivity implements
 		}
 	}
 
+	/*
 	@Override
 	public boolean onNavigationItemSelected(int position, long id) {
 		// When the given dropdown item is selected, show its contents in the
@@ -229,6 +230,6 @@ public class MainActivity extends SuperActivity implements
 		// getSupportFragmentManager().beginTransaction()
 		// .replace(R.id.container, fragment).commit();
 		return true;
-	}
+	}*/
 
 }

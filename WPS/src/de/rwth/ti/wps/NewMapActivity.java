@@ -99,11 +99,10 @@ public class NewMapActivity extends SuperActivity
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Intent intent = null;
 		switch (item.getItemId()) {
 			case R.id.action_new_map:		//intent = new Intent(this, NewMapActivity.class);
 											break;
-			case android.R.id.home:
+			//case android.R.id.home:
 			// This ID represents the Home or Up button. In the case of this
 			// activity, the Up button is shown. Use NavUtils to allow users
 			// to navigate up one level in the application structure. For
@@ -111,8 +110,8 @@ public class NewMapActivity extends SuperActivity
 			//
 			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
 			//
-											NavUtils.navigateUpFromSameTask(this);
-											break;
+			//								NavUtils.navigateUpFromSameTask(this);
+			//								break;
 			default:
 											return super.onOptionsItemSelected(item);
 			

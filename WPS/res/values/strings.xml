@@ -46,5 +46,6 @@
     <string name="floor_ground">Erdgeschoss</string>
     <string name="floor_upper">Obergeschoss</string>
     <string name="floor_basement">Untergeschoss</string>
+    <string name="test">HOffentlich</string>
 
 </resources>

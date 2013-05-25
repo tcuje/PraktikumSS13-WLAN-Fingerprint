@@ -65,8 +65,10 @@ public class MeasurePoint {
 	 * @return Returns true, if both coordinates are equal
 	 */
 	public boolean compare(MeasurePoint other) {
-		boolean resultX = (this.getPosx() - other.getPosx()) < 2 * Float.MIN_NORMAL;
-		boolean resultY = (this.getPosy() - other.getPosy()) < 2 * Float.MIN_NORMAL;
+		//boolean resultX = true;
+		//boolean resultY = true;
+		boolean resultX = (this.getPosx() - other.getPosx()) < 2 * Float.MIN_VALUE;
+		boolean resultY = (this.getPosy() - other.getPosy()) < 2 * Float.MIN_VALUE;
 		return resultX && resultY;
 	}
 
