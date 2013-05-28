@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.rwth.ti.wps;
 
 import java.io.File;

@@ -43,14 +43,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.rwth.ti.wps.LocalisationActivity" />
         </activity>
-        <activity
-            android:name="de.rwth.ti.wps.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName="de.rwth.ti.wps.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="de.rwth.ti.wps.LocalisationActivity" />
-        </activity>
     </application>
 
 </manifest>
