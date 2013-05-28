@@ -22,7 +22,7 @@ import de.rwth.ti.db.Scan;
  */
 public class ScanManager extends BroadcastReceiver {
 
-	private MainActivity app;
+	private SuperActivity app;
 	private WifiManager wifi;
 	private WifiLock wl;
 	private Timer tim;
@@ -30,10 +30,10 @@ public class ScanManager extends BroadcastReceiver {
 	private boolean onlineMode;
 	private MeasurePoint mpoint;
 
-	public ScanManager(MainActivity app) {
-		this.app = app;
+	public ScanManager(SuperActivity superActivity) {
+		this.app = superActivity;
 		// Setup WiFi
-		wifi = (WifiManager) app.getSystemService(Context.WIFI_SERVICE);
+		wifi = (WifiManager) superActivity.getSystemService(Context.WIFI_SERVICE);
 		wl = wifi.createWifiLock("Wavi");
 
 		// Setup auto scan timer
