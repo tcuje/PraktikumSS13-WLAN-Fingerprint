@@ -36,7 +36,8 @@ public interface IDataHandler {
 
 	/**
 	 * 
-	 * @return Returns a list with all buildings from the database
+	 * @return Returns a list with all buildings in alphabetical order from the
+	 *         database
 	 */
 	List<Building> getAllBuildings();
 

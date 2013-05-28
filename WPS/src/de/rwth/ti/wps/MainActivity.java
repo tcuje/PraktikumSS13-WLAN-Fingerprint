@@ -4,35 +4,27 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import de.rwth.ti.common.Constants;
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.Scan;
-import de.rwth.ti.db.StorageHandler;
 
 /**
  * This is the main activity class
  * 
  */
-public class MainActivity extends SuperActivity implements
-	OnClickListener {
+public class MainActivity extends SuperActivity implements OnClickListener {
 
 	/**
 	 * The serialization (saved instance state) Bundle key representing the
@@ -44,48 +36,52 @@ public class MainActivity extends SuperActivity implements
 	Button buttonScan;
 
 	/** Called when the activity is first created. */
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_localisation);
-		
+
 		// Setup UI
 		textStatus = (TextView) findViewById(R.id.textStatus);
 		buttonScan = (Button) findViewById(R.id.buttonScan);
 		buttonScan.setOnClickListener(this);
-	}
 
+		// create app sd directory
+		File f = new File(Environment.getExternalStorageDirectory()
+				.getAbsolutePath() + File.separator + Constants.SD_APP_DIR);
+		boolean check = f.mkdirs();
+		if (check == false) {
+			// XXX handle error
+		}
+	}
 
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		// Restore the previously serialized current dropdown position.
 		/*
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM)) {
-				getActionBar().setSelectedNavigationItem(
-						savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
-			}
-		}
-		*/
+		 * if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) { if
+		 * (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM)) {
+		 * getActionBar().setSelectedNavigationItem(
+		 * savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM)); } }
+		 */
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		// Serialize the current dropdown position.
 		/*
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getActionBar()
-					.getSelectedNavigationIndex());
-		}
-		*/
+		 * if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+		 * outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getActionBar()
+		 * .getSelectedNavigationIndex()); }
+		 */
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		// Inflate the menu; this adds items to the action bar if it is present.
-		//getMenuInflater().inflate(R.menu.menu, menu);
+		// getMenuInflater().inflate(R.menu.menu, menu);
 		return true;
 	}
 
@@ -93,9 +89,9 @@ public class MainActivity extends SuperActivity implements
 	@Override
 	public void onStart() {
 		super.onStart();
-		//storage.onStart();
-		//scm.onStart();
-		//cmgr.onStart();
+		// storage.onStart();
+		// scm.onStart();
+		// cmgr.onStart();
 		// TODO GUI don't show debug info on startup
 		showDebug();
 	}
@@ -104,14 +100,14 @@ public class MainActivity extends SuperActivity implements
 	@Override
 	public void onStop() {
 		super.onStop();
-		//storage.onStop();
-		//scm.onStop();
-		//cmgr.onStop();
+		// storage.onStop();
+		// scm.onStop();
+		// cmgr.onStop();
 	}
 
 	@Override
 	public void onClick(View view) {
-		//if (true) {
+		// if (true) {
 		if (view.getId() == R.id.buttonScan) {
 			// FIXME GUI get real data from gui
 			Building b = storage.createBuilding("Haus "
@@ -145,7 +141,7 @@ public class MainActivity extends SuperActivity implements
 			return true;
 		case R.id.menu_export:
 			try {
-				storage.exportDatabase("local.sqlite");
+				storage.exportDatabase(Constants.LOCAL_DB_NAME);
 				// TODO GUI extract message
 				Toast.makeText(getBaseContext(),
 						"Datenbank erfolgreich exportiert", Toast.LENGTH_SHORT)
@@ -158,7 +154,7 @@ public class MainActivity extends SuperActivity implements
 		case R.id.menu_import:
 			// FIXME GUI get user input for filename
 			storage.importDatabase(Environment.getExternalStorageDirectory()
-					+ File.separator + "local.sqlite");
+					+ File.separator + Constants.LOCAL_DB_NAME);
 			// TODO GUI extract message
 			Toast.makeText(getBaseContext(),
 					"Datenbank erfolgreich importiert", Toast.LENGTH_SHORT)
@@ -217,19 +213,15 @@ public class MainActivity extends SuperActivity implements
 	}
 
 	/*
-	@Override
-	public boolean onNavigationItemSelected(int position, long id) {
-		// When the given dropdown item is selected, show its contents in the
-		// container view.
-		// TextView textView = (TextView) findViewById(R.id.textStatus);
-		showDebug();
-		// Fragment fragment = new DummySectionFragment();
-		// Bundle args = new Bundle();
-		// args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-		// fragment.setArguments(args);
-		// getSupportFragmentManager().beginTransaction()
-		// .replace(R.id.container, fragment).commit();
-		return true;
-	}*/
+	 * @Override public boolean onNavigationItemSelected(int position, long id)
+	 * { // When the given dropdown item is selected, show its contents in the
+	 * // container view. // TextView textView = (TextView)
+	 * findViewById(R.id.textStatus); showDebug(); // Fragment fragment = new
+	 * DummySectionFragment(); // Bundle args = new Bundle(); //
+	 * args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1); //
+	 * fragment.setArguments(args); //
+	 * getSupportFragmentManager().beginTransaction() //
+	 * .replace(R.id.container, fragment).commit(); return true; }
+	 */
 
 }

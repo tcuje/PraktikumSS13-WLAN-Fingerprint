@@ -510,7 +510,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	@Override
 	public List<Building> getAllBuildings() {
 		Cursor cursor = db.query(Building.TABLE_NAME, Building.ALL_COLUMNS,
-				null, null, null, null, null);
+				null, null, null, null, Building.COLUMN_NAME + " ASC");
 		List<Building> result = cursorToBuildings(cursor);
 		return result;
 	}

@@ -24,12 +24,12 @@
             android:hint="@string/building" />
 
         <Button
-            android:id="@+id/Button01"
+            android:id="@+id/bCreateBuilding"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
             android:layout_weight="1"
-            android:onClick="chooseMapFile"
+            android:onClick="createBuilding"
             android:text="@string/activity_new_map_create_building" />
 
         <Spinner
