@@ -46,8 +46,8 @@
 		        android:title="@string/action_measure"/>
 		    
 		    <item
-		        android:id="@+id/action_signal_dump"
-		        android:title="@string/action_signal_dump"/>
+		        android:id="@+id/action_debug"
+		        android:title="@string/action_debug"/>
         </menu>
     </item>
     

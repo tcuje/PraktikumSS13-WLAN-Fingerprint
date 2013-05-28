@@ -103,8 +103,8 @@ public class SuperActivity extends Activity {
 		case R.id.action_new_map:
 			intent = new Intent(this, NewMapActivity.class);
 			break;
-		case R.id.action_settings:
-			//intent = new Intent(this, SettingsActivity.class);
+		case R.id.action_debug:
+			intent = new Intent(this, DebugActivity.class);
 			break;
 		default:
 			return super.onOptionsItemSelected(item);

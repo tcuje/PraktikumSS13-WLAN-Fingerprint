@@ -23,25 +23,4 @@
         android:contentDescription="@string/refresh_button_description"
         android:src="@android:drawable/ic_popup_sync" />
 
-    <Button
-        android:id="@+id/buttonScan"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/text_scan" />
-
-    <ScrollView
-        android:id="@+id/ScrollView01"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp" >
-
-        <TextView
-            android:id="@+id/textStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:freezesText="true"
-            android:singleLine="false"
-            android:text="@string/text_info" />
-    </ScrollView>
-
 </FrameLayout>
