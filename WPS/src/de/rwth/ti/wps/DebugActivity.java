@@ -44,7 +44,7 @@ public class DebugActivity extends SuperActivity implements
 		
 		// Setup UI
 		textStatus = (TextView) findViewById(R.id.textStatus);
-		debugButton = (Button) findViewById(R.id.debugButton);
+		debugButton = (Button) findViewById(R.id.createMapButton);
 		debugButton.setOnClickListener(this);
 	}
 
@@ -104,7 +104,7 @@ public class DebugActivity extends SuperActivity implements
 	@Override
 	public void onClick(View view) {
 		//if (true) {
-		if (view.getId() == R.id.debugButton) {
+		if (view.getId() == R.id.createMapButton) {
 			// FIXME GUI get real data from gui
 			Building b = storage.createBuilding("Haus "
 					+ (storage.countBuildings() + 1));

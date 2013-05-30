@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -17,18 +16,21 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.Toast;
 import de.rwth.ti.db.Building;
+import de.rwth.ti.db.Floor;
 
 public class NewMapActivity extends SuperActivity
 	implements OnItemSelectedListener {
 	
 	private static final int CHOOSE_MAP_FILE = 1;
 	
+	private EditText createBuildingEdit;
 	private Spinner buildingSelectSpinner;
 	//private Spinner floorSelectSpinner;
 	private EditText floorLevelEdit;
 	private EditText floorNameEdit;
+	private EditText northEdit;
 	//private TextView mapPathView;
 	
 	List<Building> buildingList;
@@ -38,6 +40,7 @@ public class NewMapActivity extends SuperActivity
 	//Floor selectedFloor;
 	int floorLevel;
 	String floorName;
+	int north;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +49,14 @@ public class NewMapActivity extends SuperActivity
 		
 		// Show the Up button in the action bar.
 		//setupActionBar();
-		
+		createBuildingEdit = (EditText) findViewById(R.id.createBuildingEdit);
 		buildingSelectSpinner = (Spinner) findViewById(R.id.buildingSelectSpinner);
 		buildingSelectSpinner.setOnItemSelectedListener(this);
 		//floorSelectSpinner = (Spinner) findViewById(R.id.floorSelectSpinner);
 		//floorSelectSpinner.setOnItemSelectedListener(this);
 		floorLevelEdit = (EditText) findViewById(R.id.floorLevelEdit);
 		floorNameEdit = (EditText) findViewById(R.id.floorNameEdit);
+		northEdit = (EditText) findViewById(R.id.northEdit);
 		//mapPathView = (TextView) findViewById(R.id.mapPathView);
 		
 		TextWatcher textWatch = new TextWatcher() {
@@ -69,6 +73,7 @@ public class NewMapActivity extends SuperActivity
 		//selectedFloor = null;
 		floorLevel = 0;
 		floorName = "";
+		north = -1;
 	}
 	
 	/** Called when the activity is first created or restarted */
@@ -120,6 +125,39 @@ public class NewMapActivity extends SuperActivity
 		return true;
 	}
 	
+	
+	public void createBuilding(View view) {
+		String tBuildingName = createBuildingEdit.getText().toString().trim();
+		String message;
+		
+		//Name eingegeben
+		if (tBuildingName.length() != 0) {
+			Building b = storage.createBuilding(tBuildingName);
+			
+			//Gebäude konnte erfolgreich erstellt werden?
+			if (b != null) {
+				message = getString(R.string.success_create_building);
+				
+				//Löscht den eingegeben Text
+				createBuildingEdit.setText("");
+				//Lädt die Liste der Gebäude neu
+				refreshBuildingSpinner();
+				//Wählt das letzte Element aus, also den neuen Eintrag
+				buildingSelectSpinner.setSelection(buildingList.size() - 1);
+			}
+			else {
+				message = getString(R.string.error_create_building);
+			}
+			
+		}
+		else {
+			message = getString(R.string.error_empty_input);
+		}
+		//User message
+		Toast.makeText(this, message, Toast.LENGTH_LONG)
+				.show();
+	}
+	
 	private void refreshBuildingSpinner() {
 		ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -147,6 +185,25 @@ public class NewMapActivity extends SuperActivity
 		
 		floorSelectSpinner.setAdapter(adapter);
 	}*/
+	
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int pos,
+			long id) {
+		if (parent == buildingSelectSpinner)
+		{
+			selectedBuilding = buildingList.get(pos);
+			//refreshFloorSpinner();
+		}
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {
+		if (parent == buildingSelectSpinner)
+		{
+			selectedBuilding = null;
+			//refreshFloorSpinner();
+		}
+	}
 	
 	private void onFloorLevelChanged() {
 		//floorNameEdit.setText(floorLevelEdit.getText());
@@ -181,25 +238,51 @@ public class NewMapActivity extends SuperActivity
 		return tString;
 	}
 	
-	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int pos,
-			long id) {
-		// TODO Auto-generated method stub
-		if (parent == buildingSelectSpinner)
-		{
-			//selectedBuilding = buildingList.get(pos);
-			//refreshFloorSpinner();
-		}
-	}
-
-	@Override
-	public void onNothingSelected(AdapterView<?> parent) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	public void createMap(View view) {
+		String message;
 		
+		floorName = floorNameEdit.getText().toString().trim();
+		String tFloorLevelText = floorLevelEdit.getText().toString().trim();
+		String tNorthText = northEdit.getText().toString().trim();
+		
+		//Kontrolliert, ob alle Inputs vernünftig gefüllt sind
+		if (floorName.length() != 0 && tFloorLevelText.length() != 0
+				&& !tFloorLevelText.equals("-") && tNorthText.length() != 0) {
+			north = Integer.parseInt(tNorthText);
+			
+			//Überhaupt ein Gebäude vorhanden <=> Gebäude ausgewählt
+			if (!buildingList.isEmpty()) {
+				//Kartendatei ausgewählt
+				//TODO: Bedingung hinzufügen, else Teil mit Nachricht
+				if (true) {
+					//TODO: Karten-ByteArray einfügen
+					Floor f = storage.createFloor(selectedBuilding, floorName, null, floorLevel, north);
+					
+					//Floor erfolgreich erstellt
+					if (f != null) {
+						message = getString(R.string.success_create_floor);
+						
+						//Eingaben löschen
+						buildingSelectSpinner.setSelection(0, true);
+						floorLevelEdit.setText("");
+						floorNameEdit.setText("");
+						northEdit.setText("");
+					}
+					else {
+						message = getString(R.string.error_create_floor);
+					}
+				}
+			}
+			else {
+				message = getString(R.string.error_no_building);
+			}
+		}
+		else {
+			message = getString(R.string.error_empty_input);
+		}
+		//User message
+		Toast.makeText(this, message, Toast.LENGTH_LONG)
+			.show();
 	}
 	
 	public void chooseMapFile(View view) {

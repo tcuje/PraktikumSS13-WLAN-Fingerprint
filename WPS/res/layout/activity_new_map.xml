@@ -15,28 +15,31 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <AutoCompleteTextView
-            android:id="@+id/inputBuilding"
+        <EditText
+            android:id="@+id/createBuildingEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:hint="@string/building" />
+            android:hint="@string/building"
+            android:inputType="textCapWords"
+            android:maxLines="1" />
 
         <Button
-            android:id="@+id/Button01"
+            android:id="@+id/createBuildingButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
             android:layout_weight="1"
-            android:onClick="chooseMapFile"
+            android:onClick="createBuilding"
             android:text="@string/activity_new_map_create_building" />
 
         <Spinner
             android:id="@+id/buildingSelectSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:prompt="@string/menu_building" />
 
         <EditText
             android:id="@+id/floorLevelEdit"
@@ -46,7 +49,8 @@
             android:ems="10"
             android:hint="@string/activity_new_map_floorlevel"
             android:inputType="numberSigned"
-            android:maxLength="6" />
+            android:maxLength="6"
+            android:maxLines="1" />
 
         <EditText
             android:id="@+id/floorNameEdit"
@@ -54,17 +58,20 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:hint="@string/activity_new_map_floorname" />
+            android:hint="@string/activity_new_map_floorname"
+            android:inputType="textCapSentences"
+            android:maxLines="1" />
 
         <EditText
-            android:id="@+id/editText1"
+            android:id="@+id/northEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
             android:hint="@string/activity_new_map_north"
             android:inputType="number"
-            android:maxLength="3" >
+            android:maxLength="3"
+            android:maxLines="1" >
 
             <requestFocus />
         </EditText>
@@ -84,7 +91,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/chooseMapFileButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -92,7 +99,7 @@
             android:text="@string/activity_new_map_choose_map" />
 
         <Button
-            android:id="@+id/debugButton"
+            android:id="@+id/createMapButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
