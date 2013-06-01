@@ -22,6 +22,7 @@
     </string-array>
 
     <string name="title_activity_measure">MeasureActivity</string>
+    <string name="text_measure_button">Messen</string>
     
     <string name="activity_new_map_label">Neue Karte</string>
     <string name="activity_new_map_create_building">Gebäude erstellen</string>

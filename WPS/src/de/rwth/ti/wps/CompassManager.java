@@ -19,7 +19,16 @@ public class CompassManager implements SensorEventListener {
 	private float[] gravity;
 	private float[] geomagnetic;
 	private double azimut;
+	OnCustomEventListener mListener;
 
+	public interface OnCustomEventListener{
+		public void onEvent();
+		}
+
+	public void setCustomEventListener(OnCustomEventListener eventListener) {
+		mListener=eventListener;
+	}
+		
 	public CompassManager(Activity app) {
 		sensor = (SensorManager) app.getSystemService(Context.SENSOR_SERVICE);
 		accel = sensor.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -56,6 +65,7 @@ public class CompassManager implements SensorEventListener {
 				float orientation[] = new float[3];
 				SensorManager.getOrientation(R, orientation);
 				azimut = orientation[0] * 360 / (2 * Math.PI);
+				if(mListener!=null) mListener.onEvent();
 			}
 		}
 	}

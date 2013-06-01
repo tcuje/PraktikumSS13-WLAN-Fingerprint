@@ -1,25 +1,79 @@
 package de.rwth.ti.wps;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.hardware.SensorEventListener;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+import de.rwth.ti.db.Building;
+import de.rwth.ti.db.Floor;
+import de.rwth.ti.db.MeasurePoint;
+import de.rwth.ti.wps.CompassManager.OnCustomEventListener;
 
-public class MeasureActivity extends SuperActivity {
+public class MeasureActivity extends SuperActivity{
 
+	private enum Direction
+	{
+		  NORTH, EAST, SOUTH, WEST
+	}
+	
 	/**
 	 * The serialization (saved instance state) Bundle key representing the
 	 * current dropdown position.
 	 */
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
-
+	private IPMapView mMapView;
+	private Building mBuilding;
+	private Floor mFloor;
+	private Direction mDirection;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_measure);
+		
+		mMapView = (IPMapView) findViewById(R.id.map_view);
+		
+		AssetManager assetManager = this.getAssets();
+        InputStream inputStream = null;
+        try {
+            inputStream = assetManager.open("seminargebaude2.svg");
+        } catch (IOException e) {
+            Log.e("tag", e.getMessage());
+        }
+		mMapView.newMap(inputStream);
+		mMapView.setMeasureMode(true);
+		mDirection = Direction.NORTH;
+		((TextView)findViewById(R.id.direction_text_view)).setText("Nach Norden aussrichten");
+		cmgr.setCustomEventListener(new OnCustomEventListener(){
+		    public void onEvent(){
+		    	showArrow();
+		    }
+		    });
 	}
 
+	protected void showArrow() {
+		((TextView)findViewById(R.id.direction_text_view)).setText("Nach Norden aussrichten" + cmgr.getAzimut());
+	}
+
+	@Override
+	public void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		//FIXME gebäude aus spinner verwenden
+		mBuilding = storage.createBuilding("Haus "
+ 				 + (storage.countBuildings() + 1));
+		mFloor = storage.createFloor(mBuilding, "Ebene "
+				 + (storage.countFloors() + 1), null,
+						(storage.countFloors() + 1), 15);	
+	}
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		// Restore the previously serialized current dropdown position.
@@ -71,6 +125,37 @@ public class MeasureActivity extends SuperActivity {
 		return true;
 	}
 
+	public void measure(View view){
+		
+		if (view.getId() == R.id.measure_button) {
+			float[] p = mMapView.getMeasurPoint();
+			MeasurePoint mp = storage.createMeasurePoint(mFloor, p[0], p[1]);
+			boolean check = scm.startSingleScan(mp);
+			if (check == false) {
+				Toast.makeText(this, "Fehler beim Scanstart", Toast.LENGTH_LONG)
+						.show();
+			}else{
+				mDirection = Direction.values()[(mDirection.ordinal() + 1)%4];
+				switch (mDirection) {
+				case NORTH:
+					((TextView)findViewById(R.id.direction_text_view)).setText("Nach Norden aussrichten");
+					break;
+				case EAST:
+					((TextView)findViewById(R.id.direction_text_view)).setText("Nach Osten aussrichten");
+					break;
+				case SOUTH:
+					((TextView)findViewById(R.id.direction_text_view)).setText("Nach Süden aussrichten");
+					break;
+				case WEST:
+					((TextView)findViewById(R.id.direction_text_view)).setText("Nach Westen aussrichten");
+					break;
+				default:
+					break;
+				}
+			}
+		}
+	}
+	
 	/*
 	@Override
 	public boolean onNavigationItemSelected(int position, long id) {
@@ -81,4 +166,6 @@ public class MeasureActivity extends SuperActivity {
 		
 		return true;
 	}*/
+	
 }
+
