@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     tools:ignore="MergeRootFrame" >
-
+<!-- 
     <ImageButton
         android:id="@+id/centerButton"
         android:layout_width="wrap_content"
@@ -22,7 +22,7 @@
         android:layout_gravity="bottom|right"
         android:contentDescription="@string/refresh_button_description"
         android:src="@android:drawable/ic_popup_sync" />
-
+ -->
     <Button
         android:id="@+id/buttonScan"
         android:layout_width="match_parent"

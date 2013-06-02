@@ -5,7 +5,7 @@
     <string name="app_description">WiFi Positioning System</string>
     
     <string name="action_localisation">Lokalisation</string>
-    <string name="action_new_floor">Neue Karte</string>
+    <string name="action_new_map">Neue Karte</string>
     <string name="action_measure">Messungen</string>
     <string name="action_signal_dump">WiFi-Signale</string>
     
@@ -19,19 +19,11 @@
 
     <string name="title_activity_measure">MeasureActivity</string>
     
-    <string name="activity_new_floor_label">Neue Karte</string>
     <string name="activity_new_floor_create_building">Gebäude erstellen</string>
-    <string name="activity_new_floor_edit_building">Gebäude bearbeiten</string>
-    <string name="activity_new_floor_delete_building">Gebäude löschen</string>
     <string name="activity_new_floor_create_floor">Neue Etage erstellen</string>
-    <string name="activity_new_floor_edit_floor">Etage bearbeiten</string>
-    <string name="activity_new_floor_delete_floor">Etage löschen</string>
 
     <string name="text_info">Bitte Scan drücken</string>
     <string name="text_scan">Scan starten</string>
-    <string name="text_wifistate">WLAN deaktiviert. Jetzt aktivieren?</string>
-    <string name="text_yes">Ja</string>
-    <string name="text_no">Nein</string>
     <string name="menu_debug">Rohdaten anzeigen</string>
     <string name="menu_export">Datenbank exportieren</string>
     <string name="menu_import">Datenbank importieren</string>

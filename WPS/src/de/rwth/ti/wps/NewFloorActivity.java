@@ -147,6 +147,11 @@ public class NewFloorActivity extends SuperActivity {
 
 	public void createBuilding(View view) {
 		String bName = inputBuilding.getText().toString();
+		bName = bName.trim();
+		if (bName == null || bName.length() < 1) {
+			// XXX handle error
+			return;
+		}
 		Building b = storage.createBuilding(bName);
 		if (b == null) {
 			// XXX handle error
@@ -163,14 +168,6 @@ public class NewFloorActivity extends SuperActivity {
 		buildingSelectSpinner.setSelection(index);
 	}
 
-	public void editBuilding(View view) {
-		// TODO open alert to edit building name
-	}
-
-	public void deleteBuilding(View view) {
-		// TODO open alert yes/no question
-	}
-
 	public void createFloor(View view) {
 		int pos = buildingSelectSpinner.getSelectedItemPosition();
 		if (pos == Spinner.INVALID_POSITION) {
@@ -184,15 +181,12 @@ public class NewFloorActivity extends SuperActivity {
 			// XXX handle error
 			return;
 		}
-		// TODO floor successfull created
-	}
-
-	public void editFloor(View view) {
-		// TODO open alert to edit floor name
-	}
-
-	public void deleteFloor(View view) {
-		// TODO open alert yes/no question
+		// floor successfull created
+		floorLevelEdit.setText("");
+		floorNameEdit.setText("");
+		floorLevel = 0;
+		floorName.setText("");
+		floorFile = null;
 	}
 
 }

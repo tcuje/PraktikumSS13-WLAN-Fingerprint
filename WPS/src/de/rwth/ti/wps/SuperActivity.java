@@ -100,9 +100,6 @@ public class SuperActivity extends Activity {
 		case R.id.action_new_floor:
 			intent = new Intent(this, NewFloorActivity.class);
 			break;
-		case R.id.action_settings:
-			// intent = new Intent(this, SettingsActivity.class);
-			break;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
