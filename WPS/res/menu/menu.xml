@@ -38,7 +38,7 @@
 		        android:title="@string/action_localisation"/>
 		    
 		    <item
-		        android:id="@+id/action_new_map"
+		        android:id="@+id/action_new_floor"
 		        android:title="@string/action_new_map"/>
 		    
 		    <item

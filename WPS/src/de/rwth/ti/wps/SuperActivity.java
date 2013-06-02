@@ -97,8 +97,8 @@ public class SuperActivity extends Activity {
 		case R.id.action_measure:
 			intent = new Intent(this, MeasureActivity.class);
 			break;
-		case R.id.action_new_map:
-			intent = new Intent(this, NewMapActivity.class);
+		case R.id.action_new_floor:
+			intent = new Intent(this, NewFloorActivity.class);
 			break;
 		case R.id.action_settings:
 			// intent = new Intent(this, SettingsActivity.class);

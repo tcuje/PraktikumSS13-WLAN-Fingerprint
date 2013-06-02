@@ -48,8 +48,7 @@ public class MainActivity extends SuperActivity implements OnClickListener {
 		buttonScan.setOnClickListener(this);
 
 		// create app sd directory
-		File f = new File(Environment.getExternalStorageDirectory()
-				.getAbsolutePath() + File.separator + Constants.SD_APP_DIR);
+		File f = new File(Constants.SD_APP_DIR);
 		boolean check = f.mkdirs();
 		if (check == false) {
 			// XXX handle error

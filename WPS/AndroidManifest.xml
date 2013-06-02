@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="8" />
+        android:targetSdkVersion="18" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"></uses-permission>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
@@ -27,7 +27,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="de.rwth.ti.wps.NewMapActivity"
+            android:name="de.rwth.ti.wps.SuperActivity" >
+        </activity>
+        <activity
+            android:name="de.rwth.ti.wps.NewFloorActivity"
             android:label="@string/activity_new_map_label"
             android:icon="@drawable/new_map"
             android:parentActivityName="de.rwth.ti.wps.MainActivity" >

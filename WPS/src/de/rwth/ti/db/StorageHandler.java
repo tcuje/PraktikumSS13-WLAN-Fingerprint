@@ -279,7 +279,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public Floor createFloor(Building b, String name, byte[] file, long level,
-			long north) {
+			double north) {
 		ContentValues values = new ContentValues();
 		if (b == null) {
 			return null;
@@ -597,11 +597,13 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		String dstDBPath = "/" + filename;
 		File srcDB = new File(data, srcDBPath);
 		File dstDB = new File(sd, dstDBPath);
-		FileChannel src = new FileInputStream(srcDB).getChannel();
-		FileChannel dst = new FileOutputStream(dstDB).getChannel();
+		FileInputStream fis = new FileInputStream(srcDB);
+		FileChannel src = fis.getChannel();
+		FileOutputStream fos = new FileOutputStream(dstDB);
+		FileChannel dst = fos.getChannel();
 		dst.transferFrom(src, 0, src.size());
-		src.close();
-		dst.close();
+		fis.close();
+		fos.close();
 		db = storage.getWritableDatabase();
 	}
 
