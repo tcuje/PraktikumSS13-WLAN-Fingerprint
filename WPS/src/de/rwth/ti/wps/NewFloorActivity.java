@@ -34,7 +34,7 @@ public class NewFloorActivity extends SuperActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_new_floor);
-		inputBuilding = (EditText) findViewById(R.id.inputBuilding);
+		inputBuilding = (EditText) findViewById(R.id.createBuildingEdit);
 		buildingSelectSpinner = (Spinner) findViewById(R.id.buildingSelectSpinner);
 		buildingAdapter = new ArrayAdapter<CharSequence>(this,
 				android.R.layout.simple_spinner_item);

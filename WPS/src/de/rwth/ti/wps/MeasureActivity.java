@@ -1,17 +1,10 @@
 package de.rwth.ti.wps;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class MeasureActivity extends SuperActivity {
-
-	/**
-	 * The serialization (saved instance state) Bundle key representing the
-	 * current dropdown position.
-	 */
-	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +41,8 @@ public class MeasureActivity extends SuperActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Intent intent = null;
 		switch (item.getItemId()) {
-		case R.id.action_measure: // intent = new Intent(this,
-									// MeasureActivity.class);
+		case R.id.action_measure:
 			break;
 		// case android.R.id.home:
 		// This ID represents the Home or Up button. In the case of this

@@ -2,6 +2,7 @@ package de.rwth.ti.wps;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import android.os.Bundle;
 import android.os.Environment;
@@ -9,28 +10,35 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
-import de.rwth.ti.common.Constants;
+import de.rwth.ti.db.AccessPoint;
+import de.rwth.ti.db.Building;
+import de.rwth.ti.db.Floor;
+import de.rwth.ti.db.MeasurePoint;
+import de.rwth.ti.db.Scan;
 
 /**
  * This is the main activity class
  * 
  */
-public class MainActivity extends SuperActivity implements OnClickListener {
+public class DebugActivity extends SuperActivity implements OnClickListener {
+
+	private TextView textStatus;
+	private Button debugButton;
 
 	/** Called when the activity is first created. */
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_localisation);
+		setContentView(R.layout.activity_debug);
 
-		// create app sd directory
-		File f = new File(Constants.SD_APP_DIR);
-		boolean check = f.mkdirs();
-		if (check == false) {
-			// XXX handle error
-		}
+		// Setup UI
+		textStatus = (TextView) findViewById(R.id.textStatus);
+		debugButton = (Button) findViewById(R.id.createMapButton);
+		debugButton.setOnClickListener(this);
 	}
 
 	@Override
@@ -70,6 +78,7 @@ public class MainActivity extends SuperActivity implements OnClickListener {
 		// scm.onStart();
 		// cmgr.onStart();
 		// TODO GUI don't show debug info on startup
+		showDebug();
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
@@ -83,25 +92,42 @@ public class MainActivity extends SuperActivity implements OnClickListener {
 
 	@Override
 	public void onClick(View view) {
+		// if (true) {
+		if (view.getId() == R.id.createMapButton) {
+			// FIXME GUI get real data from gui
+			Building b = storage.createBuilding("Haus "
+					+ (storage.countBuildings() + 1));
+			Floor f = storage.createFloor(b, "Ebene "
+					+ (storage.countFloors() + 1), null,
+					(storage.countFloors() + 1), 15);
+			MeasurePoint mp = storage.createMeasurePoint(f, 0, 0);
+			boolean check = scm.startSingleScan(mp);
+			if (check == false) {
+				Toast.makeText(this, "Fehler beim Scanstart", Toast.LENGTH_LONG)
+						.show();
+			}
+			showDebug();
+		}
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Start other Activities, when the related MenuItem is selected
 		// TextView textView = (TextView) findViewById(R.id.textStatus);
-//		String text;
-//		text = item.getTitle() + "\n" + Integer.toString(item.getItemId())
-//				+ "\n";
+		String text;
+		text = item.getTitle() + "\n" + Integer.toString(item.getItemId())
+				+ "\n";
+
 		switch (item.getItemId()) {
-		case R.id.action_localisation:
-//			text += "Lokalisation";
+		case R.id.action_debug:
+			text += "Lokalisation";
 			break;
 		case R.id.menu_show_debug:
-			// showDebug();
+			showDebug();
 			return true;
 		case R.id.menu_export:
 			try {
-				storage.exportDatabase(Constants.LOCAL_DB_NAME);
+				storage.exportDatabase("local.sqlite");
 				// TODO GUI extract message
 				Toast.makeText(getBaseContext(),
 						"Datenbank erfolgreich exportiert", Toast.LENGTH_SHORT)
@@ -114,7 +140,7 @@ public class MainActivity extends SuperActivity implements OnClickListener {
 		case R.id.menu_import:
 			// FIXME GUI get user input for filename
 			storage.importDatabase(Environment.getExternalStorageDirectory()
-					+ File.separator + Constants.LOCAL_DB_NAME);
+					+ File.separator + "local.sqlite");
 			// TODO GUI extract message
 			Toast.makeText(getBaseContext(),
 					"Datenbank erfolgreich importiert", Toast.LENGTH_SHORT)
@@ -124,7 +150,52 @@ public class MainActivity extends SuperActivity implements OnClickListener {
 			return super.onOptionsItemSelected(item);
 		}
 
+		textStatus.setText(text);
 		return true;
+	}
+
+	public void showDebug() {
+		textStatus.setText("Database:\n");
+		textStatus.append("\nBuildings: " + storage.countBuildings() + "\n");
+		for (Building b : storage.getAllBuildings()) {
+			textStatus.append("Building\t" + b.getId() + "\t" + b.getName()
+					+ "\n");
+		}
+		textStatus.append("\nMaps: " + storage.countFloors() + "\n");
+		for (Floor m : storage.getAllFloors()) {
+			textStatus.append("Map\t" + m.getId() + "\t" + m.getName() + "\t"
+					+ m.getFile() + "\n");
+		}
+		textStatus.append("\nCheckpoints: " + storage.countMeasurePoints()
+				+ "\n");
+		for (MeasurePoint cp : storage.getAllMeasurePoints()) {
+			textStatus.append("Checkpoint\t" + cp.getId() + "\t"
+					+ cp.getFloorId() + "\t" + cp.getPosx() + "\t"
+					+ cp.getPosy() + "\n");
+		}
+		textStatus.append("\nScans: " + storage.countScans() + "\n");
+		for (Scan scan : storage.getAllScans()) {
+			textStatus.append("Scan\t" + scan.getId() + "\t" + scan.getMpid()
+					+ "\t" + scan.getTime() + "\t" + scan.getCompass() + "\n");
+		}
+		textStatus.append("\nAccessPoints: " + storage.countAccessPoints()
+				+ "\n");
+		List<AccessPoint> all = storage.getAllAccessPoints();
+		for (AccessPoint ap : all) {
+			textStatus.append("AP\t" + ap.getId() + "\t" + ap.getScanId()
+					+ "\t" + ap.getBssid() + "\t" + ap.getLevel() + "\t"
+					+ ap.getFreq() + "\t'" + ap.getSsid() + "'\t"
+					+ ap.getProps() + "\n");
+		}
+		if (all.size() > 0) {
+			String bssid = all.get(0).getBssid();
+			List<AccessPoint> first = storage.getAccessPoint(bssid);
+			textStatus.append("\n" + bssid + "\n");
+			for (AccessPoint ap : first) {
+				textStatus.append("AP\t" + ap.getId() + "\t" + ap.getScanId()
+						+ "\t" + ap.getBssid() + "\t" + ap.getLevel() + "\n");
+			}
+		}
 	}
 
 	/*

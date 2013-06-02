@@ -3,12 +3,11 @@
 
     <string name="app_name">WPS</string>
     <string name="app_description">WiFi Positioning System</string>
-    
     <string name="action_localisation">Lokalisation</string>
     <string name="action_new_map">Neue Karte</string>
     <string name="action_measure">Messungen</string>
     <string name="action_signal_dump">WiFi-Signale</string>
-    
+    <string name="action_debug">Rohdaten anzeigen</string>
     <string name="building">Gebäude</string>
 
     <string-array name="floors">
@@ -18,10 +17,8 @@
     </string-array>
 
     <string name="title_activity_measure">MeasureActivity</string>
-    
     <string name="activity_new_floor_create_building">Gebäude erstellen</string>
     <string name="activity_new_floor_create_floor">Neue Etage erstellen</string>
-
     <string name="text_info">Bitte Scan drücken</string>
     <string name="text_scan">Scan starten</string>
     <string name="menu_debug">Rohdaten anzeigen</string>

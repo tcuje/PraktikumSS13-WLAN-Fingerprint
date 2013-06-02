@@ -15,13 +15,15 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <AutoCompleteTextView
-            android:id="@+id/inputBuilding"
+        <EditText
+            android:id="@+id/createBuildingEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:hint="@string/building" />
+            android:hint="@string/building"
+            android:inputType="textCapWords"
+            android:maxLines="1" />
 
         <Button
             android:id="@+id/bCreateBuilding"
@@ -36,7 +38,8 @@
             android:id="@+id/buildingSelectSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:prompt="@string/menu_building" />
 
         <EditText
             android:id="@+id/floorLevelEdit"
@@ -46,7 +49,8 @@
             android:ems="10"
             android:hint="@string/activity_new_floor_floorlevel"
             android:inputType="numberSigned"
-            android:maxLength="6" />
+            android:maxLength="6"
+            android:maxLines="1" />
 
         <EditText
             android:id="@+id/floorNameEdit"
@@ -55,6 +59,7 @@
             android:layout_weight="1"
             android:ems="10"
             android:hint="@string/activity_new_floor_floorname" />
+
 
         <TextView
             android:id="@+id/floorPathView"

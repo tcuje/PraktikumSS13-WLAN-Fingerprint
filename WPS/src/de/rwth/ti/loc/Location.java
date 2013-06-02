@@ -105,11 +105,11 @@ public class Location {
 		if (aps.isEmpty() || b == null) {
 			return null;
 		}
-		String mac = aps.get(0).BSSID;
-		List<AccessPoint> entries = dataHandler.getAccessPoint(mac);
-		AccessPoint ap = entries.get(0);
-		Scan scan = dataHandler.getScan(ap);
-		MeasurePoint mp = dataHandler.getMeasurePoint(scan);
+//		String mac = aps.get(0).BSSID;
+//		List<AccessPoint> entries = dataHandler.getAccessPoint(mac);
+//		AccessPoint ap = entries.get(0);
+//		Scan scan = dataHandler.getScan(ap);
+//		MeasurePoint mp = dataHandler.getMeasurePoint(scan);
 		List<Floor> maps = dataHandler.getFloors(b);
 		return maps.get(0);
 	}
