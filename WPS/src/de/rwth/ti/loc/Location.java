@@ -1,5 +1,6 @@
 package de.rwth.ti.loc;
 
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,12 +15,39 @@ import de.rwth.ti.share.IMeasureDataHandler;
 public class Location {
 
 	private IMeasureDataHandler dataHandler;
-
+	private long timeSinceFloor=0;
+	private long timeSinceBuilding=0;
+	private long theTime;
+	private Building tempBuilding;
+	private Floor tempFloor;
+	Calendar time = Calendar.getInstance();
 	public Location(IMeasureDataHandler dataHandler) {
 		this.dataHandler = dataHandler;
 	}
-
-	public Building findBuilding(List<ScanResult> aps) {
+	public LocationResult getLocation(List<ScanResult> aps, int compass, int kontrollvariable ){		//kontrollvariable 0,1,2 steuert das Verhalten der Funktion
+																										//0 ueberlaesst den Ablauf den Zeitvariablen
+		theTime = time.getTime().getTime();																//1 erzwingt Gebaeudesuche
+																										//2 erzwingt FloorSuche
+		if (theTime > timeSinceBuilding+40000 || kontrollvariable == 1){
+			tempBuilding = findBuilding(aps);
+			tempFloor = findMap(aps, tempBuilding);
+			LocationResult result = findMP(aps, tempFloor, tempBuilding, compass);
+			timeSinceFloor=theTime;
+			timeSinceBuilding=theTime;
+			return result;
+		}
+		else if (theTime > timeSinceFloor+10000 || kontrollvariable == 2){
+			tempFloor = findMap(aps, tempBuilding);
+			LocationResult result = findMP(aps, tempFloor, tempBuilding, compass);
+			timeSinceFloor=theTime;
+			timeSinceBuilding=theTime;
+			return result;
+		}
+		LocationResult result = findMP(aps, tempFloor, tempBuilding, compass);
+		return result;
+		
+	}
+	private Building findBuilding(List<ScanResult> aps) {
 		if (aps.isEmpty()) {
 			return null;
 		}
@@ -34,7 +62,7 @@ public class Location {
 	}
 
 
-	public Floor findMap(List<ScanResult> aps, Building b) {
+	private Floor findMap(List<ScanResult> aps, Building b) {
 		if (aps.isEmpty() || b == null) {
 			return null;
 		}
@@ -43,11 +71,11 @@ public class Location {
 		AccessPoint ap = entries.get(0);
 		Scan scan = dataHandler.getScan(ap);
 		MeasurePoint mp = dataHandler.getMeasurePoint(scan);
-		List<Floor> maps = dataHandler.getFloors(b);
-		return maps.get(0);
+		Floor floor = dataHandler.getFloor(mp);
+		return floor;
 	}
 
-	public LocationResult findMP(List<ScanResult> aps, Floor map, int compass) {
+	private LocationResult findMP(List<ScanResult> aps, Floor map, Building building, int compass) {
 		if (aps.isEmpty() || map == null) {
 			return null;
 		}
@@ -99,12 +127,12 @@ public class Location {
 		}
 		x = x / errorSum;
 		y = y / errorSum;
-		LocationResult result = new LocationResult(map, x, y);
+		LocationResult result = new LocationResult(building, map, x, y);
 		return result;
 
 	}
 
-	public List<ScanError> sortScanError(List<ScanError> scanErrorList) {
+	private List<ScanError> sortScanError(List<ScanError> scanErrorList) {
 		for (int i = 0; i < scanErrorList.size(); i++) {
 			for (int j = 0; j < scanErrorList.size() - 1; j++) {
 				if (scanErrorList.get(j).getError() > scanErrorList.get(j + 1)
