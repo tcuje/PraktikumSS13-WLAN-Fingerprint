@@ -13,25 +13,47 @@
         android:title="@string/menu_debug"/>
     
     <item
-        android:id="@+id/action_localisation"
-        android:title="@string/action_localisation"/>
+        android:id="@+id/menu_buildings"
+        android:title="@string/menu_building"
+        android:showAsAction="ifRoom">
+        
+        <menu>
+            <item
+                android:title="@string/title_section1"/>
+            <item
+                android:title="@string/title_section2"/>
+            <item
+                android:title="@string/title_section3"/>
+        </menu>
+    </item>
     
     <item
-        android:id="@+id/action_new_map"
-        android:title="@string/action_new_map"/>
-    
-    <item
-        android:id="@+id/action_measure"
-        android:title="@string/action_measure"/>
-    
-    <item
-        android:id="@+id/action_signal_dump"
-        android:title="@string/action_signal_dump"/>
+        android:id="@+id/action_navigation"
+        android:title="@string/action_navigation"
+        android:showAsAction="ifRoom">
+        
+        <menu>
+		    <item
+		        android:id="@+id/action_localisation"
+		        android:title="@string/action_localisation"/>
+		    
+		    <item
+		        android:id="@+id/action_new_map"
+		        android:title="@string/action_new_map"/>
+		    
+		    <item
+		        android:id="@+id/action_measure"
+		        android:title="@string/action_measure"/>
+		    
+		    <item
+		        android:id="@+id/action_debug"
+		        android:title="@string/action_debug"/>
+        </menu>
+    </item>
     
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/action_settings"/>
-
 </menu>
