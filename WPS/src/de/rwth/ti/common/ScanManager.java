@@ -1,4 +1,4 @@
-package de.rwth.ti.wps;
+package de.rwth.ti.common;
 
 import java.util.Date;
 import java.util.List;
@@ -14,6 +14,7 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.Scan;
+import de.rwth.ti.wps.SuperActivity;
 
 /**
  * This class handles wifi scanning, provides auto scanning and is activated if
@@ -33,7 +34,8 @@ public class ScanManager extends BroadcastReceiver {
 	public ScanManager(SuperActivity superActivity) {
 		this.app = superActivity;
 		// Setup WiFi
-		wifi = (WifiManager) superActivity.getSystemService(Context.WIFI_SERVICE);
+		wifi = (WifiManager) superActivity
+				.getSystemService(Context.WIFI_SERVICE);
 		wl = wifi.createWifiLock("Wavi");
 
 		// Setup auto scan timer

@@ -1,6 +1,6 @@
 package de.rwth.ti.db;
 
-import java.util.Locale;
+import de.rwth.ti.common.Constants;
 
 /**
  * This class represents a map or floor. Multiple objects represent a building
@@ -89,8 +89,8 @@ public class Floor {
 	 * @return Returns true, if lower case names are equal
 	 */
 	public boolean compare(Floor other) {
-		String name1 = this.getName().toLowerCase(Locale.GERMAN);
-		String name2 = other.getName().toLowerCase(Locale.GERMAN);
+		String name1 = this.getName().toLowerCase(Constants.LOCALE);
+		String name2 = other.getName().toLowerCase(Constants.LOCALE);
 		boolean result = name1.equals(name2);
 		return result;
 	}

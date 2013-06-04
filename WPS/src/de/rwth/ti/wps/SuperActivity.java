@@ -1,37 +1,30 @@
 package de.rwth.ti.wps;
 
-import java.io.File;
-import java.io.IOException;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+import de.rwth.ti.common.CompassManager;
+import de.rwth.ti.common.ScanManager;
 import de.rwth.ti.db.StorageHandler;
 
-/**
- * @author Michael
- *
- */
 public class SuperActivity extends Activity {
+
 	public static final String PACKAGE_NAME = "de.rwth.ti.wps";
-	
+
 	/*
 	 * Own classes
 	 */
 	protected ScanManager scm;
 	protected StorageHandler storage;
 	protected CompassManager cmgr;
-	
-/** Called when the activity is first created. */
-	
+
+	/** Called when the activity is first created. */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		// Setup Wifi
 		if (scm == null) {
 			scm = new ScanManager(this);
@@ -47,7 +40,7 @@ public class SuperActivity extends Activity {
 			cmgr = new CompassManager(this);
 		}
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -55,7 +48,7 @@ public class SuperActivity extends Activity {
 		getMenuInflater().inflate(R.menu.menu, menu);
 		return true;
 	}
-	
+
 	/** Called when the activity is first created or restarted */
 	@Override
 	public void onStart() {
@@ -63,7 +56,6 @@ public class SuperActivity extends Activity {
 		storage.onStart();
 		scm.onStart();
 		cmgr.onStart();
-		//showDebug();
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
@@ -86,12 +78,10 @@ public class SuperActivity extends Activity {
 	public CompassManager getCompassManager() {
 		return cmgr;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Start other Activities, when the related MenuItem is selected
-		// TextView textView = (TextView) findViewById(R.id.textStatus);
-
 		Intent intent = null;
 		switch (item.getItemId()) {
 		case R.id.action_localisation:
@@ -100,8 +90,8 @@ public class SuperActivity extends Activity {
 		case R.id.action_measure:
 			intent = new Intent(this, MeasureActivity.class);
 			break;
-		case R.id.action_new_map:
-			intent = new Intent(this, NewMapActivity.class);
+		case R.id.action_new_floor:
+			intent = new Intent(this, NewFloorActivity.class);
 			break;
 		case R.id.action_debug:
 			intent = new Intent(this, DebugActivity.class);
@@ -109,10 +99,10 @@ public class SuperActivity extends Activity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
-
-		if (intent != null)
+		if (intent != null) {
 			startActivity(intent);
-		
+		}
 		return true;
 	}
+
 }

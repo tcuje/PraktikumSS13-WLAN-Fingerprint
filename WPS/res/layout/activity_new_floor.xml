@@ -32,7 +32,7 @@
             android:layout_marginBottom="30dp"
             android:layout_weight="1"
             android:onClick="createBuilding"
-            android:text="@string/activity_new_map_create_building" />
+            android:text="@string/activity_new_floor_create_building" />
 
         <Spinner
             android:id="@+id/buildingSelectSpinner"
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:hint="@string/activity_new_map_floorlevel"
+            android:hint="@string/activity_new_floor_floorlevel"
             android:inputType="numberSigned"
             android:maxLength="6"
             android:maxLines="1" />
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:hint="@string/activity_new_map_floorname"
+            android:hint="@string/activity_new_floor_floorname"
             android:inputType="textCapSentences"
             android:maxLines="1" />
 
@@ -68,43 +68,28 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:hint="@string/activity_new_map_north"
+            android:hint="@string/activity_new_floor_north"
             android:inputType="number"
             android:maxLength="3"
-            android:maxLines="1" >
+            android:maxLines="1" />
 
-            <requestFocus />
-        </EditText>
-
-        <TextView
+        <EditText
             android:id="@+id/mapPathView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
             android:layout_weight="1"
-            android:clickable="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:hint="@string/activity_new_map_mappath"
-            android:longClickable="false"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <Button
-            android:id="@+id/chooseMapFileButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="chooseMapFile"
-            android:text="@string/activity_new_map_choose_map" />
+            android:ems="10"
+            android:hint="@string/activity_new_floor_floorpath"
+            android:onClick="chooseFile"
+            android:focusable="false" />
 
         <Button
             android:id="@+id/createMapButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="createMap"
-            android:text="@string/activity_new_map_create_map" />
+            android:onClick="createFloor"
+            android:text="@string/activity_new_floor_create_floor" />
 
     </LinearLayout>
 
