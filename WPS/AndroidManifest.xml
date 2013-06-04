@@ -33,7 +33,7 @@
         </activity>
         <activity
             android:name="de.rwth.ti.wps.NewFloorActivity"
-            android:label="@string/action_new_map"
+            android:label="@string/action_new_floor"
             android:icon="@drawable/new_map"
             android:parentActivityName="de.rwth.ti.wps.MainActivity" >
             <meta-data

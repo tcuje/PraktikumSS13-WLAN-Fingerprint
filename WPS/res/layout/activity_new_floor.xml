@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".NewFloorActivity" >
+    tools:context=".NewMapActivity" >
 
     <LinearLayout
         android:id="@+id/LinearLayout1"
@@ -26,7 +26,7 @@
             android:maxLines="1" />
 
         <Button
-            android:id="@+id/bCreateBuilding"
+            android:id="@+id/createBuildingButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
@@ -58,16 +58,32 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:hint="@string/activity_new_floor_floorname" />
+            android:hint="@string/activity_new_floor_floorname"
+            android:inputType="textCapSentences"
+            android:maxLines="1" />
 
+        <EditText
+            android:id="@+id/northEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/activity_new_floor_north"
+            android:inputType="number"
+            android:maxLength="3"
+            android:maxLines="1" >
+
+            <requestFocus />
+        </EditText>
 
         <TextView
-            android:id="@+id/floorPathView"
+            android:id="@+id/mapPathView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             android:layout_weight="1"
+            android:clickable="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:hint="@string/activity_new_floor_floorpath"
@@ -75,11 +91,19 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Button
-            android:id="@+id/bCreateFloor"
+            android:id="@+id/chooseMapFileButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="createFloor"
+            android:onClick="chooseMapFile"
+            android:text="@string/activity_new_floor_choose_floor" />
+
+        <Button
+            android:id="@+id/createMapButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="createMap"
             android:text="@string/activity_new_floor_create_floor" />
 
     </LinearLayout>
