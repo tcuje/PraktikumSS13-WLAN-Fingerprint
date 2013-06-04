@@ -9,11 +9,8 @@ import de.rwth.ti.common.CompassManager;
 import de.rwth.ti.common.ScanManager;
 import de.rwth.ti.db.StorageHandler;
 
-/**
- * @author Michael
- * 
- */
 public class SuperActivity extends Activity {
+
 	public static final String PACKAGE_NAME = "de.rwth.ti.wps";
 
 	/*
@@ -24,7 +21,6 @@ public class SuperActivity extends Activity {
 	protected CompassManager cmgr;
 
 	/** Called when the activity is first created. */
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -60,7 +56,6 @@ public class SuperActivity extends Activity {
 		storage.onStart();
 		scm.onStart();
 		cmgr.onStart();
-		// showDebug();
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
@@ -87,8 +82,6 @@ public class SuperActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Start other Activities, when the related MenuItem is selected
-		// TextView textView = (TextView) findViewById(R.id.textStatus);
-
 		Intent intent = null;
 		switch (item.getItemId()) {
 		case R.id.action_localisation:
@@ -106,10 +99,10 @@ public class SuperActivity extends Activity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
-
-		if (intent != null)
+		if (intent != null) {
 			startActivity(intent);
-
+		}
 		return true;
 	}
+
 }

@@ -2,9 +2,6 @@ package de.rwth.ti.wps;
 
 import java.util.List;
 
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,21 +19,15 @@ import de.rwth.ti.db.Floor;
 public class NewFloorActivity extends SuperActivity implements
 		OnItemSelectedListener {
 
-	private static final int CHOOSE_MAP_FILE = 1;
-
 	private EditText createBuildingEdit;
 	private Spinner buildingSelectSpinner;
-	// private Spinner floorSelectSpinner;
 	private EditText floorLevelEdit;
 	private EditText floorNameEdit;
 	private EditText northEdit;
-	// private TextView mapPathView;
 
 	List<Building> buildingList;
-	// List<Floor> floorList;
 
 	Building selectedBuilding;
-	// Floor selectedFloor;
 	int floorLevel;
 	String floorName;
 	int north;
@@ -139,13 +130,10 @@ public class NewFloorActivity extends SuperActivity implements
 	private void refreshBuildingSpinner() {
 		ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(
 				this, android.R.layout.simple_spinner_item);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
 		buildingList = storage.getAllBuildings();
 		for (Building b : buildingList) {
 			adapter.add(b.getName());
 		}
-
 		buildingSelectSpinner.setAdapter(adapter);
 	}
 
@@ -258,40 +246,4 @@ public class NewFloorActivity extends SuperActivity implements
 		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 	}
 
-	public void chooseMapFile(View view) {
-		Intent chooseMapIntent = new Intent();
-		chooseMapIntent.setType("image/*");
-		chooseMapIntent.setAction(Intent.ACTION_GET_CONTENT);
-		// startActivityForResult(Intent.createChooser(chooseMapIntent,
-		// "@string/activity_new_map_choose_map"), CHOOSE_MAP_FILE);
-		startActivityForResult(chooseMapIntent, CHOOSE_MAP_FILE);
-	}
-
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == CHOOSE_MAP_FILE) {
-			if (resultCode == RESULT_OK) {
-				Uri mapUri = data.getData();
-
-				if (mapUri != null) {
-					// User had pick an image.
-					Cursor cursor = getContentResolver()
-							.query(mapUri,
-									new String[] { android.provider.MediaStore.Images.ImageColumns.DATA },
-									null, null, null);
-					cursor.moveToFirst();
-
-					// Link to the image
-					final String imageFilePath = cursor.getString(0);
-					cursor.close();
-
-					// ImageView mapView = (ImageView)
-					// findViewById(R.id.mapView);
-					// mapView.setImageURI(mapUri);
-					// TextView textView = (TextView)
-					// findViewById(R.id.mapPath);
-					// textView.setText(imageFilePath);
-				}
-			}
-		}
-	}
 }

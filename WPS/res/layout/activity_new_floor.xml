@@ -91,14 +91,6 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Button
-            android:id="@+id/chooseMapFileButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="chooseMapFile"
-            android:text="@string/activity_new_floor_choose_floor" />
-
-        <Button
             android:id="@+id/createMapButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

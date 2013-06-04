@@ -1,4 +1,4 @@
-package de.rwth.ti.wps;
+package de.rwth.ti.common;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +18,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import de.rwth.ti.db.MeasurePoint;
 
 public class IPMapView extends View {
 
@@ -335,9 +336,10 @@ public class IPMapView extends View {
 		mMeasureMode = measuremode;
 	}
 
-	public float[] getMeasurPoint() {
+	public MeasurePoint getMeasurePoint() {
 		float ret[] = { mXMPoint, mYMPoint };
-		return ret;
+		// FIXME get nearest/selected MeasurePoint or create a new one
+		return null;
 	}
 
 	protected void setMeasurePoint(float x, float y) {
