@@ -1,18 +1,25 @@
 package de.rwth.ti.wps;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
+import de.rwth.ti.common.ChooseFileDialog;
+import de.rwth.ti.common.Constants;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 
@@ -20,34 +27,36 @@ public class NewFloorActivity extends SuperActivity implements
 		OnItemSelectedListener {
 
 	private EditText createBuildingEdit;
-	private Spinner buildingSelectSpinner;
+	private List<Building> buildingList;
+	private ArrayAdapter<CharSequence> buildingAdapter;
+	private Spinner buildingSpinner;
+	private Building buildingSelected;
+
 	private EditText floorLevelEdit;
 	private EditText floorNameEdit;
 	private EditText northEdit;
-
-	List<Building> buildingList;
-
-	Building selectedBuilding;
-	int floorLevel;
-	String floorName;
-	int north;
+	private TextView floorFilenameView;
+	private int floorLevel;
+	private String floorName;
+	private int north;
+	private byte[] floorFile;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_new_floor);
 
-		// Show the Up button in the action bar.
-		// setupActionBar();
 		createBuildingEdit = (EditText) findViewById(R.id.createBuildingEdit);
-		buildingSelectSpinner = (Spinner) findViewById(R.id.buildingSelectSpinner);
-		buildingSelectSpinner.setOnItemSelectedListener(this);
-		// floorSelectSpinner = (Spinner) findViewById(R.id.floorSelectSpinner);
-		// floorSelectSpinner.setOnItemSelectedListener(this);
+		buildingAdapter = new ArrayAdapter<CharSequence>(this,
+				android.R.layout.simple_spinner_item);
+		buildingSpinner = (Spinner) findViewById(R.id.buildingSelectSpinner);
+		buildingSpinner.setAdapter(buildingAdapter);
+		buildingSpinner.setOnItemSelectedListener(this);
+
 		floorLevelEdit = (EditText) findViewById(R.id.floorLevelEdit);
 		floorNameEdit = (EditText) findViewById(R.id.floorNameEdit);
 		northEdit = (EditText) findViewById(R.id.northEdit);
-		// mapPathView = (TextView) findViewById(R.id.mapPathView);
+		floorFilenameView = (TextView) findViewById(R.id.mapPathView);
 
 		TextWatcher textWatch = new TextWatcher() {
 			public void afterTextChanged(Editable s) {
@@ -62,115 +71,78 @@ public class NewFloorActivity extends SuperActivity implements
 					int after) {
 			};
 		};
-
 		floorLevelEdit.addTextChangedListener(textWatch);
 
-		selectedBuilding = null;
-		// selectedFloor = null;
+		buildingSelected = null;
 		floorLevel = 0;
-		floorName = "";
+		floorName = null;
 		north = -1;
+		floorFile = null;
 	}
 
 	/** Called when the activity is first created or restarted */
 	@Override
 	public void onStart() {
 		super.onStart();
-
 		refreshBuildingSpinner();
-	}
-
-	/**
-	 * Set up the {@link android.app.ActionBar}.
-	 * 
-	 * private void setupActionBar() {
-	 * 
-	 * getActionBar().setDisplayHomeAsUpEnabled(true);
-	 * 
-	 * }
-	 */
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		// Inflate the menu; this adds items to the action bar if it is present.
-		// getMenuInflater().inflate(R.menu.menu, menu);
-		return true;
 	}
 
 	public void createBuilding(View view) {
 		String tBuildingName = createBuildingEdit.getText().toString().trim();
-		String message;
-
-		// Name eingegeben
+		String message = null;
+		// check name
 		if (tBuildingName.length() != 0) {
 			Building b = storage.createBuilding(tBuildingName);
-
 			// Gebäude konnte erfolgreich erstellt werden?
 			if (b != null) {
 				message = getString(R.string.success_create_building);
-
 				// Löscht den eingegeben Text
 				createBuildingEdit.setText("");
 				// Lädt die Liste der Gebäude neu
 				refreshBuildingSpinner();
 				// Wählt das letzte Element aus, also den neuen Eintrag
-				buildingSelectSpinner.setSelection(buildingList.size() - 1);
+				buildingSpinner.setSelection(buildingList.size() - 1);
 			} else {
 				message = getString(R.string.error_create_building);
 			}
-
 		} else {
 			message = getString(R.string.error_empty_input);
 		}
-		// User message
-		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+		if (message != null) {
+			// User message
+			Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+		}
 	}
 
 	private void refreshBuildingSpinner() {
-		ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(
-				this, android.R.layout.simple_spinner_item);
+		buildingAdapter.clear();
 		buildingList = storage.getAllBuildings();
 		for (Building b : buildingList) {
-			adapter.add(b.getName());
+			buildingAdapter.add(b.getName());
 		}
-		buildingSelectSpinner.setAdapter(adapter);
+		if (buildingList.size() == 0) {
+			buildingSelected = null;
+		} else {
+			buildingSelected = buildingList.get(0);
+		}
 	}
-
-	/*
-	 * private void refreshFloorSpinner() { ArrayAdapter<CharSequence> adapter =
-	 * new ArrayAdapter<CharSequence>(this,
-	 * android.R.layout.simple_spinner_item);
-	 * adapter.setDropDownViewResource(android
-	 * .R.layout.simple_spinner_dropdown_item);
-	 * 
-	 * if (selectedBuilding != null) { floorList =
-	 * storage.getFloors(selectedBuilding);
-	 * 
-	 * for (Floor f : floorList) { adapter.add(f.getName()); } }
-	 * 
-	 * floorSelectSpinner.setAdapter(adapter); }
-	 */
 
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int pos,
 			long id) {
-		if (parent == buildingSelectSpinner) {
-			selectedBuilding = buildingList.get(pos);
-			// refreshFloorSpinner();
+		if (parent == buildingSpinner) {
+			buildingSelected = buildingList.get(pos);
 		}
 	}
 
 	@Override
 	public void onNothingSelected(AdapterView<?> parent) {
-		if (parent == buildingSelectSpinner) {
-			selectedBuilding = null;
-			// refreshFloorSpinner();
+		if (parent == buildingSpinner) {
+			buildingSelected = null;
 		}
 	}
 
 	private void onFloorLevelChanged() {
-		// floorNameEdit.setText(floorLevelEdit.getText());
 		String tFloorName = floorNameEdit.getText().toString().trim();
 		int tFloorLevel;
 		String tFloorLevelText = floorLevelEdit.getText().toString().trim();
@@ -179,7 +151,6 @@ public class NewFloorActivity extends SuperActivity implements
 		} else {
 			tFloorLevel = Integer.parseInt(tFloorLevelText);
 		}
-
 		if (tFloorName.equals("")
 				|| tFloorName.equals(createFloorNameFromLevel(floorLevel))) {
 			floorName = createFloorNameFromLevel(tFloorLevel);
@@ -202,9 +173,8 @@ public class NewFloorActivity extends SuperActivity implements
 		return tString;
 	}
 
-	public void createMap(View view) {
-		String message;
-
+	public void createFloor(View view) {
+		String message = null;
 		floorName = floorNameEdit.getText().toString().trim();
 		String tFloorLevelText = floorLevelEdit.getText().toString().trim();
 		String tNorthText = northEdit.getText().toString().trim();
@@ -217,24 +187,27 @@ public class NewFloorActivity extends SuperActivity implements
 			// Überhaupt ein Gebäude vorhanden <=> Gebäude ausgewählt
 			if (!buildingList.isEmpty()) {
 				// Kartendatei ausgewählt
-				// TODO: Bedingung hinzufügen, else Teil mit Nachricht
-				if (true) {
-					// TODO: Karten-ByteArray einfügen
-					Floor f = storage.createFloor(selectedBuilding, floorName,
-							null, floorLevel, north);
-
+				if (floorFile != null) {
+					Floor f = storage.createFloor(buildingSelected, floorName,
+							floorFile, floorLevel, north);
 					// Floor erfolgreich erstellt
 					if (f != null) {
 						message = getString(R.string.success_create_floor);
-
 						// Eingaben löschen
-						buildingSelectSpinner.setSelection(0, true);
+						buildingSpinner.setSelection(0);
 						floorLevelEdit.setText("");
 						floorNameEdit.setText("");
 						northEdit.setText("");
+						floorFilenameView.setText("");
+						floorLevel = 0;
+						floorName = null;
+						north = -1;
+						floorFile = null;
 					} else {
 						message = getString(R.string.error_create_floor);
 					}
+				} else {
+					message = getString(R.string.error_no_floor_file);
 				}
 			} else {
 				message = getString(R.string.error_no_building);
@@ -242,8 +215,50 @@ public class NewFloorActivity extends SuperActivity implements
 		} else {
 			message = getString(R.string.error_empty_input);
 		}
-		// User message
-		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+		if (message != null) {
+			// User message
+			Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+		}
 	}
 
+	public void chooseFile(View view) {
+		// display choose file dialog
+		ChooseFileDialog directoryChooserDialog = new ChooseFileDialog(
+				NewFloorActivity.this,
+				new ChooseFileDialog.ChosenFileListener() {
+					@Override
+					public void onChosenFile(String chosenDir) {
+						File f = new File(chosenDir);
+						if (f.exists() && f.isFile()) {
+							// TODO show file loading state in progress bar
+							ByteArrayOutputStream baos = new ByteArrayOutputStream();
+							FileInputStream fis = null;
+							try {
+								fis = new FileInputStream(f);
+							} catch (FileNotFoundException e) {
+								// XXX handle error
+							}
+							byte[] buffer = new byte[Constants.FILE_BUFFER_SIZE];
+							try {
+								for (int len = fis.read(buffer); len > 0; len = fis
+										.read(buffer)) {
+									baos.write(buffer);
+								}
+								fis.close();
+							} catch (IOException ex) {
+								// XXX handle error
+							}
+							floorFilenameView.setText(new File(chosenDir)
+									.getName());
+							floorFile = baos.toByteArray();
+							try {
+								baos.close();
+							} catch (IOException ex) {
+								// XXX handle error
+							}
+						}
+					}
+				});
+		directoryChooserDialog.chooseDirectory(Constants.SD_APP_DIR);
+	}
 }

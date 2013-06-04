@@ -71,31 +71,24 @@
             android:hint="@string/activity_new_floor_north"
             android:inputType="number"
             android:maxLength="3"
-            android:maxLines="1" >
+            android:maxLines="1" />
 
-            <requestFocus />
-        </EditText>
-
-        <TextView
+        <EditText
             android:id="@+id/mapPathView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
             android:layout_weight="1"
-            android:clickable="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
+            android:ems="10"
             android:hint="@string/activity_new_floor_floorpath"
-            android:longClickable="false"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:onClick="chooseFile"
+            android:focusable="false" />
 
         <Button
             android:id="@+id/createMapButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="createMap"
+            android:onClick="createFloor"
             android:text="@string/activity_new_floor_create_floor" />
 
     </LinearLayout>
