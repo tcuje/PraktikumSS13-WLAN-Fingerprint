@@ -5,7 +5,6 @@ import java.io.InputStream;
 
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.hardware.SensorEventListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -19,11 +18,6 @@ import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.wps.CompassManager.OnCustomEventListener;
 
 public class MeasureActivity extends SuperActivity{
-
-	private enum Direction
-	{
-		  NORTH, EAST, SOUTH, WEST
-	}
 	
 	/**
 	 * The serialization (saved instance state) Bundle key representing the
@@ -33,7 +27,7 @@ public class MeasureActivity extends SuperActivity{
 	private IPMapView mMapView;
 	private Building mBuilding;
 	private Floor mFloor;
-	private Direction mDirection;
+	private CompassManager.Direction mDirection;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,7 +44,7 @@ public class MeasureActivity extends SuperActivity{
         }
 		mMapView.newMap(inputStream);
 		mMapView.setMeasureMode(true);
-		mDirection = Direction.NORTH;
+		mDirection = CompassManager.Direction.NORTH;
 		((TextView)findViewById(R.id.direction_text_view)).setText("Nach Norden aussrichten");
 		cmgr.setCustomEventListener(new OnCustomEventListener(){
 		    public void onEvent(){
@@ -135,7 +129,7 @@ public class MeasureActivity extends SuperActivity{
 				Toast.makeText(this, "Fehler beim Scanstart", Toast.LENGTH_LONG)
 						.show();
 			}else{
-				mDirection = Direction.values()[(mDirection.ordinal() + 1)%4];
+				mDirection = CompassManager.Direction.values()[(mDirection.ordinal() + 1)%4];
 				switch (mDirection) {
 				case NORTH:
 					((TextView)findViewById(R.id.direction_text_view)).setText("Nach Norden aussrichten");
