@@ -1,12 +1,16 @@
 package de.rwth.ti.wps;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
@@ -100,10 +104,25 @@ public class DebugActivity extends SuperActivity {
 		// Start other Activities, when the related MenuItem is selected
 		switch (item.getItemId()) {
 		case R.id.menu_export:
-			//TODO: Export/Import
+			try {
+				storage.exportDatabase("local.sqlite");
+				// TODO GUI extract message
+				Toast.makeText(getBaseContext(),
+						"Datenbank erfolgreich exportiert", Toast.LENGTH_SHORT)
+						.show();
+			} catch (IOException e) {
+				Toast.makeText(getBaseContext(), e.toString(),
+						Toast.LENGTH_LONG).show();
+			}
 			break;
 		case R.id.menu_import:
-			
+			// FIXME GUI get user input for filename
+			storage.importDatabase(Environment.getDataDirectory()
+					+ File.separator + "local.sqlite");
+			// TODO GUI extract message
+			Toast.makeText(getBaseContext(),
+					"Datenbank erfolgreich importiert", Toast.LENGTH_SHORT)
+					.show();
 			break;
 		case R.id.menu_show_debug:
 			showDebug();
@@ -114,3 +133,4 @@ public class DebugActivity extends SuperActivity {
 		return true;
 	}
 }
+
