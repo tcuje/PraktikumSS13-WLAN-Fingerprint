@@ -2,7 +2,10 @@ package de.rwth.ti.wps;
 
 import java.util.List;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
@@ -25,6 +28,14 @@ public class DebugActivity extends SuperActivity {
 		setContentView(R.layout.activity_debug);
 		// Setup UI
 		textStatus = (TextView) findViewById(R.id.textStatus);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.debug, menu);
+		return true;
 	}
 
 	/** Called when the activity is first created or restarted */
@@ -83,5 +94,23 @@ public class DebugActivity extends SuperActivity {
 			}
 		}
 	}
-
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Start other Activities, when the related MenuItem is selected
+		switch (item.getItemId()) {
+		case R.id.menu_export:
+			//TODO: Export/Import
+			break;
+		case R.id.menu_import:
+			
+			break;
+		case R.id.menu_show_debug:
+			showDebug();
+			break;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+		return true;
+	}
 }
