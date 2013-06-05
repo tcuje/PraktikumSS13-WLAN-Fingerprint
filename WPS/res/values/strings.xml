@@ -33,5 +33,6 @@
     <string name="error_no_measure_point">Bitte einen Messpunkt wählen!</string>
     <string name="error_no_floor_file">Keine Kartendatei vorhanden!</string>
     <string name="error_scanning">Fehler beim Scannen!</string>
-
+	<string name="success_scanning">Erfolg beim Scannen!</string>
+    
 </resources>

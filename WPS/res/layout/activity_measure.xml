@@ -25,7 +25,6 @@
             android:id="@+id/direction_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
         <Button
             android:id="@+id/measure_button"
             android:layout_width="wrap_content"
@@ -33,6 +32,21 @@
             android:layout_alignParentRight="true"
             android:text="@string/text_measure_button"
             android:onClick="measure" />
+        <Button
+            android:id="@+id/localisation_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/measure_button"
+            android:text="loc"
+            android:onClick="localisation" />
+		<Button
+            android:id="@+id/measure_mode_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/localisation_button"
+            android:text="mode"
+            android:onClick="changeMeasureMode" />
+        
     </RelativeLayout>
 
     <de.rwth.ti.common.IPMapView

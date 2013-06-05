@@ -332,14 +332,20 @@ public class IPMapView extends View {
 		invalidate();
 	}
 
+	public boolean getMeasureMode(){
+		return mMeasureMode;
+	}
 	public void setMeasureMode(boolean measuremode) {
 		mMeasureMode = measuremode;
 	}
 
-	public MeasurePoint getMeasurePoint() {
-		float ret[] = { mXMPoint, mYMPoint };
-		// FIXME get nearest/selected MeasurePoint or create a new one
-		return null;
+	public float[] getMeasurePoint() {
+		if(mXMPoint==0 && mYMPoint == 0){
+			return null;
+		}else{
+			float ret[] = { mXMPoint, mYMPoint };
+			return ret;
+		}
 	}
 
 	protected void setMeasurePoint(float x, float y) {

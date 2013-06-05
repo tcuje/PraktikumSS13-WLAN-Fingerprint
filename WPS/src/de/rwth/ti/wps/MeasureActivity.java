@@ -3,6 +3,10 @@ package de.rwth.ti.wps;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
+import android.content.Context;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,6 +21,8 @@ import de.rwth.ti.common.IPMapView;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
+import de.rwth.ti.loc.Location;
+import de.rwth.ti.loc.LocationResult;
 
 public class MeasureActivity extends SuperActivity implements
 		OnItemSelectedListener {
@@ -81,6 +87,19 @@ public class MeasureActivity extends SuperActivity implements
 			buildingSelected = buildingList.get(0);
 		}
 	}
+	//FIXME wieder entfernen
+	public void localisation(View view) {
+		WifiManager wifi = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+		WifiLock wl = wifi.createWifiLock("WPS");
+		List<ScanResult> results = wifi.getScanResults();
+		Location myLoc = new Location(storage);
+		LocationResult myLocRes = myLoc.getLocation(results, 0, 0);
+		mapView.setPoint((float)myLocRes.getX() , (float)myLocRes.getY());
+	}
+	
+	public void changeMeasureMode(View  view){	
+			mapView.setMeasureMode(!(mapView.getMeasureMode()));
+	}
 
 	public void measure(View view) {
 		if (view.getId() == R.id.measure_button) {
@@ -95,17 +114,21 @@ public class MeasureActivity extends SuperActivity implements
 						Toast.LENGTH_LONG).show();
 				return;
 			}
-			MeasurePoint mp = mapView.getMeasurePoint();
-			if (mp == null) {
+			float[] p = mapView.getMeasurePoint();
+			if (p == null) {
 				Toast.makeText(this, R.string.error_no_measure_point,
 						Toast.LENGTH_LONG).show();
 				return;
 			}
+			MeasurePoint mp = storage.createMeasurePoint(floorSelected, p[0], p[1]);
+			
 			boolean check = scm.startSingleScan(mp);
 			if (check == false) {
 				Toast.makeText(this, R.string.error_scanning, Toast.LENGTH_LONG)
 						.show();
 			} else {
+				Toast.makeText(this, R.string.success_scanning, Toast.LENGTH_LONG)
+				.show();
 				direction = CompassManager.Direction.values()[(direction
 						.ordinal() + 1) % 4];
 				switch (direction) {
