@@ -94,7 +94,14 @@ public class MeasureActivity extends SuperActivity implements
 		List<ScanResult> results = wifi.getScanResults();
 		Location myLoc = new Location(storage);
 		LocationResult myLocRes = myLoc.getLocation(results, 0, 0);
-		mapView.setPoint((float)myLocRes.getX() , (float)myLocRes.getY());
+		float myX = (float)myLocRes.getX();
+		float myY = (float)myLocRes.getY();
+		if(myX!=myX || myY!=myY){
+			Toast.makeText(this, "Position nicht gefunden",
+					Toast.LENGTH_LONG).show();
+		}else{
+			mapView.setPoint(myX , myY);
+		}
 	}
 	
 	public void changeMeasureMode(View  view){	

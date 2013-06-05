@@ -198,6 +198,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				Scan.COLUMN_ID + "=?",
 				new String[] { String.valueOf(ap.getScanId()) }, null, null,
 				null);
+		cursor.moveToFirst();
 		Scan result = cursorToScan(cursor);
 		return result;
 	}
@@ -348,6 +349,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				Floor.COLUMN_ID + "=?",
 				new String[] { String.valueOf(mp.getFloorId()) }, null, null,
 				null, null);
+		cursor.moveToFirst();
 		Floor result = cursorToFloor(cursor);
 		return result;
 	}
