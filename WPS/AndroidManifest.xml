@@ -56,6 +56,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.rwth.ti.wps.MainActivity" />
         </activity>
+        <activity
+            android:name="de.rwth.ti.wps.DataActivity"
+            android:label="@string/title_activity_data"
+            android:parentActivityName="de.rwth.ti.wps.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.rwth.ti.wps.MainActivity" />
+        </activity>
+        <activity
+            android:name="de.rwth.ti.wps.NotificationActivity"
+            android:label="@string/title_activity_notification" >
+        </activity>
     </application>
 
 </manifest>

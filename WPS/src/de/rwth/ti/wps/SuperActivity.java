@@ -106,6 +106,9 @@ public class SuperActivity extends Activity {
 		case R.id.action_debug:
 			intent = new Intent(this, DebugActivity.class);
 			break;
+		case R.id.action_data:
+			intent = new Intent(this, DataActivity.class);
+			break;
 		default:
 			return super.onOptionsItemSelected(item);
 		}

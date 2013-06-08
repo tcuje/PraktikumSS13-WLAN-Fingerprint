@@ -54,5 +54,14 @@
     <string name="error_create_floor">Etage konnte nicht erstellt werden</string>
     <string name="success_create_floor">Etage erfolgreich erstellt</string>
     <string name="error_no_building">Keine Gebäude vorhanden/ausgewählt</string>
+    <string name="title_activity_data">DataActivity</string>
+    <string name="action_data">Daten bearbeiten</string>
+    <string name="data_activity_floor">Flur</string>
+    <string name="data_activity_building">Gebäude</string>
+    <string name="data_activity_access_point">Access Point</string>
+    <string name="data_activity_measure_point">Measure Point</string>
+    <string name="data_activity_update">Bearbeiten</string>
+    <string name="data_activity_delete">Löschen</string>
+    <string name="title_activity_notification">NotificationActivity</string>
 
 </resources>
