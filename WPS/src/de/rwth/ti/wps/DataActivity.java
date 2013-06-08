@@ -56,23 +56,25 @@ implements OnClickListener
             break;
         case R.id.dataMSButton:
             if (checked){
-                Toast.makeText(this, "You've selected: MS", Toast.LENGTH_LONG).show();}
+                Toast.makeText(this, "You've selected: MS", Toast.LENGTH_LONG).show();
+                onClick(view);}
             break;
         case R.id.dataBuildingButton:
             if (checked){
-                Toast.makeText(this, "You've selected: Gebaude", Toast.LENGTH_LONG).show();}
+                Toast.makeText(this, "You've selected: Gebaude", Toast.LENGTH_LONG).show();
+                onClick(view);}
             break;
         }
     }
 	
 	public void onClick(View view) {
 		//boolean checked = ((RadioButton) view).isChecked();
-		
+	
 		if (true) {
 		if (view.getId() == R.id.dataDeleteButton) {
 			
 			
-			 Toast.makeText(this, "You've selected: del ", Toast.LENGTH_LONG).show(); //komentarz przy ostatnim radio buttonie
+			 Toast.makeText(this, "You've selected: del"/*+ ((RadioButton) view).getText()*/, Toast.LENGTH_LONG).show(); //komentarz przy ostatnim radio buttonie
 			// FIXME GUI get real data from gui
 			
 			}
