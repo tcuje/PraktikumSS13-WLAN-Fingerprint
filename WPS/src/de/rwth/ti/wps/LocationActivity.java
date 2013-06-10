@@ -13,14 +13,11 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 import de.rwth.ti.common.CompassManager;
-import de.rwth.ti.common.CompassManager.OnCustomEventListener;
 import de.rwth.ti.common.IPMapView;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
-import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.loc.Location;
 import de.rwth.ti.loc.LocationResult;
 
@@ -42,7 +39,7 @@ public class LocationActivity extends SuperActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_location);		
+		setContentView(R.layout.activity_location);
 
 //		buildingAdapter = new ArrayAdapter<CharSequence>(this,
 //				android.R.layout.simple_spinner_item);
@@ -55,8 +52,6 @@ public class LocationActivity extends SuperActivity implements
 //		floorSpinner = (Spinner) findViewById(R.id.floor);
 //		floorSpinner.setAdapter(floorAdapter);
 //		floorSpinner.setOnItemSelectedListener(this);
-		
-
 
 		mapView = (IPMapView) findViewById(R.id.map_view);
 		mapView.setMeasureMode(false);
@@ -70,7 +65,6 @@ public class LocationActivity extends SuperActivity implements
 //			}
 //		});
 	}
-
 
 	@Override
 	public void onStart() {
@@ -86,48 +80,53 @@ public class LocationActivity extends SuperActivity implements
 			buildingSelected = buildingList.get(0);
 		}
 	}
-	public void localisation_on(View view){
-		localisation_on_off=true;
+
+	public void localisation_on(View view) {
+		localisation_on_off = true;
 		localisation(view);
 	}
-	public void localisation_off(View view){
-		localisation_on_off=false;
+
+	public void localisation_off(View view) {
+		localisation_on_off = false;
 	}
+
 	public void localisation(View view) {
-		while(localisation_on_off){
-			WifiManager wifi = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+		while (localisation_on_off) {
+			WifiManager wifi = (WifiManager) this
+					.getSystemService(Context.WIFI_SERVICE);
 			WifiLock wl = wifi.createWifiLock("WPS");
 			List<ScanResult> results = wifi.getScanResults();
 			Location myLoc = new Location(storage);
-			LocationResult myLocRes = myLoc.getLocation(results, 0, 0);		//FIXME compass
-			float myX = (float)myLocRes.getX();
-			float myY = (float)myLocRes.getY();
-			if(myX!=myX || myY!=myY){
+			LocationResult myLocRes = myLoc.getLocation(results, 0, 0); // FIXME
+																		// compass
+			float myX = (float) myLocRes.getX();
+			float myY = (float) myLocRes.getY();
+			if (myX != myX || myY != myY) {
 				Toast.makeText(this, "Position nicht gefunden",
 						Toast.LENGTH_LONG).show();
-			}else{
-				if(myLocRes.getMap()!=floorSelected){
-					floorSelected=myLocRes.getMap();
+			} else {
+				if (myLocRes.getMap() != floorSelected) {
+					floorSelected = myLocRes.getMap();
 					byte[] file = floorSelected.getFile();
 					if (file != null) {
-						ByteArrayInputStream bin = new ByteArrayInputStream(file);
+						ByteArrayInputStream bin = new ByteArrayInputStream(
+								file);
 						mapView.newMap(bin);
 					} else {
 						Toast.makeText(this, R.string.error_no_floor_file,
 								Toast.LENGTH_LONG).show();
 					}
-					
-					
+
 				}
-				mapView.setPoint(myX , myY);
+				mapView.setPoint(myX, myY);
 			}
 		}
-	//		((TextView) findViewById(R.id.building))
-	//		.setText(myLocRes.getBuilding());
-	//		((TextView) findViewById(R.id.floor))
-	//		.setText("Nach Norden aussrichten");
+		// ((TextView) findViewById(R.id.building))
+		// .setText(myLocRes.getBuilding());
+		// ((TextView) findViewById(R.id.floor))
+		// .setText("Nach Norden aussrichten");
 	}
-	
+
 //	public void changeMeasureMode(View  view){	
 //			mapView.setMeasureMode(!(mapView.getMeasureMode()));
 //	}

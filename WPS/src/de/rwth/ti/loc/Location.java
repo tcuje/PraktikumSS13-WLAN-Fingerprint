@@ -104,23 +104,27 @@ public class Location {
 			double errorValue = 1;
 			List<AccessPoint> entries = dataHandler.getAccessPoints(scanEntries
 					.get(j));
-			for (int k = 0; k < 3; k++) {
-				String mac = aps.get(k).BSSID;
-				int l;
-				boolean success = false;
-				for (l = 0; l < entries.size(); l++) {
-					if (mac.compareTo(entries.get(l).getBssid())==0) {
-						success = true;
-						break;
+			// FIXME what if aps.size() <= 2 !?
+			if (aps.size() >= 3) {
+				for (int k = 0; k < 3; k++) {
+					String mac = aps.get(k).BSSID;
+					int l;
+					boolean success = false;
+					for (l = 0; l < entries.size(); l++) {
+						if (mac.compareTo(entries.get(l).getBssid()) == 0) {
+							success = true;
+							break;
+						}
+					}
+					if (success) {
+						errorValue += (double) ((100 + (double) aps.get(k).level) / 100)
+								* (Math.abs((int) ((aps.get(k).level) - entries
+										.get(l).getLevel())));
+					} else {
+						errorValue += (double) ((100 + aps.get(k).level) / 100)
+								* (Math.abs((int) ((aps.get(k).level) + 100)));
 					}
 				}
-				if (success) {
-					errorValue += (double)((100 + (double)aps.get(k).level) / 100) * (Math.abs((int)((aps.get(k).level) - entries.get(l).getLevel())));
-				} else {
-					errorValue += (double)((100 + aps.get(k).level) / 100)
-							* (Math.abs((int)((aps.get(k).level) + 100)));
-				}
-
 			}
 			ScanError scanErrorObject = new ScanError();
 			scanErrorObject.setScanError(scanEntries.get(j), errorValue);

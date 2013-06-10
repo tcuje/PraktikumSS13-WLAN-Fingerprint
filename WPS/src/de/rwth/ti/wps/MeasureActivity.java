@@ -1,9 +1,14 @@
 package de.rwth.ti.wps;
 
 import java.io.ByteArrayInputStream;
+import java.util.Date;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
@@ -21,6 +26,7 @@ import de.rwth.ti.common.IPMapView;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
+import de.rwth.ti.db.Scan;
 import de.rwth.ti.loc.Location;
 import de.rwth.ti.loc.LocationResult;
 
@@ -37,6 +43,9 @@ public class MeasureActivity extends SuperActivity implements
 	private Floor floorSelected;
 	private IPMapView mapView;
 	private CompassManager.Direction direction;
+	private BroadcastReceiver wifiReceiver;
+	private MeasurePoint lastMP;
+	private AlertDialog waitDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +75,7 @@ public class MeasureActivity extends SuperActivity implements
 				showArrow();
 			}
 		});
+		wifiReceiver = new MyReceiver();
 	}
 
 	protected void showArrow() {
@@ -85,6 +95,18 @@ public class MeasureActivity extends SuperActivity implements
 			buildingSelected = null;
 		} else {
 			buildingSelected = buildingList.get(0);
+		}
+		this.registerReceiver(this.wifiReceiver, new IntentFilter(
+				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		try {
+			this.unregisterReceiver(wifiReceiver);
+		} catch (IllegalArgumentException ex) {
+			// just ignore it
 		}
 	}
 
@@ -127,38 +149,15 @@ public class MeasureActivity extends SuperActivity implements
 						Toast.LENGTH_LONG).show();
 				return;
 			}
-			MeasurePoint mp = storage.createMeasurePoint(floorSelected, p[0],
-					p[1]);
-
-			boolean check = scm.startSingleScan(mp);
+			lastMP = storage.createMeasurePoint(floorSelected, p[0], p[1]);
+			boolean check = scm.startSingleScan();
 			if (check == false) {
+				lastMP = null;
 				Toast.makeText(this, R.string.error_scanning, Toast.LENGTH_LONG)
 						.show();
 			} else {
-				Toast.makeText(this, R.string.success_scanning,
-						Toast.LENGTH_LONG).show();
-				direction = CompassManager.Direction.values()[(direction
-						.ordinal() + 1) % 4];
-				switch (direction) {
-				case NORTH:
-					((TextView) findViewById(R.id.direction_text_view))
-							.setText("Nach Norden aussrichten");
-					break;
-				case EAST:
-					((TextView) findViewById(R.id.direction_text_view))
-							.setText("Nach Osten aussrichten");
-					break;
-				case SOUTH:
-					((TextView) findViewById(R.id.direction_text_view))
-							.setText("Nach Süden aussrichten");
-					break;
-				case WEST:
-					((TextView) findViewById(R.id.direction_text_view))
-							.setText("Nach Westen aussrichten");
-					break;
-				default:
-					break;
-				}
+				waitDialog = new AlertDialog.Builder(this).setTitle(
+						R.string.scan_wait).show();
 			}
 		}
 	}
@@ -205,6 +204,67 @@ public class MeasureActivity extends SuperActivity implements
 			buildingSelected = null;
 			floorSelected = null;
 			// TODO clear map view
+		}
+	}
+
+	private class MyReceiver extends BroadcastReceiver {
+
+		private WifiManager wifi = MeasureActivity.this.getScanManager()
+				.getWifi();
+
+		@Override
+		public void onReceive(Context c, Intent intent) {
+			List<ScanResult> results = wifi.getScanResults();
+			// measure mode, save the access points to database
+			if (results != null && !results.isEmpty()) {
+				if (lastMP != null) {
+					Date d = new Date();
+					Scan scan = MeasureActivity.this.getStorage().createScan(
+							lastMP,
+							d.getTime() / 1000,
+							MeasureActivity.this.getCompassManager()
+									.getAzimut());
+					for (ScanResult result : results) {
+						MeasureActivity.this.getStorage().createAccessPoint(
+								scan, result.BSSID, result.level,
+								result.frequency, result.SSID,
+								result.capabilities);
+					}
+					lastMP = null;
+					if (waitDialog != null) {
+						waitDialog.dismiss();
+						waitDialog = null;
+					}
+					Toast.makeText(MeasureActivity.this,
+							R.string.success_scanning, Toast.LENGTH_SHORT)
+							.show();
+					direction = CompassManager.Direction.values()[(direction
+							.ordinal() + 1) % 4];
+					switch (direction) {
+					case NORTH:
+						((TextView) findViewById(R.id.direction_text_view))
+								.setText("Nach Norden aussrichten");
+						break;
+					case EAST:
+						((TextView) findViewById(R.id.direction_text_view))
+								.setText("Nach Osten aussrichten");
+						break;
+					case SOUTH:
+						((TextView) findViewById(R.id.direction_text_view))
+								.setText("Nach Süden aussrichten");
+						break;
+					case WEST:
+						((TextView) findViewById(R.id.direction_text_view))
+								.setText("Nach Westen aussrichten");
+						break;
+					default:
+						break;
+					}
+				}
+			} else {
+				Toast.makeText(MeasureActivity.this, R.string.scan_no_ap,
+						Toast.LENGTH_LONG).show();
+			}
 		}
 	}
 

@@ -14,5 +14,6 @@ public class Constants {
 	public static final String LOCAL_DB_NAME = "local.sqlite";
 	public static final Locale LOCALE = Locale.GERMAN;
 	public static final int FILE_BUFFER_SIZE = 10240;
+	public static final int AUTO_SCAN_SEC = 2;
 
 }
