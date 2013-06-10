@@ -1,32 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <item
-        android:id="@+id/menu_export"
-        android:title="@string/menu_export"/>
-    
-    <item
-        android:id="@+id/menu_import"
-        android:title="@string/menu_import"/>
-    
-    <item
-        android:id="@+id/menu_show_debug"
-        android:title="@string/menu_debug"/>
-    
+    <!--
     <item
         android:id="@+id/menu_buildings"
         android:title="@string/menu_building"
         android:showAsAction="ifRoom">
-        
-        <menu>
-            <item
-                android:title="@string/title_section1"/>
-            <item
-                android:title="@string/title_section2"/>
-            <item
-                android:title="@string/title_section3"/>
-        </menu>
     </item>
-    
+    -->
     <item
         android:id="@+id/action_navigation"
         android:title="@string/action_navigation"
@@ -35,11 +15,12 @@
         <menu>
 		    <item
 		        android:id="@+id/action_localisation"
-		        android:title="@string/action_localisation"/>
+		        android:title="@string/action_localisation"
+		        android:visible="true"/>
 		    
 		    <item
-		        android:id="@+id/action_new_map"
-		        android:title="@string/action_new_map"/>
+		        android:id="@+id/action_new_floor"
+		        android:title="@string/action_new_floor"/>
 		    
 		    <item
 		        android:id="@+id/action_measure"
@@ -51,9 +32,4 @@
         </menu>
     </item>
     
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
 </menu>

@@ -4,16 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MeasureActivity"
+    tools:context=".LocationActivity"
     tools:ignore="MergeRootFrame" >
 
-    <Spinner
-        android:id="@+id/buildingSelectSpinner"
+    <TextView
+        android:id="@+id/building"
         android:layout_width="match_parent"
+        android:text=""
         android:layout_height="wrap_content"/>
 
-    <Spinner
-        android:id="@+id/floorSelectSpinner"
+    <TextView
+        android:id="@+id/floor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -25,27 +26,22 @@
             android:id="@+id/direction_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
         <Button
-            android:id="@+id/measure_button"
+            android:id="@+id/localisation_button_on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:onClick="localisation_on"
+            android:text="Messung" />
+        
+        <Button
+            android:id="@+id/localisation_button_off"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="@string/text_measure_button"
-            android:onClick="measure" />
-        <Button
-            android:id="@+id/localisation_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/measure_button"
-            android:text="loc"
-            android:onClick="localisation" />
-		<Button
-            android:id="@+id/measure_mode_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/localisation_button"
-            android:text="mode"
-            android:onClick="changeMeasureMode" />
+            android:onClick="localisation_off"
+            android:text="Stop" />
         
     </RelativeLayout>
 

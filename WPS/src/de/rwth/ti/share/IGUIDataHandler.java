@@ -41,7 +41,7 @@ public interface IGUIDataHandler extends IDataHandler {
 	 *         <code>null</code> otherwise
 	 */
 	public Floor createFloor(Building b, String name, byte[] file, long level,
-			long north);
+			double north);
 
 	/**
 	 * Creates a new <code>MeasurePoint</code>

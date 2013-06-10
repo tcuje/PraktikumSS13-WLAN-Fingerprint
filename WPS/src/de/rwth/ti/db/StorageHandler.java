@@ -198,6 +198,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				Scan.COLUMN_ID + "=?",
 				new String[] { String.valueOf(ap.getScanId()) }, null, null,
 				null);
+		cursor.moveToFirst();
 		Scan result = cursorToScan(cursor);
 		return result;
 	}
@@ -279,7 +280,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public Floor createFloor(Building b, String name, byte[] file, long level,
-			long north) {
+			double north) {
 		ContentValues values = new ContentValues();
 		if (b == null) {
 			return null;
@@ -348,6 +349,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				Floor.COLUMN_ID + "=?",
 				new String[] { String.valueOf(mp.getFloorId()) }, null, null,
 				null, null);
+		cursor.moveToFirst();
 		Floor result = cursorToFloor(cursor);
 		return result;
 	}
@@ -510,7 +512,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	@Override
 	public List<Building> getAllBuildings() {
 		Cursor cursor = db.query(Building.TABLE_NAME, Building.ALL_COLUMNS,
-				null, null, null, null, null);
+				null, null, null, null, Building.COLUMN_NAME + " ASC");
 		List<Building> result = cursorToBuildings(cursor);
 		return result;
 	}
@@ -597,11 +599,13 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		String dstDBPath = "/" + filename;
 		File srcDB = new File(data, srcDBPath);
 		File dstDB = new File(sd, dstDBPath);
-		FileChannel src = new FileInputStream(srcDB).getChannel();
-		FileChannel dst = new FileOutputStream(dstDB).getChannel();
+		FileInputStream fis = new FileInputStream(srcDB);
+		FileChannel src = fis.getChannel();
+		FileOutputStream fos = new FileOutputStream(dstDB);
+		FileChannel dst = fos.getChannel();
 		dst.transferFrom(src, 0, src.size());
-		src.close();
-		dst.close();
+		fis.close();
+		fos.close();
 		db = storage.getWritableDatabase();
 	}
 

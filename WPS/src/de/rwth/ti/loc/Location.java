@@ -15,38 +15,45 @@ import de.rwth.ti.share.IMeasureDataHandler;
 public class Location {
 
 	private IMeasureDataHandler dataHandler;
-	private long timeSinceFloor=0;
-	private long timeSinceBuilding=0;
+	private long timeSinceFloor = 0;
+	private long timeSinceBuilding = 0;
 	private long theTime;
 	private Building tempBuilding;
 	private Floor tempFloor;
 	Calendar time = Calendar.getInstance();
+
 	public Location(IMeasureDataHandler dataHandler) {
 		this.dataHandler = dataHandler;
 	}
-	public LocationResult getLocation(List<ScanResult> aps, int compass, int kontrollvariable ){		//kontrollvariable 0,1,2 steuert das Verhalten der Funktion
-																										//0 ueberlaesst den Ablauf den Zeitvariablen
-		theTime = time.getTime().getTime();																//1 erzwingt Gebaeudesuche
-																										//2 erzwingt FloorSuche
-		if (theTime > timeSinceBuilding+40000 || kontrollvariable == 1){
+
+	public LocationResult getLocation(List<ScanResult> aps, int compass,
+			int kontrollvariable) { // kontrollvariable 0,1,2 steuert das
+									// Verhalten der Funktion
+									// 0 ueberlaesst den Ablauf den
+									// Zeitvariablen
+		theTime = time.getTime().getTime(); // 1 erzwingt Gebaeudesuche
+											// 2 erzwingt FloorSuche
+		if (theTime > timeSinceBuilding + 40000 || kontrollvariable == 1) {
 			tempBuilding = findBuilding(aps);
 			tempFloor = findMap(aps, tempBuilding);
-			LocationResult result = findMP(aps, tempFloor, tempBuilding, compass);
-			timeSinceFloor=theTime;
-			timeSinceBuilding=theTime;
+			LocationResult result = findMP(aps, tempFloor, tempBuilding,
+					compass);
+			timeSinceFloor = theTime;
+			timeSinceBuilding = theTime;
 			return result;
-		}
-		else if (theTime > timeSinceFloor+10000 || kontrollvariable == 2){
+		} else if (theTime > timeSinceFloor + 10000 || kontrollvariable == 2) {
 			tempFloor = findMap(aps, tempBuilding);
-			LocationResult result = findMP(aps, tempFloor, tempBuilding, compass);
-			timeSinceFloor=theTime;
-			timeSinceBuilding=theTime;
+			LocationResult result = findMP(aps, tempFloor, tempBuilding,
+					compass);
+			timeSinceFloor = theTime;
+			timeSinceBuilding = theTime;
 			return result;
 		}
 		LocationResult result = findMP(aps, tempFloor, tempBuilding, compass);
 		return result;
-		
+
 	}
+
 	private Building findBuilding(List<ScanResult> aps) {
 		if (aps.isEmpty()) {
 			return null;
@@ -61,7 +68,6 @@ public class Location {
 		return result;
 	}
 
-
 	private Floor findMap(List<ScanResult> aps, Building b) {
 		if (aps.isEmpty() || b == null) {
 			return null;
@@ -75,7 +81,8 @@ public class Location {
 		return floor;
 	}
 
-	private LocationResult findMP(List<ScanResult> aps, Floor map, Building building, int compass) {
+	private LocationResult findMP(List<ScanResult> aps, Floor map,
+			Building building, int compass) {
 		if (aps.isEmpty() || map == null) {
 			return null;
 		}
@@ -90,18 +97,16 @@ public class Location {
 				int l;
 				boolean success = false;
 				for (l = 0; l < entries.size(); l++) {
-					if (mac == entries.get(l).getBssid()) {
+					if (mac.compareTo(entries.get(l).getBssid())==0) {
 						success = true;
 						break;
 					}
 				}
 				if (success) {
-					errorValue += ((100 + aps.get(k).level) / 100)
-							* (Math.abs((aps.get(k).level)
-									- entries.get(l).getLevel()));
+					errorValue += (double)((100 + (double)aps.get(k).level) / 100) * (Math.abs((int)((aps.get(k).level) - entries.get(l).getLevel())));
 				} else {
-					errorValue += ((100 + aps.get(k).level) / 100)
-							* (Math.abs((aps.get(k).level) + 100));
+					errorValue += (double)((100 + aps.get(k).level) / 100)
+							* (Math.abs((int)((aps.get(k).level) + 100)));
 				}
 
 			}
