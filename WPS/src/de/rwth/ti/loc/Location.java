@@ -109,18 +109,16 @@ public class Location {
 				int l;
 				boolean success = false;
 				for (l = 0; l < entries.size(); l++) {
-					if (mac == entries.get(l).getBssid()) {
+					if (mac.compareTo(entries.get(l).getBssid())==0) {
 						success = true;
 						break;
 					}
 				}
 				if (success) {
-					errorValue += ((100 + aps.get(k).level) / 100)
-							* (Math.abs((aps.get(k).level)
-									- entries.get(l).getLevel()));
+					errorValue += (double)((100 + (double)aps.get(k).level) / 100) * (Math.abs((int)((aps.get(k).level) - entries.get(l).getLevel())));
 				} else {
-					errorValue += ((100 + aps.get(k).level) / 100)
-							* (Math.abs((aps.get(k).level) + 100));
+					errorValue += (double)((100 + aps.get(k).level) / 100)
+							* (Math.abs((int)((aps.get(k).level) + 100)));
 				}
 
 			}

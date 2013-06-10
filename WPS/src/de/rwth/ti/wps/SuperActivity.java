@@ -105,7 +105,8 @@ public abstract class SuperActivity extends Activity {
 		Intent intent = null;
 		switch (item.getItemId()) {
 		case R.id.action_localisation:
-			intent = new Intent(this, MainActivity.class);
+			intent = new Intent(this, LocationActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			break;
 		case R.id.action_measure:
 			intent = new Intent(this, MeasureActivity.class);
@@ -144,5 +145,4 @@ public abstract class SuperActivity extends Activity {
 		}
 		return true;
 	}
-
 }
