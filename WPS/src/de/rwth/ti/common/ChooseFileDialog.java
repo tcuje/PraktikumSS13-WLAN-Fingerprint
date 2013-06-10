@@ -23,39 +23,23 @@ import android.widget.TextView;
 
 public class ChooseFileDialog {
 
-	private String sdcardDirectory = "";
 	private Context context;
+	private String sdcardDirectory = "";
+	private ChosenFileListener chosenFileListener = null;
 	private TextView titleView;
-
 	private String dir = "";
 	private int numDirs = 0;
 	private List<String> entries = null;
-	private ChosenFileListener chosenFileListener = null;
 	private ArrayAdapter<String> listAdapter = null;
 	private AlertDialog dirsDialog;
 
-	// ////////////////////////////////////////////////////
 	// Callback interface for selected directory
-	// ////////////////////////////////////////////////////
 	public interface ChosenFileListener {
 
 		public void onChosenFile(String chosenFile);
 	}
 
-	public ChooseFileDialog(Context context,// dialogBuilder.setPositiveButton("OK",
-											// new OnClickListener() {
-//
-//			@Override
-//			public void onClick(DialogInterface dialog, int which) {
-//				// Current directory chosen
-//				if (m_chosenDirectoryListener != null) {
-//					// Call registered listener supplied with the chosen
-//					// directory
-//					m_chosenDirectoryListener.onChosenDir(m_dir);
-//				}
-//			}
-//		});
-
+	public ChooseFileDialog(Context context,
 			ChosenFileListener chosenFileListener) {
 		this.context = context;
 		sdcardDirectory = Environment.getExternalStorageDirectory()
@@ -67,11 +51,6 @@ public class ChooseFileDialog {
 		} catch (IOException ioe) {
 		}
 	}
-
-	// //////////////////////////////////////////////////////////////////////////////
-	// chooseDirectory(String dir) - load directory chooser dialog for initial
-	// input 'dir' directory
-	// //////////////////////////////////////////////////////////////////////////////
 
 	public void chooseDirectory(String dirName) {
 		File dirFile = new File(dirName);
@@ -112,18 +91,6 @@ public class ChooseFileDialog {
 
 		AlertDialog.Builder dialogBuilder = createDirectoryChooserDialog(
 				dirName, entries, new DirectoryOnClickListener());
-//		dialogBuilder.setPositiveButton("OK", new OnClickListener() {
-//
-//			@Override
-//			public void onClick(DialogInterface dialog, int which) {
-//				// Current directory chosen
-//				if (m_chosenDirectoryListener != null) {
-//					// Call registered listener supplied with the chosen
-//					// directory
-//					m_chosenDirectoryListener.onChosenDir(m_dir);
-//				}
-//			}
-//		});
 		dialogBuilder.setNegativeButton("Cancel", null);
 
 		dirsDialog = dialogBuilder.create();

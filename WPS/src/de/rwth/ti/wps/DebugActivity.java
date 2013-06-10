@@ -4,13 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
+import de.rwth.ti.common.Constants;
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
@@ -33,7 +33,7 @@ public class DebugActivity extends SuperActivity {
 		// Setup UI
 		textStatus = (TextView) findViewById(R.id.textStatus);
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -98,17 +98,15 @@ public class DebugActivity extends SuperActivity {
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Start other Activities, when the related MenuItem is selected
 		switch (item.getItemId()) {
 		case R.id.menu_export:
 			try {
-				storage.exportDatabase("local.sqlite");
-				// TODO GUI extract message
+				storage.exportDatabase(Constants.LOCAL_DB_NAME);
 				Toast.makeText(getBaseContext(),
-						"Datenbank erfolgreich exportiert", Toast.LENGTH_SHORT)
+						R.string.database_export_success, Toast.LENGTH_SHORT)
 						.show();
 			} catch (IOException e) {
 				Toast.makeText(getBaseContext(), e.toString(),
@@ -116,13 +114,10 @@ public class DebugActivity extends SuperActivity {
 			}
 			break;
 		case R.id.menu_import:
-			// FIXME GUI get user input for filename
 			storage.importDatabase(Environment.getDataDirectory()
-					+ File.separator + "local.sqlite");
-			// TODO GUI extract message
-			Toast.makeText(getBaseContext(),
-					"Datenbank erfolgreich importiert", Toast.LENGTH_SHORT)
-					.show();
+					+ File.separator + Constants.LOCAL_DB_NAME);
+			Toast.makeText(getBaseContext(), R.string.database_import_success,
+					Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.menu_show_debug:
 			showDebug();
@@ -133,4 +128,3 @@ public class DebugActivity extends SuperActivity {
 		return true;
 	}
 }
-

@@ -34,5 +34,7 @@
     <string name="error_no_floor_file">Keine Kartendatei vorhanden!</string>
     <string name="error_scanning">Fehler beim Scannen!</string>
 	<string name="success_scanning">Erfolg beim Scannen!</string>
+	<string name="database_export_success">Datenbank erfolgreich exportiert</string>
+	<string name="database_import_success">Datenbank erfolgreich importiert</string>
     
 </resources>
