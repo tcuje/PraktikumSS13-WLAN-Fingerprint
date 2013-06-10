@@ -18,7 +18,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-import de.rwth.ti.db.MeasurePoint;
 
 public class IPMapView extends View {
 
@@ -332,17 +331,18 @@ public class IPMapView extends View {
 		invalidate();
 	}
 
-	public boolean getMeasureMode(){
+	public boolean getMeasureMode() {
 		return mMeasureMode;
 	}
+
 	public void setMeasureMode(boolean measuremode) {
 		mMeasureMode = measuremode;
 	}
 
 	public float[] getMeasurePoint() {
-		if(mXMPoint==0 && mYMPoint == 0){
+		if (mXMPoint == 0 && mYMPoint == 0) {
 			return null;
-		}else{
+		} else {
 			float ret[] = { mXMPoint, mYMPoint };
 			return ret;
 		}

@@ -60,10 +60,22 @@ public class Location {
 		}
 		String mac = aps.get(0).BSSID;
 		List<AccessPoint> entries = dataHandler.getAccessPoint(mac);
+		if (entries.isEmpty()) {
+			return null;
+		}
 		AccessPoint ap = entries.get(0);
 		Scan scan = dataHandler.getScan(ap);
+		if (scan == null) {
+			return null;
+		}
 		MeasurePoint mp = dataHandler.getMeasurePoint(scan);
+		if (mp == null) {
+			return null;
+		}
 		Floor map = dataHandler.getFloor(mp);
+		if (map == null) {
+			return null;
+		}
 		Building result = dataHandler.getBuilding(map);
 		return result;
 	}
@@ -89,7 +101,7 @@ public class Location {
 		List<Scan> scanEntries = dataHandler.getScans(map, compass);
 		List<ScanError> errorList = new LinkedList<ScanError>();
 		for (int j = 0; j < scanEntries.size(); j++) {
-			double errorValue = 0;
+			double errorValue = 1;
 			List<AccessPoint> entries = dataHandler.getAccessPoints(scanEntries
 					.get(j));
 			for (int k = 0; k < 3; k++) {
@@ -132,8 +144,10 @@ public class Location {
 							.getPosy();
 			errorSum += (1 / (errorList.get(h).getError()));
 		}
-		x = x / errorSum;
-		y = y / errorSum;
+		if (errorSum != 0) {
+			x = x / errorSum;
+			y = y / errorSum;
+		}
 		LocationResult result = new LocationResult(building, map, x, y);
 		return result;
 

@@ -198,8 +198,10 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				Scan.COLUMN_ID + "=?",
 				new String[] { String.valueOf(ap.getScanId()) }, null, null,
 				null);
-		cursor.moveToFirst();
-		Scan result = cursorToScan(cursor);
+		Scan result = null;
+		if (cursor.moveToFirst() == true) {
+			result = cursorToScan(cursor);
+		}
 		return result;
 	}
 
@@ -260,8 +262,10 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				MeasurePoint.ALL_COLUMNS, MeasurePoint.COLUMN_ID + "=?",
 				new String[] { String.valueOf(scan.getMpid()) }, null, null,
 				null);
-		cursor.moveToFirst();
-		MeasurePoint result = cursorToMeasurePoint(cursor);
+		MeasurePoint result = null;
+		if (cursor.moveToFirst() == true) {
+			result = cursorToMeasurePoint(cursor);
+		}
 		cursor.close();
 		return result;
 	}
@@ -274,7 +278,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				null);
 		cursor.moveToFirst();
 		List<MeasurePoint> result = cursorToMeasurePoints(cursor);
-		cursor.close();
 		return result;
 	}
 
@@ -349,8 +352,11 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				Floor.COLUMN_ID + "=?",
 				new String[] { String.valueOf(mp.getFloorId()) }, null, null,
 				null, null);
-		cursor.moveToFirst();
-		Floor result = cursorToFloor(cursor);
+		Floor result = null;
+		if (cursor.moveToFirst() == true) {
+			result = cursorToFloor(cursor);
+		}
+		cursor.close();
 		return result;
 	}
 
@@ -523,8 +529,10 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				Building.COLUMN_ID + "=?",
 				new String[] { String.valueOf(floor.getBId()) }, null, null,
 				null);
-		cursor.moveToFirst();
-		Building result = cursorToBuilding(cursor);
+		Building result = null;
+		if (cursor.moveToFirst() == true) {
+			result = cursorToBuilding(cursor);
+		}
 		cursor.close();
 		return result;
 	}
@@ -615,10 +623,8 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	 * 
 	 * @param filename
 	 *            full filepath for the import database
-	 * @return Returns an object containing import details
 	 */
-	// FIXME return ImportResult objectIOException
-	public Object importDatabase(String filename) {
+	public void importDatabase(String filename) {
 		// copy the database from sd card to internal storage
 //		File sd = Environment.getExternalStorageDirectory();
 //		File data = Environment.getDataDirectory();
@@ -654,7 +660,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				// new building
 				bParent = this.createBuilding(bImp.getName());
 				if (bParent == null) {
-					// XXX handle error
 					// skip all child objects for invalid building
 					continue;
 				}
@@ -678,7 +683,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 					fParent = this.createFloor(bParent, fImp.getName(),
 							fImp.getFile(), fImp.getLevel(), fImp.getNorth());
 					if (fParent == null) {
-						// XXX handle error
 						// skip all child objects for invalid floor
 						continue;
 					}
@@ -704,7 +708,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 						mpParent = this.createMeasurePoint(fParent,
 								mpImp.getPosx(), mpImp.getPosy());
 						if (mpParent == null) {
-							// XXX handle error
 							// skip all child objects for invalid floor
 							continue;
 						}
@@ -728,7 +731,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 							scParent = this.createScan(mpParent,
 									scImp.getTime(), scImp.getCompass());
 							if (scParent == null) {
-								// XXX handle error
 								// skip all child objects for invalid scan
 								continue;
 							}
@@ -755,7 +757,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 										apImp.getFreq(), apImp.getSsid(),
 										apImp.getProps());
 								if (apParent == null) {
-									// XXX handle error
+									continue;
 								}
 							}
 						}
@@ -764,6 +766,5 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 			}
 		}
 		temp.onStop();
-		return null;
 	}
 }

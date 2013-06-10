@@ -1,15 +1,21 @@
 package de.rwth.ti.wps;
 
+import java.io.File;
+import java.io.IOException;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 import de.rwth.ti.common.CompassManager;
+import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.ScanManager;
 import de.rwth.ti.db.StorageHandler;
 
-public class SuperActivity extends Activity {
+public abstract class SuperActivity extends Activity {
 
 	public static final String PACKAGE_NAME = "de.rwth.ti.wps";
 
@@ -25,18 +31,20 @@ public class SuperActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		onCreate(savedInstanceState, true, true, true);
 	}
-	
+
 	protected void onCreate(Bundle savedInstanceState, boolean hasCompass) {
 		onCreate(savedInstanceState, hasCompass, true, true);
 	}
-	
-	protected void onCreate(Bundle savedInstanceState, boolean hasCompass, boolean hasScan) {
+
+	protected void onCreate(Bundle savedInstanceState, boolean hasCompass,
+			boolean hasScan) {
 		onCreate(savedInstanceState, hasCompass, hasScan, true);
 	}
-	
-	protected void onCreate(Bundle savedInstanceState, boolean hasCompass, boolean hasScan, boolean hasStorage) {
+
+	protected void onCreate(Bundle savedInstanceState, boolean hasCompass,
+			boolean hasScan, boolean hasStorage) {
 		super.onCreate(savedInstanceState);
-		
+
 		// Setup Wifi
 		if (scm == null && hasScan) {
 			scm = new ScanManager(this);
@@ -106,6 +114,23 @@ public class SuperActivity extends Activity {
 		case R.id.action_new_floor:
 			intent = new Intent(this, NewFloorActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			break;
+		case R.id.menu_export:
+			try {
+				storage.exportDatabase(Constants.LOCAL_DB_NAME);
+				Toast.makeText(getBaseContext(),
+						R.string.database_export_success, Toast.LENGTH_SHORT)
+						.show();
+			} catch (IOException e) {
+				Toast.makeText(getBaseContext(), e.toString(),
+						Toast.LENGTH_LONG).show();
+			}
+			break;
+		case R.id.menu_import:
+			storage.importDatabase(Environment.getDataDirectory()
+					+ File.separator + Constants.LOCAL_DB_NAME);
+			Toast.makeText(getBaseContext(), R.string.database_import_success,
+					Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.action_debug:
 			intent = new Intent(this, DebugActivity.class);

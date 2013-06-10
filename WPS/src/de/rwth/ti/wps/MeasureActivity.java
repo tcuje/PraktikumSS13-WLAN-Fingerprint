@@ -87,25 +87,25 @@ public class MeasureActivity extends SuperActivity implements
 			buildingSelected = buildingList.get(0);
 		}
 	}
-	//FIXME wieder entfernen
+
+	// FIXME wieder entfernen
 	public void localisation(View view) {
-		WifiManager wifi = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+		WifiManager wifi = (WifiManager) this
+				.getSystemService(Context.WIFI_SERVICE);
 		WifiLock wl = wifi.createWifiLock("WPS");
 		List<ScanResult> results = wifi.getScanResults();
 		Location myLoc = new Location(storage);
 		LocationResult myLocRes = myLoc.getLocation(results, 0, 0);
-		float myX = (float)myLocRes.getX();
-		float myY = (float)myLocRes.getY();
-		if(myX!=myX || myY!=myY){
-			Toast.makeText(this, "Position nicht gefunden",
-					Toast.LENGTH_LONG).show();
-		}else{
-			mapView.setPoint(myX , myY);
+		if (myLocRes == null) {
+			Toast.makeText(this, "Position nicht gefunden", Toast.LENGTH_LONG)
+					.show();
+		} else {
+			mapView.setPoint((float) myLocRes.getX(), (float) myLocRes.getY());
 		}
 	}
-	
-	public void changeMeasureMode(View  view){	
-			mapView.setMeasureMode(!(mapView.getMeasureMode()));
+
+	public void changeMeasureMode(View view) {
+		mapView.setMeasureMode(!(mapView.getMeasureMode()));
 	}
 
 	public void measure(View view) {
@@ -127,15 +127,16 @@ public class MeasureActivity extends SuperActivity implements
 						Toast.LENGTH_LONG).show();
 				return;
 			}
-			MeasurePoint mp = storage.createMeasurePoint(floorSelected, p[0], p[1]);
-			
+			MeasurePoint mp = storage.createMeasurePoint(floorSelected, p[0],
+					p[1]);
+
 			boolean check = scm.startSingleScan(mp);
 			if (check == false) {
 				Toast.makeText(this, R.string.error_scanning, Toast.LENGTH_LONG)
 						.show();
 			} else {
-				Toast.makeText(this, R.string.success_scanning, Toast.LENGTH_LONG)
-				.show();
+				Toast.makeText(this, R.string.success_scanning,
+						Toast.LENGTH_LONG).show();
 				direction = CompassManager.Direction.values()[(direction
 						.ordinal() + 1) % 4];
 				switch (direction) {
