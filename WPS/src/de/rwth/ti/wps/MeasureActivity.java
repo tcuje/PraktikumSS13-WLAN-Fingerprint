@@ -135,9 +135,11 @@ public class MeasureActivity extends SuperActivity implements
 		this.registerReceiver(this.wifiReceiver, new IntentFilter(
 				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 		updateComp = new TimerTask() {
+
 			@Override
 			public void run() {
 				runOnUiThread(new Runnable() {
+
 					@Override
 					public void run() {
 						updateCompass();
@@ -216,7 +218,8 @@ public class MeasureActivity extends SuperActivity implements
 			byte[] file = floorSelected.getFile();
 			if (file != null) {
 				ByteArrayInputStream bin = new ByteArrayInputStream(file);
-				mapView.newMap(bin, storage.getMeasurePoints(floorSelected));
+//				mapView.newMap(bin, storage.getMeasurePoints(floorSelected));
+				mapView.newMap(bin);
 			} else {
 				Toast.makeText(this, R.string.error_no_floor_file,
 						Toast.LENGTH_LONG).show();
@@ -235,7 +238,7 @@ public class MeasureActivity extends SuperActivity implements
 		} else if (parent == floorSpinner) {
 			buildingSelected = null;
 			floorSelected = null;
-			mapView.clear();
+//			mapView.clear();
 		}
 	}
 

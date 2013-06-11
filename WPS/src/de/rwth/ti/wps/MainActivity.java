@@ -93,6 +93,7 @@ public class MainActivity extends SuperActivity implements
 	}
 
 	private class MyReceiver extends BroadcastReceiver {
+
 		private WifiManager wifi = MainActivity.this.getScanManager().getWifi();
 		private CompassManager comp = MainActivity.this.getCompassManager();
 		private StorageHandler sth = MainActivity.this.getStorage();
@@ -117,7 +118,8 @@ public class MainActivity extends SuperActivity implements
 						if (file != null) {
 							ByteArrayInputStream bin = new ByteArrayInputStream(
 									file);
-							viewMap.newMap(bin, sth.getMeasurePoints(map));
+//							viewMap.newMap(bin, sth.getMeasurePoints(map));
+							viewMap.newMap(bin);
 						} else {
 							Toast.makeText(MainActivity.this,
 									R.string.error_no_floor_file,
@@ -129,7 +131,7 @@ public class MainActivity extends SuperActivity implements
 					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed focus position once
 						lastMap = map;
-						viewMap.center();
+//						viewMap.center();
 					}
 				}
 			}
@@ -138,7 +140,7 @@ public class MainActivity extends SuperActivity implements
 
 	public void centerPosition(View view) {
 		if (view == btCenter) {
-			viewMap.center();
+//			viewMap.center();
 		}
 	}
 
