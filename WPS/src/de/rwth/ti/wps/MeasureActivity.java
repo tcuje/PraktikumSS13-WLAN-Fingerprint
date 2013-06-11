@@ -1,28 +1,34 @@
 package de.rwth.ti.wps;
 
 import java.io.ByteArrayInputStream;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
-import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import de.rwth.ti.common.CompassManager;
-import de.rwth.ti.common.CompassManager.OnCustomEventListener;
+import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.IPMapView;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
-import de.rwth.ti.loc.Location;
-import de.rwth.ti.loc.LocationResult;
+import de.rwth.ti.db.Scan;
 
 public class MeasureActivity extends SuperActivity implements
 		OnItemSelectedListener {
@@ -35,8 +41,17 @@ public class MeasureActivity extends SuperActivity implements
 	private ArrayAdapter<CharSequence> floorAdapter;
 	private Spinner floorSpinner;
 	private Floor floorSelected;
+	private Button btMeasure;
 	private IPMapView mapView;
+	private TextView directionText;
+	private TextView compassText;
 	private CompassManager.Direction direction;
+	private BroadcastReceiver wifiReceiver;
+	private MeasurePoint lastMP;
+	private AlertDialog waitDialog;
+	private double lastAzimuth;
+	private Timer timer;
+	private TimerTask updateComp;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,22 +70,53 @@ public class MeasureActivity extends SuperActivity implements
 		floorSpinner.setAdapter(floorAdapter);
 		floorSpinner.setOnItemSelectedListener(this);
 
+		btMeasure = (Button) findViewById(R.id.measure_button);
+
 		mapView = (IPMapView) findViewById(R.id.map_view);
 		mapView.setMeasureMode(true);
 
+		directionText = (TextView) findViewById(R.id.direction_text_view);
+
+		compassText = (TextView) findViewById(R.id.compass_text);
+
+		timer = new Timer();
+
 		direction = CompassManager.Direction.NORTH;
-		((TextView) findViewById(R.id.direction_text_view))
-				.setText("Nach Norden aussrichten");
-		cmgr.setCustomEventListener(new OnCustomEventListener() {
-			public void onEvent() {
-				showArrow();
-			}
-		});
+		wifiReceiver = new MyReceiver();
+		updateCompass();
 	}
 
-	protected void showArrow() {
-		((TextView) findViewById(R.id.direction_text_view))
-				.setText("Nach Norden aussrichten" + cmgr.getAzimut());
+	private void updateCompass() {
+		lastAzimuth = this.getCompassManager().getAzimut();
+		compassText.setText(String.valueOf((int) lastAzimuth));
+		// compare azimuth to direction
+		btMeasure.setEnabled(false);
+		switch (direction) {
+		case NORTH:
+			if (lastAzimuth > -Constants.ANGLE_DIFF
+					&& lastAzimuth < Constants.ANGLE_DIFF) {
+				btMeasure.setEnabled(true);
+			}
+			break;
+		case EAST:
+			if (lastAzimuth > 90 - Constants.ANGLE_DIFF
+					&& lastAzimuth < 90 + Constants.ANGLE_DIFF) {
+				btMeasure.setEnabled(true);
+			}
+			break;
+		case SOUTH:
+			if (lastAzimuth > 180 - Constants.ANGLE_DIFF
+					|| lastAzimuth < -180 + Constants.ANGLE_DIFF) {
+				btMeasure.setEnabled(true);
+			}
+			break;
+		case WEST:
+			if (lastAzimuth > -90 - Constants.ANGLE_DIFF
+					&& lastAzimuth < -90 + Constants.ANGLE_DIFF) {
+				btMeasure.setEnabled(true);
+			}
+			break;
+		}
 	}
 
 	@Override
@@ -86,26 +132,34 @@ public class MeasureActivity extends SuperActivity implements
 		} else {
 			buildingSelected = buildingList.get(0);
 		}
+		this.registerReceiver(this.wifiReceiver, new IntentFilter(
+				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+		updateComp = new TimerTask() {
+			@Override
+			public void run() {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						updateCompass();
+					}
+				});
+			}
+		};
+		timer.schedule(updateComp, 0, 500);
 	}
-	//FIXME wieder entfernen
-	public void localisation(View view) {
-		WifiManager wifi = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
-		WifiLock wl = wifi.createWifiLock("WPS");
-		List<ScanResult> results = wifi.getScanResults();
-		Location myLoc = new Location(storage);
-		LocationResult myLocRes = myLoc.getLocation(results, 0, 0);
-		float myX = (float)myLocRes.getX();
-		float myY = (float)myLocRes.getY();
-		if(myX!=myX || myY!=myY){
-			Toast.makeText(this, "Position nicht gefunden",
-					Toast.LENGTH_LONG).show();
-		}else{
-			mapView.setPoint(myX , myY);
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		try {
+			this.unregisterReceiver(wifiReceiver);
+		} catch (IllegalArgumentException ex) {
+			// just ignore it
 		}
-	}
-	
-	public void changeMeasureMode(View  view){	
-			mapView.setMeasureMode(!(mapView.getMeasureMode()));
+		if (updateComp != null) {
+			updateComp.cancel();
+			updateComp = null;
+		}
 	}
 
 	public void measure(View view) {
@@ -127,37 +181,15 @@ public class MeasureActivity extends SuperActivity implements
 						Toast.LENGTH_LONG).show();
 				return;
 			}
-			MeasurePoint mp = storage.createMeasurePoint(floorSelected, p[0], p[1]);
-			
-			boolean check = scm.startSingleScan(mp);
+			lastMP = storage.createMeasurePoint(floorSelected, p[0], p[1]);
+			boolean check = scm.startSingleScan();
 			if (check == false) {
+				lastMP = null;
 				Toast.makeText(this, R.string.error_scanning, Toast.LENGTH_LONG)
 						.show();
 			} else {
-				Toast.makeText(this, R.string.success_scanning, Toast.LENGTH_LONG)
-				.show();
-				direction = CompassManager.Direction.values()[(direction
-						.ordinal() + 1) % 4];
-				switch (direction) {
-				case NORTH:
-					((TextView) findViewById(R.id.direction_text_view))
-							.setText("Nach Norden aussrichten");
-					break;
-				case EAST:
-					((TextView) findViewById(R.id.direction_text_view))
-							.setText("Nach Osten aussrichten");
-					break;
-				case SOUTH:
-					((TextView) findViewById(R.id.direction_text_view))
-							.setText("Nach Süden aussrichten");
-					break;
-				case WEST:
-					((TextView) findViewById(R.id.direction_text_view))
-							.setText("Nach Westen aussrichten");
-					break;
-				default:
-					break;
-				}
+				waitDialog = new AlertDialog.Builder(this).setTitle(
+						R.string.scan_wait).show();
 			}
 		}
 	}
@@ -184,7 +216,7 @@ public class MeasureActivity extends SuperActivity implements
 			byte[] file = floorSelected.getFile();
 			if (file != null) {
 				ByteArrayInputStream bin = new ByteArrayInputStream(file);
-				mapView.newMap(bin);
+				mapView.newMap(bin, storage.getMeasurePoints(floorSelected));
 			} else {
 				Toast.makeText(this, R.string.error_no_floor_file,
 						Toast.LENGTH_LONG).show();
@@ -203,7 +235,64 @@ public class MeasureActivity extends SuperActivity implements
 		} else if (parent == floorSpinner) {
 			buildingSelected = null;
 			floorSelected = null;
-			// TODO clear map view
+			mapView.clear();
+		}
+	}
+
+	private class MyReceiver extends BroadcastReceiver {
+
+		private WifiManager wifi = MeasureActivity.this.getScanManager()
+				.getWifi();
+
+		@Override
+		public void onReceive(Context c, Intent intent) {
+			List<ScanResult> results = wifi.getScanResults();
+			// measure mode, save the access points to database
+			if (results != null && !results.isEmpty()) {
+				if (lastMP != null) {
+					Date d = new Date();
+					Scan scan = MeasureActivity.this.getStorage().createScan(
+							lastMP,
+							d.getTime() / 1000,
+							MeasureActivity.this.getCompassManager()
+									.getAzimut());
+					for (ScanResult result : results) {
+						MeasureActivity.this.getStorage().createAccessPoint(
+								scan, result.BSSID, result.level,
+								result.frequency, result.SSID,
+								result.capabilities);
+					}
+					lastMP = null;
+					if (waitDialog != null) {
+						waitDialog.dismiss();
+						waitDialog = null;
+					}
+					Toast.makeText(MeasureActivity.this,
+							R.string.success_scanning, Toast.LENGTH_SHORT)
+							.show();
+					direction = CompassManager.Direction.values()[(direction
+							.ordinal() + 1) % 4];
+					switch (direction) {
+					case NORTH:
+						directionText.setText(R.string.measure_face_north);
+						break;
+					case EAST:
+						directionText.setText(R.string.measure_face_east);
+						break;
+					case SOUTH:
+						directionText.setText(R.string.measure_face_south);
+						break;
+					case WEST:
+						directionText.setText(R.string.measure_face_west);
+						break;
+					default:
+						break;
+					}
+				}
+			} else {
+				Toast.makeText(MeasureActivity.this, R.string.scan_no_ap,
+						Toast.LENGTH_LONG).show();
+			}
 		}
 	}
 

@@ -79,7 +79,9 @@ public interface IMeasureDataHandler extends IDataHandler {
 	 * @return Returns the <code>Building</code> for the <code>Floor</code>
 	 */
 	public Building getBuilding(Floor floor);
-
+	
+	//FIXME Building getBuilding(int id)und Floor getFloor(int id)
+	
 	/**
 	 * 
 	 * @param floor

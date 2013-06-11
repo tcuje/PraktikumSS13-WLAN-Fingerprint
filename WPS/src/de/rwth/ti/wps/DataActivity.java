@@ -83,6 +83,10 @@ implements OnClickListener
 	
 		}
 
+	public void deleteOnClick(View view){}
+	
+	public void updateOnClick(View view){}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
