@@ -1,4 +1,4 @@
-package de.rwth.ti.wps;
+package de.rwth.ti.common;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,14 +12,38 @@ import android.hardware.SensorManager;
  * 
  */
 public class CompassManager implements SensorEventListener {
-
+	
+	public enum Direction
+	{
+		  NORTH, EAST, SOUTH, WEST
+	}
+	
 	private SensorManager sensor;
 	private Sensor accel;
 	private Sensor magnet;
 	private float[] gravity;
 	private float[] geomagnetic;
 	private double azimut;
+	OnCustomEventListener mListener;
+	private Direction targetDirection = Direction.NORTH;
+	private float maxDefect = 30;
 
+	public interface OnCustomEventListener{
+		public void onEvent();
+		}
+
+	public void setCustomEventListener(OnCustomEventListener eventListener) {
+		mListener=eventListener;
+	}
+	
+	public void setMaxDefect(float max){
+		maxDefect = max;
+	}
+	
+	public void setTargetDirection(Direction direction){
+		targetDirection = direction;
+	}
+		
 	public CompassManager(Activity app) {
 		sensor = (SensorManager) app.getSystemService(Context.SENSOR_SERVICE);
 		accel = sensor.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -56,6 +80,9 @@ public class CompassManager implements SensorEventListener {
 				float orientation[] = new float[3];
 				SensorManager.getOrientation(R, orientation);
 				azimut = orientation[0] * 360 / (2 * Math.PI);
+				if(mListener!=null){ 
+					
+				}
 			}
 		}
 	}

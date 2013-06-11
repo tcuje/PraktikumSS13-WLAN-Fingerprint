@@ -4,13 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import de.rwth.ti.db.AccessPoint;
@@ -23,61 +21,24 @@ import de.rwth.ti.db.Scan;
  * This is the main activity class
  * 
  */
-public class DebugActivity extends SuperActivity implements
-	OnClickListener {
+public class DebugActivity extends SuperActivity {
 
-	/**
-	 * The serialization (saved instance state) Bundle key representing the
-	 * current dropdown position.
-	 */
-	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
-
-	TextView textStatus;
-	Button debugButton;
+	private TextView textStatus;
 
 	/** Called when the activity is first created. */
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_debug);
-		
 		// Setup UI
 		textStatus = (TextView) findViewById(R.id.textStatus);
-		debugButton = (Button) findViewById(R.id.createMapButton);
-		debugButton.setOnClickListener(this);
 	}
-
-
-	@Override
-	public void onRestoreInstanceState(Bundle savedInstanceState) {
-		// Restore the previously serialized current dropdown position.
-		/*
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM)) {
-				getActionBar().setSelectedNavigationItem(
-						savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
-			}
-		}
-		*/
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		// Serialize the current dropdown position.
-		/*
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getActionBar()
-					.getSelectedNavigationIndex());
-		}
-		*/
-	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		// Inflate the menu; this adds items to the action bar if it is present.
-		//getMenuInflater().inflate(R.menu.menu, menu);
+		getMenuInflater().inflate(R.menu.debug, menu);
 		return true;
 	}
 
@@ -85,10 +46,6 @@ public class DebugActivity extends SuperActivity implements
 	@Override
 	public void onStart() {
 		super.onStart();
-		//storage.onStart();
-		//scm.onStart();
-		//cmgr.onStart();
-		// TODO GUI don't show debug info on startup
 		showDebug();
 	}
 
@@ -96,73 +53,6 @@ public class DebugActivity extends SuperActivity implements
 	@Override
 	public void onStop() {
 		super.onStop();
-		//storage.onStop();
-		//scm.onStop();
-		//cmgr.onStop();
-	}
-
-	@Override
-	public void onClick(View view) {
-		//if (true) {
-		if (view.getId() == R.id.createMapButton) {
-			// FIXME GUI get real data from gui
-			Building b = storage.createBuilding("Haus "
-					+ (storage.countBuildings() + 1));
-			Floor f = storage.createFloor(b, "Ebene "
-					+ (storage.countFloors() + 1), null,
-					(storage.countFloors() + 1), 15);
-			MeasurePoint mp = storage.createMeasurePoint(f, 0, 0);
-			boolean check = scm.startSingleScan(mp);
-			if (check == false) {
-				Toast.makeText(this, "Fehler beim Scanstart", Toast.LENGTH_LONG)
-						.show();
-			}
-			showDebug();
-		}
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Start other Activities, when the related MenuItem is selected
-		// TextView textView = (TextView) findViewById(R.id.textStatus);
-		String text;
-		text = item.getTitle() + "\n" + Integer.toString(item.getItemId())
-				+ "\n";
-
-		switch (item.getItemId()) {
-		case R.id.action_debug:
-			text += "Lokalisation";
-			break;
-		case R.id.menu_show_debug:
-			showDebug();
-			return true;
-		case R.id.menu_export:
-			try {
-				storage.exportDatabase("local.sqlite");
-				// TODO GUI extract message
-				Toast.makeText(getBaseContext(),
-						"Datenbank erfolgreich exportiert", Toast.LENGTH_SHORT)
-						.show();
-			} catch (IOException e) {
-				Toast.makeText(getBaseContext(), e.toString(),
-						Toast.LENGTH_LONG).show();
-			}
-			return true;
-		case R.id.menu_import:
-			// FIXME GUI get user input for filename
-			storage.importDatabase(Environment.getExternalStorageDirectory()
-					+ File.separator + "local.sqlite");
-			// TODO GUI extract message
-			Toast.makeText(getBaseContext(),
-					"Datenbank erfolgreich importiert", Toast.LENGTH_SHORT)
-					.show();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-
-		textStatus.setText(text);
-		return true;
 	}
 
 	public void showDebug() {
@@ -208,21 +98,39 @@ public class DebugActivity extends SuperActivity implements
 			}
 		}
 	}
-
-	/*
+	
 	@Override
-	public boolean onNavigationItemSelected(int position, long id) {
-		// When the given dropdown item is selected, show its contents in the
-		// container view.
-		// TextView textView = (TextView) findViewById(R.id.textStatus);
-		showDebug();
-		// Fragment fragment = new DummySectionFragment();
-		// Bundle args = new Bundle();
-		// args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-		// fragment.setArguments(args);
-		// getSupportFragmentManager().beginTransaction()
-		// .replace(R.id.container, fragment).commit();
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Start other Activities, when the related MenuItem is selected
+		switch (item.getItemId()) {
+		case R.id.menu_export:
+			try {
+				storage.exportDatabase("local.sqlite");
+				// TODO GUI extract message
+				Toast.makeText(getBaseContext(),
+						"Datenbank erfolgreich exportiert", Toast.LENGTH_SHORT)
+						.show();
+			} catch (IOException e) {
+				Toast.makeText(getBaseContext(), e.toString(),
+						Toast.LENGTH_LONG).show();
+			}
+			break;
+		case R.id.menu_import:
+			// FIXME GUI get user input for filename
+			storage.importDatabase(Environment.getDataDirectory()
+					+ File.separator + "local.sqlite");
+			// TODO GUI extract message
+			Toast.makeText(getBaseContext(),
+					"Datenbank erfolgreich importiert", Toast.LENGTH_SHORT)
+					.show();
+			break;
+		case R.id.menu_show_debug:
+			showDebug();
+			break;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 		return true;
-	}*/
-
+	}
 }
+
