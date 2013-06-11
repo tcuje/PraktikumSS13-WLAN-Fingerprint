@@ -15,9 +15,10 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.widget.Toast;
+import de.rwth.ti.common.Constants;
 import de.rwth.ti.share.IGUIDataHandler;
 import de.rwth.ti.share.IMeasureDataHandler;
-import de.rwth.ti.wps.MainActivity;
 
 /**
  * This class handles the database or persistent storage access
@@ -599,9 +600,9 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	 */
 	public void exportDatabase(String filename) throws IOException {
 		db.close();
-		File sd = Environment.getExternalStorageDirectory();
+		File sd = new File(Constants.SD_APP_DIR);
 		File data = Environment.getDataDirectory();
-		String srcDBPath = "//data//" + MainActivity.PACKAGE_NAME
+		String srcDBPath = "//data//" + Constants.PACKAGE_NAME
 				+ "//databases//" + dbName;
 		// String dstDBPath = "/backup/" + filename;
 		String dstDBPath = "/" + filename;
@@ -640,7 +641,12 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 //		dst.close();
 		// open import database
 		StorageHandler temp = new StorageHandler(context, filename);
-		temp.onStart();
+		try {
+			temp.onStart();
+		} catch (SQLException ex) {
+			Toast.makeText(context, ex.getMessage(), Toast.LENGTH_LONG).show();
+			return;
+		}
 		// import buildings
 		List<Building> impBuildings = temp.getAllBuildings();
 		List<Building> locBuildings = this.getAllBuildings();

@@ -23,7 +23,7 @@
                 android:title="@string/menu_import"/>
             <item
                 android:id="@+id/action_debug"
-                android:title="@string/action_debug"/>
+                android:title="@string/menu_debug"/>
         </menu>
     </item>
 

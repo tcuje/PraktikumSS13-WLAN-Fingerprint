@@ -6,7 +6,6 @@ import java.io.IOException;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -16,8 +15,6 @@ import de.rwth.ti.common.ScanManager;
 import de.rwth.ti.db.StorageHandler;
 
 public abstract class SuperActivity extends Activity {
-
-	public static final String PACKAGE_NAME = "de.rwth.ti.wps";
 
 	/*
 	 * Own classes
@@ -104,10 +101,6 @@ public abstract class SuperActivity extends Activity {
 		// Start other Activities, when the related MenuItem is selected
 		Intent intent = null;
 		switch (item.getItemId()) {
-		case R.id.action_localisation:
-			intent = new Intent(this, LocationActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			break;
 		case R.id.action_measure:
 			intent = new Intent(this, MeasureActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -128,8 +121,8 @@ public abstract class SuperActivity extends Activity {
 			}
 			break;
 		case R.id.menu_import:
-			storage.importDatabase(Environment.getDataDirectory()
-					+ File.separator + Constants.LOCAL_DB_NAME);
+			storage.importDatabase(Constants.SD_APP_DIR + File.separator
+					+ Constants.LOCAL_DB_NAME);
 			Toast.makeText(getBaseContext(), R.string.database_import_success,
 					Toast.LENGTH_SHORT).show();
 			break;

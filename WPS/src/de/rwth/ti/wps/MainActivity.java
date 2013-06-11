@@ -11,14 +11,17 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import de.rwth.ti.common.CompassManager;
 import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.IPMapView;
 import de.rwth.ti.db.Floor;
+import de.rwth.ti.db.StorageHandler;
 import de.rwth.ti.loc.Location;
 import de.rwth.ti.loc.LocationResult;
 
@@ -31,6 +34,7 @@ public class MainActivity extends SuperActivity implements
 
 	private CheckBox checkLoc;
 	private IPMapView viewMap;
+	private ImageButton btCenter;
 	private BroadcastReceiver wifiReceiver;
 
 	/** Called when the activity is first created. */
@@ -50,6 +54,7 @@ public class MainActivity extends SuperActivity implements
 		checkLoc.setOnCheckedChangeListener(this);
 		viewMap = (IPMapView) findViewById(R.id.viewMap);
 		viewMap.setMeasureMode(false);
+		btCenter = (ImageButton) findViewById(R.id.centerButton);
 		wifiReceiver = new MyReceiver();
 	}
 
@@ -88,9 +93,9 @@ public class MainActivity extends SuperActivity implements
 	}
 
 	private class MyReceiver extends BroadcastReceiver {
-
 		private WifiManager wifi = MainActivity.this.getScanManager().getWifi();
 		private CompassManager comp = MainActivity.this.getCompassManager();
+		private StorageHandler sth = MainActivity.this.getStorage();
 		private Floor lastMap;
 
 		@Override
@@ -106,14 +111,13 @@ public class MainActivity extends SuperActivity implements
 							.show();
 				} else {
 					Floor map = myLocRes.getMap();
-					if (map != lastMap) {
+					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed reload it
-						lastMap = map;
 						byte[] file = myLocRes.getMap().getFile();
 						if (file != null) {
 							ByteArrayInputStream bin = new ByteArrayInputStream(
 									file);
-							viewMap.newMap(bin);
+							viewMap.newMap(bin, sth.getMeasurePoints(map));
 						} else {
 							Toast.makeText(MainActivity.this,
 									R.string.error_no_floor_file,
@@ -122,8 +126,19 @@ public class MainActivity extends SuperActivity implements
 					}
 					viewMap.setPoint((float) myLocRes.getX(),
 							(float) myLocRes.getY());
+					if (lastMap == null || map.getId() != lastMap.getId()) {
+						// map has changed focus position once
+						lastMap = map;
+						viewMap.center();
+					}
 				}
 			}
+		}
+	}
+
+	public void centerPosition(View view) {
+		if (view == btCenter) {
+			viewMap.center();
 		}
 	}
 

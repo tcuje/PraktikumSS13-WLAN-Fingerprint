@@ -9,7 +9,7 @@
     <de.rwth.ti.common.IPMapView
         android:id="@+id/viewMap"
         android:layout_width="fill_parent"
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
         android:layout_below="@+id/toggleLocalization" />
 
     <CheckBox
@@ -21,4 +21,14 @@
         android:layout_alignParentTop="true"
         android:text="@string/toggle_localisation" />
 
-</RelativeLayout>
+    <ImageButton
+        android:id="@+id/centerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:contentDescription="@+string/button_center"
+        android:onClick="centerPosition"
+        android:src="@android:drawable/ic_menu_mylocation" />
+
+</RelativeLayout>
