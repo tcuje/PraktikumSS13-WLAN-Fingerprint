@@ -98,36 +98,33 @@ public class Location {
 		if (aps.isEmpty() || map == null) {
 			return null;
 		}
-		List<Scan> scanEntries = dataHandler.getScans(map, compass);
 		List<ScanError> errorList = new LinkedList<ScanError>();
-		for (int j = 0; j < scanEntries.size(); j++) {
+		List<Scan> scanEntries = dataHandler.getScans(map, compass);
+		for (Scan scan : scanEntries) {
 			double errorValue = 1;
-			List<AccessPoint> entries = dataHandler.getAccessPoints(scanEntries
-					.get(j));
-			// FIXME what if aps.size() <= 2 !?
-			if (aps.size() >= 3) {
-				for (int k = 0; k < 3; k++) {
-					String mac = aps.get(k).BSSID;
-					int l;
-					boolean success = false;
-					for (l = 0; l < entries.size(); l++) {
-						if (mac.compareTo(entries.get(l).getBssid()) == 0) {
-							success = true;
-							break;
-						}
+			// FIXME get 3 best access points
+			List<AccessPoint> entries = dataHandler.getAccessPoints(scan);
+			for (int k = 0; k < 3 && k < aps.size(); k++) {
+				String mac = aps.get(k).BSSID;
+				int l;
+				boolean success = false;
+				for (l = 0; l < entries.size(); l++) {
+					if (mac.compareTo(entries.get(l).getBssid()) == 0) {
+						success = true;
+						break;
 					}
-					if (success) {
-						errorValue += (double) ((100 + (double) aps.get(k).level) / 100)
-								* (Math.abs((int) ((aps.get(k).level) - entries
-										.get(l).getLevel())));
-					} else {
-						errorValue += (double) ((100 + aps.get(k).level) / 100)
-								* (Math.abs((int) ((aps.get(k).level) + 100)));
-					}
+				}
+				if (success) {
+					errorValue += (double) ((100 + (double) aps.get(k).level) / 100)
+							* (Math.abs((int) ((aps.get(k).level) - entries
+									.get(l).getLevel())));
+				} else {
+					errorValue += (double) ((100 + aps.get(k).level) / 100)
+							* (Math.abs((int) ((aps.get(k).level) + 100)));
 				}
 			}
 			ScanError scanErrorObject = new ScanError();
-			scanErrorObject.setScanError(scanEntries.get(j), errorValue);
+			scanErrorObject.setScanError(scan, errorValue);
 			errorList.add(scanErrorObject);
 		}
 		errorList = sortScanError(errorList);

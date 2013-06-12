@@ -3,6 +3,7 @@ package de.rwth.ti.wps;
 import java.util.List;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.TextView;
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
@@ -82,6 +83,15 @@ public class DebugActivity extends SuperActivity {
 						+ "\t" + ap.getBssid() + "\t" + ap.getLevel() + "\n");
 			}
 		}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		boolean result = super.onOptionsItemSelected(item);
+		if (item.getItemId() == R.id.menu_import) {
+			showDebug();
+		}
+		return result;
 	}
 
 }
