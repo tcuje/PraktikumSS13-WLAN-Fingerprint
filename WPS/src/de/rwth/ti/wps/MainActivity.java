@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -56,6 +57,14 @@ public class MainActivity extends SuperActivity implements
 		viewMap.setMeasureMode(false);
 		btCenter = (ImageButton) findViewById(R.id.centerButton);
 		wifiReceiver = new MyReceiver();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.menu, menu);
+		return true;
 	}
 
 	/** Called when the activity is first created or restarted */
@@ -111,10 +120,10 @@ public class MainActivity extends SuperActivity implements
 							"Position nicht gefunden", Toast.LENGTH_LONG)
 							.show();
 				} else {
-					Floor map = myLocRes.getMap();
+					Floor map = myLocRes.getFloor();
 					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed reload it
-						byte[] file = myLocRes.getMap().getFile();
+						byte[] file = myLocRes.getFloor().getFile();
 						if (file != null) {
 							ByteArrayInputStream bin = new ByteArrayInputStream(
 									file);
@@ -130,7 +139,7 @@ public class MainActivity extends SuperActivity implements
 					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed focus position once
 						lastMap = map;
-//						viewMap.center();
+						viewMap.center();
 					}
 				}
 			}
@@ -139,7 +148,7 @@ public class MainActivity extends SuperActivity implements
 
 	public void centerPosition(View view) {
 		if (view == btCenter) {
-//			viewMap.center();
+			viewMap.center();
 		}
 	}
 

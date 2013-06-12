@@ -59,13 +59,13 @@ public class MeasureActivity extends SuperActivity implements
 		setContentView(R.layout.activity_measure);
 
 		buildingAdapter = new ArrayAdapter<CharSequence>(this,
-				android.R.layout.simple_spinner_item);
+				R.layout.spinner_item);
 		buildingSpinner = (Spinner) findViewById(R.id.buildingSelectSpinner);
 		buildingSpinner.setAdapter(buildingAdapter);
 		buildingSpinner.setOnItemSelectedListener(this);
 
 		floorAdapter = new ArrayAdapter<CharSequence>(this,
-				android.R.layout.simple_spinner_item);
+				R.layout.spinner_item);
 		floorSpinner = (Spinner) findViewById(R.id.floorSelectSpinner);
 		floorSpinner.setAdapter(floorAdapter);
 		floorSpinner.setOnItemSelectedListener(this);
@@ -166,6 +166,7 @@ public class MeasureActivity extends SuperActivity implements
 
 	public void measure(View view) {
 		if (view.getId() == R.id.measure_button) {
+			lastMP = null;
 			// check if building/floor is selected
 			if (buildingSelected == null) {
 				Toast.makeText(this, R.string.error_empty_input,
@@ -183,13 +184,12 @@ public class MeasureActivity extends SuperActivity implements
 						Toast.LENGTH_LONG).show();
 				return;
 			}
-			lastMP = storage.createMeasurePoint(floorSelected, p[0], p[1]);
 			boolean check = scm.startSingleScan();
 			if (check == false) {
-				lastMP = null;
 				Toast.makeText(this, R.string.error_scanning, Toast.LENGTH_LONG)
 						.show();
 			} else {
+				lastMP = storage.createMeasurePoint(floorSelected, p[0], p[1]);
 				waitDialog = new AlertDialog.Builder(this).setTitle(
 						R.string.scan_wait).show();
 			}
@@ -237,7 +237,7 @@ public class MeasureActivity extends SuperActivity implements
 		} else if (parent == floorSpinner) {
 			buildingSelected = null;
 			floorSelected = null;
-//			mapView.clear();
+			mapView.clear();
 		}
 	}
 
@@ -264,7 +264,6 @@ public class MeasureActivity extends SuperActivity implements
 								result.frequency, result.SSID,
 								result.capabilities);
 					}
-					lastMP = null;
 					if (waitDialog != null) {
 						waitDialog.dismiss();
 						waitDialog = null;
@@ -272,6 +271,10 @@ public class MeasureActivity extends SuperActivity implements
 					Toast.makeText(MeasureActivity.this,
 							R.string.success_scanning, Toast.LENGTH_SHORT)
 							.show();
+					if (direction.ordinal() + 1 > CompassManager.Direction
+							.values().length) {
+						lastMP = null;
+					}
 					direction = CompassManager.Direction.values()[(direction
 							.ordinal() + 1) % 4];
 					switch (direction) {

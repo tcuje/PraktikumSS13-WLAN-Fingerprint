@@ -35,14 +35,14 @@ public class Location {
 											// 2 erzwingt FloorSuche
 		if (theTime > timeSinceBuilding + 40000 || kontrollvariable == 1) {
 			tempBuilding = findBuilding(aps);
-			tempFloor = findMap(aps, tempBuilding);
+			tempFloor = findFloor(aps, tempBuilding);
 			LocationResult result = findMP(aps, tempFloor, tempBuilding,
 					compass);
 			timeSinceFloor = theTime;
 			timeSinceBuilding = theTime;
 			return result;
 		} else if (theTime > timeSinceFloor + 10000 || kontrollvariable == 2) {
-			tempFloor = findMap(aps, tempBuilding);
+			tempFloor = findFloor(aps, tempBuilding);
 			LocationResult result = findMP(aps, tempFloor, tempBuilding,
 					compass);
 			timeSinceFloor = theTime;
@@ -72,15 +72,15 @@ public class Location {
 		if (mp == null) {
 			return null;
 		}
-		Floor map = dataHandler.getFloor(mp);
-		if (map == null) {
+		Floor floor = dataHandler.getFloor(mp);
+		if (floor == null) {
 			return null;
 		}
-		Building result = dataHandler.getBuilding(map);
+		Building result = dataHandler.getBuilding(floor);
 		return result;
 	}
 
-	private Floor findMap(List<ScanResult> aps, Building b) {
+	private Floor findFloor(List<ScanResult> aps, Building b) {
 		if (aps.isEmpty() || b == null) {
 			return null;
 		}
@@ -93,13 +93,13 @@ public class Location {
 		return floor;
 	}
 
-	private LocationResult findMP(List<ScanResult> aps, Floor map,
+	private LocationResult findMP(List<ScanResult> aps, Floor floor,
 			Building building, int compass) {
-		if (aps.isEmpty() || map == null) {
+		if (aps.isEmpty() || floor == null) {
 			return null;
 		}
 		List<ScanError> errorList = new LinkedList<ScanError>();
-		List<Scan> scanEntries = dataHandler.getScans(map, compass);
+		List<Scan> scanEntries = dataHandler.getScans(floor, compass);
 		for (Scan scan : scanEntries) {
 			double errorValue = 1;
 			// get 3 best access points ordered by level
@@ -147,7 +147,7 @@ public class Location {
 			x = x / errorSum;
 			y = y / errorSum;
 		}
-		LocationResult result = new LocationResult(building, map, x, y);
+		LocationResult result = new LocationResult(building, floor, x, y);
 		return result;
 
 	}

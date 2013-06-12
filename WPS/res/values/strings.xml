@@ -14,6 +14,7 @@
     <string name="text_measure_button">Messen</string>
     <string name="menu_export">Datenbank exportieren</string>
     <string name="menu_import">Datenbank importieren</string>
+    <string name="menu_clear">Datenbank leeren</string>
     <string name="menu_building">Gebäude</string>
     <string name="activity_new_floor_floorlevel">Etagennummer</string>
     <string name="activity_new_floor_floorname">Etagenname</string>
@@ -36,6 +37,7 @@
 	<string name="success_scanning">Erfolg beim Scannen!</string>
 	<string name="database_export_success">Datenbank erfolgreich exportiert</string>
 	<string name="database_import_success">Datenbank erfolgreich importiert</string>
+	<string name="database_clear_success">Datenbank erfolgreich geleert</string>
 	<string name="toggle_localisation">Lokalisierung</string>
 	<string name="scan_wait">Bitte warten</string>
 	<string name="scan_no_ap">Keine Ergebnisse, bitte die Messung wiederholen</string>

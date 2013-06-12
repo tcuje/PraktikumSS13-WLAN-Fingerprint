@@ -629,8 +629,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	/**
-	 * Updates your local map information with the given database, including
-	 * import
+	 * Updates the local information with the given database, including import
 	 * 
 	 * @param filename
 	 *            full filepath for the import database
@@ -782,5 +781,9 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 			}
 		}
 		temp.onStop();
+	}
+
+	public void clearDatabase() {
+		storage.clearDatabase(db);
 	}
 }

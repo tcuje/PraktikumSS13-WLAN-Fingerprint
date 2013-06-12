@@ -1,10 +1,15 @@
 package de.rwth.ti.wps;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
+import de.rwth.ti.common.Constants;
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
@@ -41,6 +46,14 @@ public class DebugActivity extends SuperActivity {
 		super.onStop();
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.debug, menu);
+		return true;
+	}
+
 	public void showDebug() {
 		textStatus.setText("Database:\n");
 		textStatus.append("\nBuildings: " + storage.countBuildings() + "\n");
@@ -48,15 +61,15 @@ public class DebugActivity extends SuperActivity {
 			textStatus.append("Building\t" + b.getId() + "\t" + b.getName()
 					+ "\n");
 		}
-		textStatus.append("\nMaps: " + storage.countFloors() + "\n");
+		textStatus.append("\nFloors: " + storage.countFloors() + "\n");
 		for (Floor m : storage.getAllFloors()) {
-			textStatus.append("Map\t" + m.getId() + "\t" + m.getName() + "\t"
+			textStatus.append("Floor\t" + m.getId() + "\t" + m.getName() + "\t"
 					+ m.getFile() + "\n");
 		}
-		textStatus.append("\nCheckpoints: " + storage.countMeasurePoints()
+		textStatus.append("\nMeasurePoints: " + storage.countMeasurePoints()
 				+ "\n");
 		for (MeasurePoint cp : storage.getAllMeasurePoints()) {
-			textStatus.append("Checkpoint\t" + cp.getId() + "\t"
+			textStatus.append("MeasurePoint\t" + cp.getId() + "\t"
 					+ cp.getFloorId() + "\t" + cp.getPosx() + "\t"
 					+ cp.getPosy() + "\n");
 		}
@@ -88,10 +101,32 @@ public class DebugActivity extends SuperActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		boolean result = super.onOptionsItemSelected(item);
-		if (item.getItemId() == R.id.menu_import) {
+		switch (item.getItemId()) {
+		case R.id.menu_export:
+			try {
+				storage.exportDatabase(Constants.LOCAL_DB_NAME);
+				Toast.makeText(getBaseContext(),
+						R.string.database_export_success, Toast.LENGTH_SHORT)
+						.show();
+			} catch (IOException e) {
+				Toast.makeText(getBaseContext(), e.toString(),
+						Toast.LENGTH_LONG).show();
+			}
+			break;
+		case R.id.menu_import:
+			storage.importDatabase(Constants.SD_APP_DIR + File.separator
+					+ Constants.LOCAL_DB_NAME);
+			Toast.makeText(getBaseContext(), R.string.database_import_success,
+					Toast.LENGTH_SHORT).show();
 			showDebug();
+			break;
+		case R.id.menu_clear:
+			storage.clearDatabase();
+			Toast.makeText(getBaseContext(), R.string.database_clear_success,
+					Toast.LENGTH_SHORT).show();
+			showDebug();
+			break;
 		}
 		return result;
 	}
-
 }

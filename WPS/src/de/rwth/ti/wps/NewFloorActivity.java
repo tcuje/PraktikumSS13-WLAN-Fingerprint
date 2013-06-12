@@ -48,7 +48,7 @@ public class NewFloorActivity extends SuperActivity implements
 
 		createBuildingEdit = (EditText) findViewById(R.id.createBuildingEdit);
 		buildingAdapter = new ArrayAdapter<CharSequence>(this,
-				android.R.layout.simple_spinner_item);
+				R.layout.spinner_item);
 		buildingSpinner = (Spinner) findViewById(R.id.buildingSelectSpinner);
 		buildingSpinner.setAdapter(buildingAdapter);
 		buildingSpinner.setOnItemSelectedListener(this);
@@ -56,7 +56,7 @@ public class NewFloorActivity extends SuperActivity implements
 		floorLevelEdit = (EditText) findViewById(R.id.floorLevelEdit);
 		floorNameEdit = (EditText) findViewById(R.id.floorNameEdit);
 		northEdit = (EditText) findViewById(R.id.northEdit);
-		floorFilenameView = (TextView) findViewById(R.id.mapPathView);
+		floorFilenameView = (TextView) findViewById(R.id.filePathEdit);
 
 		TextWatcher textWatch = new TextWatcher() {
 			public void afterTextChanged(Editable s) {
@@ -194,8 +194,8 @@ public class NewFloorActivity extends SuperActivity implements
 					if (f != null) {
 						message = getString(R.string.success_create_floor);
 						// Eingaben löschen
-						buildingSpinner.setSelection(0);
 						floorLevelEdit.setText("");
+						floorLevelEdit.requestFocus();
 						floorNameEdit.setText("");
 						northEdit.setText("");
 						floorFilenameView.setText("");
