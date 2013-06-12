@@ -125,6 +125,16 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	@Override
+	public List<AccessPoint> getAccessPoints(Scan scan, int limit) {
+		Cursor cursor = db.query(AccessPoint.TABLE_NAME,
+				AccessPoint.ALL_COLUMNS, AccessPoint.COLUMN_SCANID + "=?",
+				new String[] { String.valueOf(scan.getId()) }, null, null,
+				AccessPoint.COLUMN_LEVEL + " DESC", String.valueOf(limit));
+		List<AccessPoint> result = cursorToAccessPoints(cursor);
+		return result;
+	}
+
+	@Override
 	public List<AccessPoint> getAccessPoint(String bssid) {
 		Cursor cursor = db.query(AccessPoint.TABLE_NAME,
 				AccessPoint.ALL_COLUMNS, AccessPoint.COLUMN_BSSID + "=?",

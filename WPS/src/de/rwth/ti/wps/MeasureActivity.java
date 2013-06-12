@@ -218,8 +218,7 @@ public class MeasureActivity extends SuperActivity implements
 			byte[] file = floorSelected.getFile();
 			if (file != null) {
 				ByteArrayInputStream bin = new ByteArrayInputStream(file);
-//				mapView.newMap(bin, storage.getMeasurePoints(floorSelected));
-				mapView.newMap(bin);
+				mapView.newMap(bin, storage.getMeasurePoints(floorSelected));
 			} else {
 				Toast.makeText(this, R.string.error_no_floor_file,
 						Toast.LENGTH_LONG).show();

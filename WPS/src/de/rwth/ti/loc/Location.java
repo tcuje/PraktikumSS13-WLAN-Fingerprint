@@ -102,9 +102,9 @@ public class Location {
 		List<Scan> scanEntries = dataHandler.getScans(map, compass);
 		for (Scan scan : scanEntries) {
 			double errorValue = 1;
-			// FIXME get 3 best access points
-			List<AccessPoint> entries = dataHandler.getAccessPoints(scan);
-			for (int k = 0; k < 3 && k < aps.size(); k++) {
+			// get 3 best access points ordered by level
+			List<AccessPoint> entries = dataHandler.getAccessPoints(scan, 3);
+			for (int k = 0; k < aps.size(); k++) {
 				String mac = aps.get(k).BSSID;
 				int l;
 				boolean success = false;

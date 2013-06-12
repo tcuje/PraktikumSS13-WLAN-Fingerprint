@@ -118,8 +118,7 @@ public class MainActivity extends SuperActivity implements
 						if (file != null) {
 							ByteArrayInputStream bin = new ByteArrayInputStream(
 									file);
-//							viewMap.newMap(bin, sth.getMeasurePoints(map));
-							viewMap.newMap(bin);
+							viewMap.newMap(bin, sth.getMeasurePoints(map));
 						} else {
 							Toast.makeText(MainActivity.this,
 									R.string.error_no_floor_file,
