@@ -92,7 +92,7 @@ public class Location {
 			double errorValue = 0;
 			List<AccessPoint> entries = dataHandler.getAccessPoints(scanEntries
 					.get(j));
-			for (int k = 0; k < 3; k++) {
+			for (int k = 0; k < 3 && k < aps.size(); k++) {
 				String mac = aps.get(k).BSSID;
 				int l;
 				boolean success = false;
