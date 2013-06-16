@@ -88,7 +88,7 @@ public class MeasureActivity extends SuperActivity implements
 
 	private void updateCompass() {
 		lastAzimuth = this.getCompassManager().getAzimut();
-		compassText.setText(String.valueOf((int) lastAzimuth));
+		compassText.setText("N " + (int) lastAzimuth + "°");
 		// compare azimuth to direction
 		btMeasure.setEnabled(false);
 		switch (direction) {
@@ -166,7 +166,6 @@ public class MeasureActivity extends SuperActivity implements
 
 	public void measure(View view) {
 		if (view.getId() == R.id.measure_button) {
-			lastMP = null;
 			// check if building/floor is selected
 			if (buildingSelected == null) {
 				Toast.makeText(this, R.string.error_empty_input,
@@ -189,7 +188,13 @@ public class MeasureActivity extends SuperActivity implements
 				Toast.makeText(this, R.string.error_scanning, Toast.LENGTH_LONG)
 						.show();
 			} else {
-				lastMP = storage.createMeasurePoint(floorSelected, p[0], p[1]);
+				if (lastMP == null) {
+					lastMP = storage.createMeasurePoint(floorSelected, p[0],
+							p[1]);
+				}
+				if (waitDialog != null) {
+					waitDialog.dismiss();
+				}
 				waitDialog = new AlertDialog.Builder(this).setTitle(
 						R.string.scan_wait).show();
 			}
@@ -251,7 +256,8 @@ public class MeasureActivity extends SuperActivity implements
 			List<ScanResult> results = wifi.getScanResults();
 			// measure mode, save the access points to database
 			if (results != null && !results.isEmpty()) {
-				if (lastMP != null) {
+				if (lastMP != null && waitDialog != null
+						&& waitDialog.isShowing()) {
 					Date d = new Date();
 					Scan scan = MeasureActivity.this.getStorage().createScan(
 							lastMP,
@@ -264,10 +270,8 @@ public class MeasureActivity extends SuperActivity implements
 								result.frequency, result.SSID,
 								result.capabilities);
 					}
-					if (waitDialog != null) {
-						waitDialog.dismiss();
-						waitDialog = null;
-					}
+					waitDialog.dismiss();
+					waitDialog = null;
 					Toast.makeText(MeasureActivity.this,
 							R.string.success_scanning, Toast.LENGTH_SHORT)
 							.show();

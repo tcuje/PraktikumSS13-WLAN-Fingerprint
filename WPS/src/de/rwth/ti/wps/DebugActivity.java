@@ -63,8 +63,9 @@ public class DebugActivity extends SuperActivity {
 		}
 		textStatus.append("\nFloors: " + storage.countFloors() + "\n");
 		for (Floor m : storage.getAllFloors()) {
+			byte[] f = m.getFile();
 			textStatus.append("Floor\t" + m.getId() + "\t" + m.getName() + "\t"
-					+ m.getFile() + "\n");
+					+ (f != null && f.length != 0) + "\n");
 		}
 		textStatus.append("\nMeasurePoints: " + storage.countMeasurePoints()
 				+ "\n");

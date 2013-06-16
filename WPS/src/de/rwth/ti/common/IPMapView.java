@@ -36,8 +36,6 @@ public class IPMapView extends View {
 	private float mYFocus = 0;
 	private float mXScaleFocus = 0;
 	private float mYScaleFocus = 0;
-	private float mAccXPoint = 0;
-	private float mAccYPoint = 0;
 	private PointF mPoint = null;
 	private PointF mMPoint = null;
 	private int mHeight = 0;
@@ -49,8 +47,8 @@ public class IPMapView extends View {
 	private List<Path> myFillPaths;
 	private List<MeasurePoint> myPoints;
 	private Paint mPaint;
-	private Rect mRect;
 	private Bitmap map;
+	private Rect zoomBounds;
 
 	public IPMapView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -62,7 +60,7 @@ public class IPMapView extends View {
 		mPaint = new Paint();
 		mPaint.setStrokeWidth(3);
 		mPaint.setAntiAlias(true);
-		mRect = new Rect();
+		zoomBounds = new Rect();
 	}
 
 	@Override
@@ -84,7 +82,7 @@ public class IPMapView extends View {
 			mMinScaleFactor = xNew / ((float) mWidth);
 			mMaxScaleFactor = 10.0f * mMinScaleFactor;
 		}
-		mScaleFactor = mMinScaleFactor;
+//		mScaleFactor = mMinScaleFactor;
 		mViewHeight = yNew;
 		mViewWidth = xNew;
 	}
@@ -122,11 +120,9 @@ public class IPMapView extends View {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		canvas.save();
+		// FIXME zoom
 		canvas.scale(mScaleFactor, mScaleFactor, mXScaleFocus, mYScaleFocus);
 		canvas.translate(mXFocus, mYFocus);
-		canvas.getClipBounds(mRect);
-		mAccXPoint = mRect.exactCenterX();
-		mAccYPoint = mRect.exactCenterY();
 		// draw pre rendered map from bitmap
 		if (map != null) {
 			canvas.drawBitmap(map, 0, 0, mPaint);
@@ -146,7 +142,116 @@ public class IPMapView extends View {
 				canvas.drawCircle(mMPoint.x, mMPoint.y, POINT_SIZE, mPaint);
 			}
 		}
+		// FIXME
+//		// draw current zoom factor
+//		canvas.translate(-mXFocus, -mYFocus);
+//		canvas.scale(1 / mScaleFactor, 1 / mScaleFactor, mXScaleFocus,
+//				mYScaleFocus);
+//		mPaint.setColor(Color.BLACK);
+//		String zStr = Float.toString(mScaleFactor);
+//		int ind = zStr.indexOf(".");
+//		if (ind != -1) {
+//			int len = Math.min(ind + 3, zStr.length());
+//			zStr = zStr.substring(0, len);
+//		}
+//		mPaint.getTextBounds(zStr, 0, zStr.length(), zoomBounds);
+//		float x = canvas.getWidth() - zoomBounds.width();
+//		float y = canvas.getHeight() - zoomBounds.height();
+//		canvas.drawText(zStr, x, y, mPaint);
+		// restore it
 		canvas.restore();
+	}
+
+	public void setPoint(float x, float y) {
+		if (mPoint == null) {
+			mPoint = new PointF();
+		}
+		mPoint.set(x, y);
+		invalidate();
+	}
+
+	public boolean getMeasureMode() {
+		return mMeasureMode;
+	}
+
+	public void setMeasureMode(boolean measuremode) {
+		mMeasureMode = measuremode;
+	}
+
+	public float[] getMeasurePoint() {
+		float result[] = null;
+		if (mMPoint != null) {
+			result = new float[] { mMPoint.x, mMPoint.y };
+		}
+		return result;
+	}
+
+	protected void setMeasurePoint(float x, float y) {
+		mMPoint = new PointF();
+//		mMPoint.x = (x / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
+//				+ mAccXPoint;
+//		mMPoint.y = (y / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))
+//				+ mAccYPoint;
+		// FIXME zoom
+		mMPoint.x = (x - mXScaleFocus) / mScaleFactor - mXFocus;
+		mMPoint.y = (y - mYScaleFocus) / mScaleFactor - mYFocus;
+		invalidate();
+	}
+
+	private class MyGestureListener extends
+			GestureDetector.SimpleOnGestureListener {
+		@Override
+		public void onLongPress(MotionEvent e) {
+			if (mMeasureMode && map != null) {
+				setMeasurePoint(e.getX(), e.getY());
+			}
+			super.onLongPress(e);
+		}
+
+		@Override
+		public boolean onScroll(MotionEvent e1, MotionEvent e2,
+				float distanceX, float distanceY) {
+			if (!mScaleDetector.isInProgress()) {
+				mXFocus -= distanceX / mScaleFactor;
+				mYFocus -= distanceY / mScaleFactor;
+				invalidate();
+			}
+			return true;
+		};
+	};
+
+	private class ScaleListener extends
+			ScaleGestureDetector.SimpleOnScaleGestureListener {
+
+		@Override
+		public boolean onScale(ScaleGestureDetector detector) {
+			float f = detector.getScaleFactor();
+			mScaleFactor *= f;
+			mXScaleFocus = detector.getFocusX();
+			mYScaleFocus = detector.getFocusY();
+			// Don't let the object get too small or too large.
+			mScaleFactor = Math.max(mMinScaleFactor,
+					Math.min(mScaleFactor, mMaxScaleFactor));
+			invalidate();
+			return true;
+		}
+	}
+
+	public void center() {
+		if (mPoint != null) {
+			mXFocus = -mPoint.x + mViewWidth / 2;
+			mYFocus = -mPoint.y + mViewHeight / 2;
+			invalidate();
+		}
+	}
+
+	public void clear() {
+		map = null;
+		mPoint = null;
+	}
+
+	public float getScaleFactor() {
+		return mScaleFactor;
 	}
 
 	public void newMap(InputStream inputStream, List<MeasurePoint> measurePoints) {
@@ -186,10 +291,10 @@ public class IPMapView extends View {
 			} else if (eventType == XmlPullParser.START_TAG) {
 				System.out.println("Start tag " + xpp.getName());
 				if (xpp.getName().equals("svg")) {
-					mHeight = Integer.valueOf(xpp.getAttributeValue(null,
-							"height"));
-					mWidth = Integer.valueOf(xpp.getAttributeValue(null,
-							"width"));
+					String val = xpp.getAttributeValue(null, "height");
+					mHeight = Integer.valueOf(val);
+					val = xpp.getAttributeValue(null, "width");
+					mWidth = Integer.valueOf(val);
 				}
 				if (xpp.getName().equals("path")) {
 					Path aPath = new Path();
@@ -330,89 +435,4 @@ public class IPMapView extends View {
 		redrawMap();
 		invalidate();
 	}
-
-	public void setPoint(float x, float y) {
-		if (mPoint == null) {
-			mPoint = new PointF();
-		}
-		mPoint.set(x, y);
-		invalidate();
-	}
-
-	public boolean getMeasureMode() {
-		return mMeasureMode;
-	}
-
-	public void setMeasureMode(boolean measuremode) {
-		mMeasureMode = measuremode;
-	}
-
-	public float[] getMeasurePoint() {
-		float result[] = null;
-		if (mMPoint != null) {
-			result = new float[] { mMPoint.x, mMPoint.y };
-		}
-		return result;
-	}
-
-	protected void setMeasurePoint(float x, float y) {
-		mMPoint = new PointF();
-		mMPoint.x = (x / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
-				+ mAccXPoint;
-		mMPoint.y = (y / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))
-				+ mAccYPoint;
-		invalidate();
-	}
-
-	private class MyGestureListener extends
-			GestureDetector.SimpleOnGestureListener {
-		@Override
-		public void onLongPress(MotionEvent e) {
-			if (mMeasureMode && map != null) {
-				setMeasurePoint(e.getX(), e.getY());
-			}
-			super.onLongPress(e);
-		}
-
-		@Override
-		public boolean onScroll(MotionEvent e1, MotionEvent e2,
-				float distanceX, float distanceY) {
-			if (!mScaleDetector.isInProgress()) {
-				mXFocus -= distanceX / mScaleFactor;
-				mYFocus -= distanceY / mScaleFactor;
-				invalidate();
-			}
-			return true;
-		};
-	};
-
-	private class ScaleListener extends
-			ScaleGestureDetector.SimpleOnScaleGestureListener {
-		@Override
-		public boolean onScale(ScaleGestureDetector detector) {
-			mScaleFactor *= detector.getScaleFactor();
-			mXScaleFocus = detector.getFocusX();
-			mYScaleFocus = detector.getFocusY();
-			// Don't let the object get too small or too large.
-			mScaleFactor = Math.max(mMinScaleFactor,
-					Math.min(mScaleFactor, mMaxScaleFactor));
-
-			invalidate();
-			return true;
-		}
-	}
-
-	public void center() {
-		if (mPoint != null) {
-			mXFocus = -mPoint.x + mViewWidth / 2;
-			mYFocus = -mPoint.y + mViewHeight / 2;
-			invalidate();
-		}
-	}
-
-	public void clear() {
-		map = null;
-		mPoint = null;
-	}
-
 }
