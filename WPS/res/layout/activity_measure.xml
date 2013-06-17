@@ -30,14 +30,17 @@
             android:id="@+id/direction_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/measure_face_north" />
+            android:layout_centerHorizontal="true"
+            android:text="@string/measure_face_north"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Button
             android:id="@+id/measure_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
+            android:layout_alignParentTop="false"
             android:onClick="measure"
             android:text="@string/text_measure_button" />
 

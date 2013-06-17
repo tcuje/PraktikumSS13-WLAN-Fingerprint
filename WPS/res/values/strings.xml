@@ -7,7 +7,7 @@
     <string name="action_localisation">Lokalisation</string>
     <string name="action_new_floor">Neue Karte</string>
     <string name="action_measure">Messmodus</string>
-    <string name="action_debug">Debug</string>
+    <string name="action_debug">Datenbank anzeigen</string>
     <string name="building">Gebäude</string>
     <string name="activity_new_floor_create_building">Gebäude erstellen</string>
     <string name="activity_new_floor_create_floor">Neue Etage erstellen</string>
@@ -22,7 +22,6 @@
     <string name="floor_upper">Obergeschoss</string>
     <string name="floor_basement">Untergeschoss</string>
     <string name="activity_new_floor_north">Nordausrichtung</string>
-    <string name="menu_debug">Datenbank anzeigen</string>
     <string name="error_create_building">Gebäude konnte nicht erstellt werden</string>
     <string name="success_create_building">Gebäude erfolgreich erstellt</string>
     <string name="error_empty_input">Ein Feld ist leer, bitte ausfüllen</string>

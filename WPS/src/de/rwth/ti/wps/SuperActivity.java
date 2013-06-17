@@ -1,16 +1,11 @@
 package de.rwth.ti.wps;
 
-import java.io.File;
-import java.io.IOException;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 import de.rwth.ti.common.CompassManager;
-import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.ScanManager;
 import de.rwth.ti.db.StorageHandler;
 
@@ -109,6 +104,9 @@ public abstract class SuperActivity extends Activity {
 			intent = new Intent(this, NewFloorActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			break;
+		/*
+		 * In DebugActivity verlegt, da nur dort nötig
+		 * und garantiert nicht in Navigation einzuordnen
 		case R.id.menu_export:
 			try {
 				storage.exportDatabase(Constants.LOCAL_DB_NAME);
@@ -126,6 +124,7 @@ public abstract class SuperActivity extends Activity {
 			Toast.makeText(getBaseContext(), R.string.database_import_success,
 					Toast.LENGTH_SHORT).show();
 			break;
+		*/
 		case R.id.action_debug:
 			intent = new Intent(this, DebugActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

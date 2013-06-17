@@ -11,6 +11,8 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -58,6 +60,14 @@ public class MainActivity extends SuperActivity implements
 		wifiReceiver = new MyReceiver();
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
 	/** Called when the activity is first created or restarted */
 	@Override
 	public void onStart() {
@@ -90,6 +100,23 @@ public class MainActivity extends SuperActivity implements
 				getScanManager().stopAutoScan();
 			}
 		}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_localisation:
+			item.setChecked(!item.isChecked());
+			if (item.isChecked() == true) {
+				getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
+			} else {
+				getScanManager().stopAutoScan();
+			}
+			break;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+		return true;
 	}
 
 	private class MyReceiver extends BroadcastReceiver {

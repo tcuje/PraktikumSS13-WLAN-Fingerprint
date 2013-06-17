@@ -19,8 +19,8 @@ public class Constants {
 	public static final int ANGLE_DIFF = 30;
 
 	// MapView color schema
-	public static final int COLOR_FLOOR_FILL = Color.GRAY;
-	public static final int COLOR_FLOOR_WALL = Color.YELLOW;
+	public static final int COLOR_FLOOR_FILL = Color.WHITE;
+	public static final int COLOR_FLOOR_WALL = Color.GRAY;
 	public static final int COLOR_MEASURE_POINTS = Color.LTGRAY;
 	public static final int COLOR_POSITION = Color.BLUE;
 	public static final int COLOR_ACTIVE_POINT = Color.GREEN;
