@@ -1,35 +1,30 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <!--
-    <item
-        android:id="@+id/menu_buildings"
-        android:title="@string/menu_building"
-        android:showAsAction="ifRoom">
-    </item>
-    -->
     <item
         android:id="@+id/action_navigation"
-        android:title="@string/action_navigation"
-        android:showAsAction="ifRoom">
-        
+        android:showAsAction="ifRoom"
+        android:title="@string/action_navigation">
         <menu>
-		    <item
-		        android:id="@+id/action_localisation"
-		        android:title="@string/action_localisation"
-		        android:visible="true"/>
-		    
-		    <item
-		        android:id="@+id/action_new_floor"
-		        android:title="@string/action_new_floor"/>
-		    
-		    <item
-		        android:id="@+id/action_measure"
-		        android:title="@string/action_measure"/>
-		    
-		    <item
-		        android:id="@+id/action_debug"
-		        android:title="@string/action_debug"/>
+            <item
+                android:id="@+id/action_localisation"
+                android:title="@string/action_localisation"
+                android:visible="false"/>
+            <item
+                android:id="@+id/action_new_floor"
+                android:title="@string/action_new_floor"/>
+            <item
+                android:id="@+id/action_measure"
+                android:title="@string/action_measure"/>
+            <item
+                android:id="@+id/menu_export"
+                android:title="@string/menu_export"/>
+            <item
+                android:id="@+id/menu_import"
+                android:title="@string/menu_import"/>
+            <item
+                android:id="@+id/action_debug"
+                android:title="@string/menu_debug"/>
         </menu>
     </item>
-    
+
 </menu>

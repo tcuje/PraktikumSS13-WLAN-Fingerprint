@@ -3,17 +3,17 @@
 
     <string name="app_name">WPS</string>
     <string name="app_description">WiFi Positioning System</string>
+    <string name="action_navigation">Navigation</string>
     <string name="action_localisation">Lokalisation</string>
     <string name="action_new_floor">Neue Karte</string>
     <string name="action_measure">Messmodus</string>
+    <string name="action_debug">Debug</string>
     <string name="building">Gebäude</string>
     <string name="activity_new_floor_create_building">Gebäude erstellen</string>
     <string name="activity_new_floor_create_floor">Neue Etage erstellen</string>
     <string name="text_measure_button">Messen</string>
-    <string name="menu_debug">Rohdaten anzeigen</string>
     <string name="menu_export">Datenbank exportieren</string>
     <string name="menu_import">Datenbank importieren</string>
-    <string name="action_navigation">Navigation</string>
     <string name="menu_building">Gebäude</string>
     <string name="activity_new_floor_floorlevel">Etagennummer</string>
     <string name="activity_new_floor_floorname">Etagenname</string>
@@ -22,7 +22,7 @@
     <string name="floor_upper">Obergeschoss</string>
     <string name="floor_basement">Untergeschoss</string>
     <string name="activity_new_floor_north">Nordausrichtung</string>
-    <string name="action_debug">Debug</string>
+    <string name="menu_debug">Datenbank anzeigen</string>
     <string name="error_create_building">Gebäude konnte nicht erstellt werden</string>
     <string name="success_create_building">Gebäude erfolgreich erstellt</string>
     <string name="error_empty_input">Ein Feld ist leer, bitte ausfüllen</string>
@@ -34,5 +34,15 @@
     <string name="error_no_floor_file">Keine Kartendatei vorhanden!</string>
     <string name="error_scanning">Fehler beim Scannen!</string>
 	<string name="success_scanning">Erfolg beim Scannen!</string>
+	<string name="database_export_success">Datenbank erfolgreich exportiert</string>
+	<string name="database_import_success">Datenbank erfolgreich importiert</string>
+	<string name="toggle_localisation">Lokalisierung</string>
+	<string name="scan_wait">Bitte warten</string>
+	<string name="scan_no_ap">Keine Ergebnisse, bitte die Messung wiederholen</string>
+	<string name="button_center">Auf aktuelle Position zentrieren</string>
+	<string name="measure_face_north">Nach Norden ausrichten</string>
+	<string name="measure_face_east">Nach Osten ausrichten</string>
+	<string name="measure_face_south">Nach Süden ausrichten</string>
+	<string name="measure_face_west">Nach Westen ausrichten</string>
     
 </resources>
