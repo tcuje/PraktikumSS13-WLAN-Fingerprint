@@ -3,16 +3,15 @@ package de.rwth.ti.common;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Paint.Cap;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -25,50 +24,60 @@ import de.rwth.ti.db.MeasurePoint;
 
 public class IPMapView extends View {
 
-	private static final float POINT_SIZE = 10;
-
 	private ScaleGestureDetector mScaleDetector;
 	private GestureDetector mGestureDetector;
 	private float mScaleFactor = 1.f;
-	private float mMinScaleFactor = 1.0f;
-	private float mMaxScaleFactor = 2.0f;
+	private float mMinScaleFactor = 1.f;
 	private float mXFocus = 0;
 	private float mYFocus = 0;
 	private float mXScaleFocus = 0;
 	private float mYScaleFocus = 0;
 	private float mAccXPoint = 0;
 	private float mAccYPoint = 0;
-	private PointF mPoint = null;
-	private PointF mMPoint = null;
-	private int mHeight = 0;
-	private int mWidth = 0;
-	private int mViewHeight = 0;
-	private int mViewWidth = 0;
+	private float mXPoint = 0;
+	private float mYPoint = 0;
+	private float mXMPoint = 0;
+	private float mYMPoint = 0;
+	private float mHeight = 0;
+	private float mWidth = 0;
+	private float mViewHeight = 0;
+	private float mViewWidth = 0;
 	private boolean mMeasureMode = true;
-	private List<Path> myPaths;
-	private List<Path> myFillPaths;
-	private List<MeasurePoint> myPoints;
-	private Paint mPaint;
-	private Rect mRect;
-	private Bitmap map;
+	private Context myContext;
+	private ArrayList<Path> myPaths;
+	private ArrayList<Path> myFillPaths;
+	private ArrayList<PointF> myOldPoints;
+	private Paint mPaint = new Paint();
+	private Rect mRect = new Rect();
 
 	public IPMapView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		myPaths = new ArrayList<Path>();
 		myFillPaths = new ArrayList<Path>();
-		myPoints = new ArrayList<MeasurePoint>();
+		myOldPoints = new ArrayList<PointF>();
+		myContext = context;
 		mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
 		mGestureDetector = new GestureDetector(context, new MyGestureListener());
-		mPaint = new Paint();
-		mPaint.setStrokeWidth(3);
-		mPaint.setAntiAlias(true);
-		mRect = new Rect();
+		
+		mPaint.setStrokeCap(Paint.Cap.ROUND);
+	}
+
+	public IPMapView(Context context, AttributeSet attrs,
+			InputStream inputStream) {
+		super(context, attrs);
+		myPaths = new ArrayList<Path>();
+		myFillPaths = new ArrayList<Path>();
+		myContext = context;
+		mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
+		mGestureDetector = new GestureDetector(context, new MyGestureListener());
+		newMap(inputStream);
 	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
 		mScaleDetector.onTouchEvent(ev);
 		mGestureDetector.onTouchEvent(ev);
+
 		return true;
 	}
 
@@ -80,77 +89,93 @@ public class IPMapView extends View {
 	@Override
 	protected void onSizeChanged(int xNew, int yNew, int xOld, int yOld) {
 		super.onSizeChanged(xNew, yNew, xOld, yOld);
-		if (mWidth != 0) {
-			mMinScaleFactor = xNew / ((float) mWidth);
-			mMaxScaleFactor = 10.0f * mMinScaleFactor;
-		}
+		mMinScaleFactor = xNew / ((float) mWidth);
 		mScaleFactor = mMinScaleFactor;
 		mViewHeight = yNew;
 		mViewWidth = xNew;
-	}
 
-	private void redrawMap() {
-		map = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
-		Canvas canvas = new Canvas(map);
-		// draw background color
-		canvas.drawARGB(255, 0, 0, 0);
-		if (myFillPaths != null) {
-			mPaint.setColor(Constants.COLOR_FLOOR_FILL);
-			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-			for (Path aPath : myFillPaths) {
-				canvas.drawPath(aPath, mPaint);
-			}
-		}
-		if (myPaths != null) {
-			mPaint.setColor(Constants.COLOR_FLOOR_WALL);
-			mPaint.setStyle(Paint.Style.STROKE);
-			for (Path aPath : myPaths) {
-				canvas.drawPath(aPath, mPaint);
-			}
-		}
-		if (myPoints != null) {
-			mPaint.setColor(Constants.COLOR_MEASURE_POINTS);
-			mPaint.setStyle(Paint.Style.FILL);
-			for (MeasurePoint mp : myPoints) {
-				canvas.drawCircle((float) mp.getPosx(), (float) mp.getPosy(),
-						POINT_SIZE, mPaint);
-			}
-		}
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		canvas.save();
-		canvas.scale(mScaleFactor, mScaleFactor, mXScaleFocus, mYScaleFocus);
+		// canvas.drawColor(android.graphics.Color.GRAY);
 		canvas.translate(mXFocus, mYFocus);
+		canvas.scale(mScaleFactor, mScaleFactor, mXScaleFocus, mYScaleFocus);
+
 		canvas.getClipBounds(mRect);
 		mAccXPoint = mRect.exactCenterX();
 		mAccYPoint = mRect.exactCenterY();
-		// draw pre rendered map from bitmap
-		if (map != null) {
-			canvas.drawBitmap(map, 0, 0, mPaint);
+
+		mPaint.setStrokeWidth(0.432f);
+		mPaint.setColor(android.graphics.Color.GRAY);
+		mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+		mPaint.setAntiAlias(true);
+
+		if (myFillPaths != null) {
+			for (Path aPath : myFillPaths) {
+				canvas.drawPath(aPath, mPaint);
+			}
 		}
-		if (mMeasureMode == false) {
-			// draw positon
-			if (mPoint != null) {
-				mPaint.setColor(Constants.COLOR_POSITION);
-				mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-				canvas.drawCircle(mPoint.x, mPoint.y, POINT_SIZE, mPaint);
+
+		mPaint.setColor(android.graphics.Color.BLACK);
+		mPaint.setStyle(Paint.Style.STROKE);
+
+		if (myPaths != null) {
+			for (Path aPath : myPaths) {
+				canvas.drawPath(aPath, mPaint);
 			}
-		} else {
-			// draw measure point
-			if (mMPoint != null) {
-				mPaint.setColor(Constants.COLOR_ACTIVE_POINT);
-				mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-				canvas.drawCircle(mMPoint.x, mMPoint.y, POINT_SIZE, mPaint);
-			}
+		}
+		// Punkt f�r Standort einzeichen
+		if (!mMeasureMode) {
+			mPaint.setColor(android.graphics.Color.BLUE);
+			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+			canvas.drawCircle(mXPoint, mYPoint, 10, mPaint);
+		}
+		// Messpunkt einzeichen
+		if (mMeasureMode) {
+			mPaint.setColor(android.graphics.Color.GREEN);
+			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+			canvas.drawCircle(mXMPoint, mYMPoint, 2, mPaint);
+		}
+		mPaint.setColor(android.graphics.Color.BLACK);
+		for (PointF aPoint : myOldPoints) {
+			canvas.drawCircle(aPoint.x, aPoint.y, 2, mPaint);
 		}
 		canvas.restore();
 	}
 
-	public void newMap(InputStream inputStream, List<MeasurePoint> measurePoints) {
-		myPoints.clear();
+	public void clearMap(){
+		myPaths.clear();
+		myFillPaths.clear();
+		myOldPoints.clear();
+		mScaleFactor = 1.f;
+		mXFocus = 0;
+		mYFocus = 0;
+		mXScaleFocus = 0;
+		mYScaleFocus = 0;
+		mAccXPoint = 0;
+		mAccYPoint = 0;
+		mXPoint = 0;
+		mYPoint = 0;
+		mXMPoint = 0;
+		mYMPoint = 0;
+		mHeight = 0;
+		mWidth = 0;
+	}
+	
+	public void newMap(InputStream inputStream) {
+
+		/*
+		 * FileReader reader = null; try {
+		 * 
+		 * reader = new FileReader("kartewaltershottkey.svg"); } catch
+		 * (FileNotFoundException e1) { // TODO Auto-generated catch block
+		 * e1.printStackTrace(); }
+		 */
+		this.clearMap();
+		
 		XmlPullParserFactory factory = null;
 		try {
 			factory = XmlPullParserFactory.newInstance();
@@ -185,10 +210,11 @@ public class IPMapView extends View {
 				System.out.println("Start document");
 			} else if (eventType == XmlPullParser.START_TAG) {
 				System.out.println("Start tag " + xpp.getName());
+				String test = xpp.getName();
 				if (xpp.getName().equals("svg")) {
-					mHeight = Integer.valueOf(xpp.getAttributeValue(null,
+					mHeight = Float.valueOf(xpp.getAttributeValue(null,
 							"height"));
-					mWidth = Integer.valueOf(xpp.getAttributeValue(null,
+					mWidth = Float.valueOf(xpp.getAttributeValue(null,
 							"width"));
 				}
 				if (xpp.getName().equals("path")) {
@@ -198,6 +224,7 @@ public class IPMapView extends View {
 					String aPathRout[] = xpp.getAttributeValue(null, "d")
 							.split(" ");
 					for (int i = 0; i < aPathRout.length; i++) {
+						String pointsCB[];
 						String aCoordinate[];
 						switch (aPathRout[i].charAt(0)) {
 						case 'M':
@@ -257,12 +284,12 @@ public class IPMapView extends View {
 							i++;
 							aCoordinate[4] = (aPathRout[i].split(","))[0];
 							aCoordinate[5] = (aPathRout[i].split(","))[1];
-							aPath.cubicTo(Float.parseFloat(aCoordinate[4]),
-									Float.parseFloat(aCoordinate[5]),
-									Float.parseFloat(aCoordinate[0]),
+							aPath.cubicTo(Float.parseFloat(aCoordinate[0]),
 									Float.parseFloat(aCoordinate[1]),
 									Float.parseFloat(aCoordinate[2]),
-									Float.parseFloat(aCoordinate[3]));
+									Float.parseFloat(aCoordinate[3]),
+									Float.parseFloat(aCoordinate[4]),
+									Float.parseFloat(aCoordinate[5]));
 							break;
 						case 'c':
 							aPathRout[i] = aPathRout[i].substring(1);
@@ -280,12 +307,12 @@ public class IPMapView extends View {
 							aCoordinate[4] = (aPathRout[i].split(","))[0];
 							aCoordinate[5] = (aPathRout[i].split(","))[1];
 							aPath.cubicTo(
-									Float.parseFloat(aCoordinate[4]),
-									Float.parseFloat(aCoordinate[5]),
 									Float.parseFloat(aCoordinate[0]),
 									Float.parseFloat(aCoordinate[1]),
-									(Float.parseFloat(aCoordinate[2]) * mWidth),
-									(Float.parseFloat(aCoordinate[3]) * mHeight));
+									Float.parseFloat(aCoordinate[2]),
+									Float.parseFloat(aCoordinate[3]),
+									(Float.parseFloat(aCoordinate[4]) * mWidth),
+									(Float.parseFloat(aCoordinate[5]) * mHeight));
 							break;
 						case 'z':
 							aPath.close();
@@ -324,43 +351,45 @@ public class IPMapView extends View {
 			}
 		}
 		System.out.println("End document");
-		mMinScaleFactor = this.getWidth() / ((float) mWidth);
-		mMaxScaleFactor = 10.0f * mMinScaleFactor;
-		myPoints.addAll(measurePoints);
-		redrawMap();
 		invalidate();
 	}
 
+	public void addOldPoint(PointF punkt){
+		myOldPoints.add(punkt);
+	}
+	
 	public void setPoint(float x, float y) {
-		if (mPoint == null) {
-			mPoint = new PointF();
-		}
-		mPoint.set(x, y);
+		mXFocus = -x + mViewWidth / 2;
+		mYFocus = -y + mViewHeight / 2;
+		mXPoint = x;
+		mYPoint = y;
+		mScaleFactor = 1.f;
 		invalidate();
 	}
 
-	public boolean getMeasureMode() {
+	public boolean getMeasureMode(){
 		return mMeasureMode;
 	}
-
 	public void setMeasureMode(boolean measuremode) {
 		mMeasureMode = measuremode;
 	}
 
 	public float[] getMeasurePoint() {
-		float result[] = null;
-		if (mMPoint != null) {
-			result = new float[] { mMPoint.x, mMPoint.y };
+		if(mXMPoint==0 && mYMPoint == 0){
+			return null;
+		}else{
+			float ret[] = { mXMPoint, mYMPoint };
+			return ret;
 		}
-		return result;
 	}
 
 	protected void setMeasurePoint(float x, float y) {
-		mMPoint = new PointF();
-		mMPoint.x = (x / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
+		mXMPoint = (x / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
 				+ mAccXPoint;
-		mMPoint.y = (y / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))
+		mYMPoint = (y / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))
 				+ mAccYPoint;
+		// mXMPoint = (x-mXFocus)/mScaleFactor;
+		// mYMPoint = (y-mYFocus)/mScaleFactor;
 		invalidate();
 	}
 
@@ -368,7 +397,7 @@ public class IPMapView extends View {
 			GestureDetector.SimpleOnGestureListener {
 		@Override
 		public void onLongPress(MotionEvent e) {
-			if (mMeasureMode && map != null) {
+			if (mMeasureMode) {
 				setMeasurePoint(e.getX(), e.getY());
 			}
 			super.onLongPress(e);
@@ -378,8 +407,8 @@ public class IPMapView extends View {
 		public boolean onScroll(MotionEvent e1, MotionEvent e2,
 				float distanceX, float distanceY) {
 			if (!mScaleDetector.isInProgress()) {
-				mXFocus -= distanceX / mScaleFactor;
-				mYFocus -= distanceY / mScaleFactor;
+				mXFocus -= distanceX;
+				mYFocus -= distanceY;
 				invalidate();
 			}
 			return true;
@@ -391,28 +420,17 @@ public class IPMapView extends View {
 		@Override
 		public boolean onScale(ScaleGestureDetector detector) {
 			mScaleFactor *= detector.getScaleFactor();
-			mXScaleFocus = detector.getFocusX();
-			mYScaleFocus = detector.getFocusY();
+			mXScaleFocus = -detector.getFocusX();
+			mYScaleFocus = -detector.getFocusY();
+			//mXScaleFocus =0;
+			//mYScaleFocus =0;
 			// Don't let the object get too small or too large.
 			mScaleFactor = Math.max(mMinScaleFactor,
-					Math.min(mScaleFactor, mMaxScaleFactor));
+					Math.min(mScaleFactor, 10.0f));
 
 			invalidate();
 			return true;
 		}
-	}
-
-	public void center() {
-		if (mPoint != null) {
-			mXFocus = -mPoint.x + mViewWidth / 2;
-			mYFocus = -mPoint.y + mViewHeight / 2;
-			invalidate();
-		}
-	}
-
-	public void clear() {
-		map = null;
-		mPoint = null;
 	}
 
 }
