@@ -1,6 +1,5 @@
 package de.rwth.ti.wps;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -10,8 +9,10 @@ import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import de.rwth.ti.common.ChooseFileDialog;
 import de.rwth.ti.common.Constants;
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
@@ -107,24 +108,59 @@ public class DebugActivity extends SuperActivity {
 		boolean result = super.onOptionsItemSelected(item);
 		switch (item.getItemId()) {
 		case R.id.menu_export:
-			try {
-				String dbExportName = Constants.LOCAL_DB_NAME;
-				storage.exportDatabase(dbExportName);
-				Toast.makeText(
-						getBaseContext(),
-						getText(R.string.database_export_success) + "\n"
-								+ dbExportName, Toast.LENGTH_SHORT).show();
-			} catch (IOException e) {
-				Toast.makeText(getBaseContext(), e.toString(),
-						Toast.LENGTH_LONG).show();
-			}
+			final EditText input = new EditText(DebugActivity.this);
+			input.setText(Constants.LOCAL_DB_NAME);
+			new AlertDialog.Builder(DebugActivity.this)
+					.setTitle(R.string.database_export_question)
+					.setMessage(R.string.choose_filename)
+					.setView(input)
+					.setPositiveButton(R.string.ok,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									String dbExportName = input.getText()
+											.toString();
+									if (dbExportName
+											.endsWith(Constants.DB_SUFFIX) == false) {
+										dbExportName += Constants.DB_SUFFIX;
+									}
+									try {
+										storage.exportDatabase(dbExportName);
+									} catch (IOException e) {
+										Toast.makeText(getBaseContext(),
+												e.toString(), Toast.LENGTH_LONG)
+												.show();
+									}
+									Toast.makeText(
+											getBaseContext(),
+											getText(R.string.database_export_success)
+													+ "\n" + dbExportName,
+											Toast.LENGTH_SHORT).show();
+								}
+							})
+					.setNegativeButton(R.string.cancel,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									// Do nothing.
+								}
+							}).show();
 			break;
 		case R.id.menu_import:
-			storage.importDatabase(Constants.SD_APP_DIR + File.separator
-					+ Constants.LOCAL_DB_NAME);
-			Toast.makeText(getBaseContext(), R.string.database_import_success,
-					Toast.LENGTH_SHORT).show();
-			showDebug();
+			ChooseFileDialog directoryChooserDialog = new ChooseFileDialog(
+					DebugActivity.this,
+					new ChooseFileDialog.ChosenFileListener() {
+						@Override
+						public void onChosenFile(String chosenFile) {
+							if (storage.importDatabase(chosenFile) == true) {
+								Toast.makeText(getBaseContext(),
+										R.string.database_import_success,
+										Toast.LENGTH_SHORT).show();
+							}
+							showDebug();
+						}
+					}, Constants.DB_SUFFIX);
+			directoryChooserDialog.chooseDirectory(Constants.SD_APP_DIR);
 			break;
 		case R.id.menu_clear:
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);

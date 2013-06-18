@@ -227,8 +227,8 @@ public class NewFloorActivity extends SuperActivity implements
 				NewFloorActivity.this,
 				new ChooseFileDialog.ChosenFileListener() {
 					@Override
-					public void onChosenFile(String chosenDir) {
-						File f = new File(chosenDir);
+					public void onChosenFile(String chosenFile) {
+						File f = new File(chosenFile);
 						if (f.exists() && f.isFile()) {
 							// TODO show file loading state in progress bar
 							ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -248,7 +248,7 @@ public class NewFloorActivity extends SuperActivity implements
 							} catch (IOException ex) {
 								// XXX handle error
 							}
-							floorFilenameView.setText(new File(chosenDir)
+							floorFilenameView.setText(new File(chosenFile)
 									.getName());
 							floorFile = baos.toByteArray();
 							try {
@@ -258,7 +258,7 @@ public class NewFloorActivity extends SuperActivity implements
 							}
 						}
 					}
-				});
+				}, Constants.MAP_SUFFIX);
 		directoryChooserDialog.chooseDirectory(Constants.SD_APP_DIR);
 	}
 }

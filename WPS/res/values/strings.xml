@@ -48,5 +48,10 @@
     <string name="database_clear_question">Wollen Sie wirklich alle Daten unwiderruflich löschen?</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="database_export_question">Datenbank Export</string>
+    <string name="choose_filename">Geben Sie den Dateinamen ein</string>
+    <string name="file_not_exist">Die Datei existiert nicht</string>
 
 </resources>

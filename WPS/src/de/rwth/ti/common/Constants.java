@@ -13,10 +13,12 @@ public class Constants {
 			+ File.separator
 			+ "WPS";
 	public static final Locale LOCALE = Locale.GERMAN;
-	public static final String LOCAL_DB_NAME = "local.sqlite";
+	public static final String DB_SUFFIX = ".sqlite";
+	public static final String LOCAL_DB_NAME = "local" + DB_SUFFIX;
 	public static final int FILE_BUFFER_SIZE = 10240;
 	public static final int AUTO_SCAN_SEC = 2;
 	public static final int ANGLE_DIFF = 30;
+	public static final String MAP_SUFFIX = ".svg";
 
 	// MapView color schema
 	public static final int COLOR_FLOOR_FILL = Color.WHITE;
