@@ -803,8 +803,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		List<Scan> scans = getScans(mp);
 		// contains all access points for this scan
 		Map<String, List<AccessPoint>> allAps = new HashMap<String, List<AccessPoint>>();
-		// contains
-		Map<String, Double> levelAps = new HashMap<String, Double>();
 		for (Scan scan : scans) {
 			List<AccessPoint> aps = getAccessPoints(scan, 3);
 			for (AccessPoint ap : aps) {

@@ -1,6 +1,5 @@
 package de.rwth.ti.wps;
 
-import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -24,7 +23,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import de.rwth.ti.common.CompassManager;
 import de.rwth.ti.common.Constants;
-import de.rwth.ti.common.IPMapView;
+import de.rwth.ti.common.MapRenderer;
+import de.rwth.ti.common.ScaleImageView;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
@@ -42,7 +42,7 @@ public class MeasureActivity extends SuperActivity implements
 	private Spinner floorSpinner;
 	private Floor floorSelected;
 	private Button btMeasure;
-	private IPMapView mapView;
+	private ScaleImageView mapView;
 	private TextView directionText;
 	private TextView compassText;
 	private CompassManager.Direction direction;
@@ -72,8 +72,9 @@ public class MeasureActivity extends SuperActivity implements
 
 		btMeasure = (Button) findViewById(R.id.measure_button);
 
-		mapView = (IPMapView) findViewById(R.id.map_view);
-		mapView.setMeasureMode(true);
+		mapView = (ScaleImageView) findViewById(R.id.map_view);
+		// FIXME
+//		mapView.setMeasureMode(true);
 
 		directionText = (TextView) findViewById(R.id.direction_text_view);
 
@@ -177,20 +178,22 @@ public class MeasureActivity extends SuperActivity implements
 						Toast.LENGTH_LONG).show();
 				return;
 			}
-			float[] p = mapView.getMeasurePoint();
-			if (p == null) {
-				Toast.makeText(this, R.string.error_no_measure_point,
-						Toast.LENGTH_LONG).show();
-				return;
-			}
+			// FIXME
+//			float[] p = mapView.getMeasurePoint();
+//			if (p == null) {
+//				Toast.makeText(this, R.string.error_no_measure_point,
+//						Toast.LENGTH_LONG).show();
+//				return;
+//			}
 			boolean check = getScanManager().startSingleScan();
 			if (check == false) {
 				Toast.makeText(this, R.string.error_scanning, Toast.LENGTH_LONG)
 						.show();
 			} else {
 				if (lastMP == null) {
-					lastMP = getStorage().createMeasurePoint(floorSelected,
-							p[0], p[1]);
+					// FIXME
+//					lastMP = getStorage().createMeasurePoint(floorSelected,
+//							p[0], p[1]);
 				}
 				if (waitDialog != null) {
 					waitDialog.dismiss();
@@ -222,13 +225,22 @@ public class MeasureActivity extends SuperActivity implements
 			// update map view
 			byte[] file = floorSelected.getFile();
 			if (file != null) {
-				ByteArrayInputStream bin = new ByteArrayInputStream(file);
 				List<MeasurePoint> mps = getStorage().getMeasurePoints(
 						floorSelected);
 				for (MeasurePoint mp : mps) {
 					mp.setQuality(getStorage().getQuality(mp));
 				}
-				mapView.newMap(bin, mps);
+				// FIXME
+//				mapView.newMap(bin, mps);
+//				Bitmap b = Bitmap.createBitmap(128, 128, Config.ARGB_8888);
+//				Canvas c = new Canvas(b);
+//				c.drawRGB(0, 0, 0);
+//				Paint mPaint = new Paint();
+//				mPaint.setColor(Color.RED);
+//				mPaint.setStyle(Style.FILL);
+//				c.drawCircle(10, 10, 50, mPaint);
+//				mapView.setImageBitmap(b);
+				runOnUiThread(new MapRenderer(mapView, file, mps));
 			} else {
 				Toast.makeText(this, R.string.error_no_floor_file,
 						Toast.LENGTH_LONG).show();
@@ -247,7 +259,8 @@ public class MeasureActivity extends SuperActivity implements
 		} else if (parent == floorSpinner) {
 			buildingSelected = null;
 			floorSelected = null;
-			mapView.clear();
+			// FIXME
+//			mapView.clear();
 		}
 	}
 
