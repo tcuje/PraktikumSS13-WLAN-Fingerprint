@@ -1,9 +1,11 @@
 package de.rwth.ti.wps;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.PointF;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
@@ -136,6 +138,8 @@ public class MeasureActivity extends SuperActivity implements
 			} else {
 				Toast.makeText(this, R.string.success_scanning, Toast.LENGTH_LONG)
 				.show();
+				PointF myPoint = new PointF((float)mp.getPosx() , (float)mp.getPosy());
+				mapView.addOldPoint(myPoint);
 				direction = CompassManager.Direction.values()[(direction
 						.ordinal() + 1) % 4];
 				switch (direction) {
@@ -185,6 +189,10 @@ public class MeasureActivity extends SuperActivity implements
 			if (file != null) {
 				ByteArrayInputStream bin = new ByteArrayInputStream(file);
 				mapView.newMap(bin);
+				List<MeasurePoint> mpl = storage.getMeasurePoints(floorSelected);
+				for(MeasurePoint mp : mpl){
+					mapView.addOldPoint(new PointF((float)mp.getPosx(),(float)mp.getPosy()));
+				}
 			} else {
 				Toast.makeText(this, R.string.error_no_floor_file,
 						Toast.LENGTH_LONG).show();

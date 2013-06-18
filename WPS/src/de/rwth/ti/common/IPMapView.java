@@ -12,6 +12,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -44,6 +45,7 @@ public class IPMapView extends View {
 	private Context myContext;
 	private ArrayList<Path> myPaths;
 	private ArrayList<Path> myFillPaths;
+	private ArrayList<PointF> myOldPoints;
 	private Paint mPaint = new Paint();
 	private Rect mRect = new Rect();
 
@@ -51,6 +53,7 @@ public class IPMapView extends View {
 		super(context, attrs);
 		myPaths = new ArrayList<Path>();
 		myFillPaths = new ArrayList<Path>();
+		myOldPoints = new ArrayList<PointF>();
 		myContext = context;
 		mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
 		mGestureDetector = new GestureDetector(context, new MyGestureListener());
@@ -132,6 +135,10 @@ public class IPMapView extends View {
 			mPaint.setColor(android.graphics.Color.GREEN);
 			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 			canvas.drawCircle(mXMPoint, mYMPoint, 10, mPaint);
+		}
+		mPaint.setColor(android.graphics.Color.BLACK);
+		for (PointF aPoint : myOldPoints) {
+			canvas.drawCircle(aPoint.x, aPoint.y, 10, mPaint);
 		}
 		canvas.restore();
 	}
@@ -323,6 +330,10 @@ public class IPMapView extends View {
 		invalidate();
 	}
 
+	public void addOldPoint(PointF punkt){
+		myOldPoints.add(punkt);
+	}
+	
 	public void setPoint(float x, float y) {
 		mXFocus = -x + mViewWidth / 2;
 		mYFocus = -y + mViewHeight / 2;
