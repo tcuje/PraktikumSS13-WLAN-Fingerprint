@@ -17,7 +17,7 @@
                 android:title="@string/action_measure"/>
             <item
                 android:id="@+id/action_debug"
-                android:title="@string/menu_debug"/>
+                android:title="@string/action_debug"/>
         </menu>
     </item>
 

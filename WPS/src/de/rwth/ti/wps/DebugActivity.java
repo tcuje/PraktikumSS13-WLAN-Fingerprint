@@ -33,6 +33,14 @@ public class DebugActivity extends SuperActivity {
 		textStatus = (TextView) findViewById(R.id.textStatus);
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.debug, menu);
+		return true;
+	}
+
 	/** Called when the activity is first created or restarted */
 	@Override
 	public void onStart() {
@@ -44,14 +52,6 @@ public class DebugActivity extends SuperActivity {
 	@Override
 	public void onStop() {
 		super.onStop();
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.debug, menu);
-		return true;
 	}
 
 	public void showDebug() {
