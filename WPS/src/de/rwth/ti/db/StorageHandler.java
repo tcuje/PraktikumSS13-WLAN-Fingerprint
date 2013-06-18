@@ -614,7 +614,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		File data = Environment.getDataDirectory();
 		String srcDBPath = "//data//" + Constants.PACKAGE_NAME
 				+ "//databases//" + dbName;
-		// String dstDBPath = "/backup/" + filename;
 		String dstDBPath = "/" + filename;
 		File srcDB = new File(data, srcDBPath);
 		File dstDB = new File(sd, dstDBPath);

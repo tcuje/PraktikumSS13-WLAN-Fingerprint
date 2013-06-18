@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -105,10 +108,12 @@ public class DebugActivity extends SuperActivity {
 		switch (item.getItemId()) {
 		case R.id.menu_export:
 			try {
-				storage.exportDatabase(Constants.LOCAL_DB_NAME);
-				Toast.makeText(getBaseContext(),
-						R.string.database_export_success, Toast.LENGTH_SHORT)
-						.show();
+				String dbExportName = Constants.LOCAL_DB_NAME;
+				storage.exportDatabase(dbExportName);
+				Toast.makeText(
+						getBaseContext(),
+						getText(R.string.database_export_success) + "\n"
+								+ dbExportName, Toast.LENGTH_SHORT).show();
 			} catch (IOException e) {
 				Toast.makeText(getBaseContext(), e.toString(),
 						Toast.LENGTH_LONG).show();
@@ -122,10 +127,18 @@ public class DebugActivity extends SuperActivity {
 			showDebug();
 			break;
 		case R.id.menu_clear:
-			storage.clearDatabase();
-			Toast.makeText(getBaseContext(), R.string.database_clear_success,
-					Toast.LENGTH_SHORT).show();
-			showDebug();
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.database_clear_question)
+					.setPositiveButton(R.string.yes, new OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							storage.clearDatabase();
+							Toast.makeText(getBaseContext(),
+									R.string.database_clear_success,
+									Toast.LENGTH_SHORT).show();
+							showDebug();
+						}
+					}).setNegativeButton(R.string.no, null).show();
 			break;
 		}
 		return result;

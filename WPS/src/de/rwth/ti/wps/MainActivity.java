@@ -60,14 +60,6 @@ public class MainActivity extends SuperActivity implements
 		wifiReceiver = new MyReceiver();
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
 	/** Called when the activity is first created or restarted */
 	@Override
 	public void onStart() {
@@ -103,18 +95,35 @@ public class MainActivity extends SuperActivity implements
 	}
 
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.menu, menu);
+		return true;
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		// Start other Activities, when the related MenuItem is selected
+		Intent intent = null;
 		switch (item.getItemId()) {
-		case R.id.menu_localisation:
-			item.setChecked(!item.isChecked());
-			if (item.isChecked() == true) {
-				getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
-			} else {
-				getScanManager().stopAutoScan();
-			}
+		case R.id.action_measure:
+			intent = new Intent(this, MeasureActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			break;
+		case R.id.action_new_floor:
+			intent = new Intent(this, NewFloorActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			break;
+		case R.id.action_debug:
+			intent = new Intent(this, DebugActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			break;
 		default:
 			return super.onOptionsItemSelected(item);
+		}
+		if (intent != null) {
+			startActivity(intent);
 		}
 		return true;
 	}
