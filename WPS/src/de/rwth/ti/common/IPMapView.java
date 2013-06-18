@@ -11,6 +11,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Paint.Cap;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -37,10 +38,10 @@ public class IPMapView extends View {
 	private float mYPoint = 0;
 	private float mXMPoint = 0;
 	private float mYMPoint = 0;
-	private int mHeight = 0;
-	private int mWidth = 0;
-	private int mViewHeight = 0;
-	private int mViewWidth = 0;
+	private float mHeight = 0;
+	private float mWidth = 0;
+	private float mViewHeight = 0;
+	private float mViewWidth = 0;
 	private boolean mMeasureMode = true;
 	private Context myContext;
 	private ArrayList<Path> myPaths;
@@ -57,6 +58,8 @@ public class IPMapView extends View {
 		myContext = context;
 		mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
 		mGestureDetector = new GestureDetector(context, new MyGestureListener());
+		
+		mPaint.setStrokeCap(Paint.Cap.ROUND);
 	}
 
 	public IPMapView(Context context, AttributeSet attrs,
@@ -105,7 +108,7 @@ public class IPMapView extends View {
 		mAccXPoint = mRect.exactCenterX();
 		mAccYPoint = mRect.exactCenterY();
 
-		mPaint.setStrokeWidth(3);
+		mPaint.setStrokeWidth(0.432f);
 		mPaint.setColor(android.graphics.Color.GRAY);
 		mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 		mPaint.setAntiAlias(true);
@@ -116,7 +119,7 @@ public class IPMapView extends View {
 			}
 		}
 
-		mPaint.setColor(android.graphics.Color.YELLOW);
+		mPaint.setColor(android.graphics.Color.BLACK);
 		mPaint.setStyle(Paint.Style.STROKE);
 
 		if (myPaths != null) {
@@ -134,15 +137,34 @@ public class IPMapView extends View {
 		if (mMeasureMode) {
 			mPaint.setColor(android.graphics.Color.GREEN);
 			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-			canvas.drawCircle(mXMPoint, mYMPoint, 10, mPaint);
+			canvas.drawCircle(mXMPoint, mYMPoint, 2, mPaint);
 		}
 		mPaint.setColor(android.graphics.Color.BLACK);
 		for (PointF aPoint : myOldPoints) {
-			canvas.drawCircle(aPoint.x, aPoint.y, 10, mPaint);
+			canvas.drawCircle(aPoint.x, aPoint.y, 2, mPaint);
 		}
 		canvas.restore();
 	}
 
+	public void clearMap(){
+		myPaths.clear();
+		myFillPaths.clear();
+		myOldPoints.clear();
+		mScaleFactor = 1.f;
+		mXFocus = 0;
+		mYFocus = 0;
+		mXScaleFocus = 0;
+		mYScaleFocus = 0;
+		mAccXPoint = 0;
+		mAccYPoint = 0;
+		mXPoint = 0;
+		mYPoint = 0;
+		mXMPoint = 0;
+		mYMPoint = 0;
+		mHeight = 0;
+		mWidth = 0;
+	}
+	
 	public void newMap(InputStream inputStream) {
 
 		/*
@@ -152,6 +174,8 @@ public class IPMapView extends View {
 		 * (FileNotFoundException e1) { // TODO Auto-generated catch block
 		 * e1.printStackTrace(); }
 		 */
+		this.clearMap();
+		
 		XmlPullParserFactory factory = null;
 		try {
 			factory = XmlPullParserFactory.newInstance();
@@ -188,9 +212,9 @@ public class IPMapView extends View {
 				System.out.println("Start tag " + xpp.getName());
 				String test = xpp.getName();
 				if (xpp.getName().equals("svg")) {
-					mHeight = Integer.valueOf(xpp.getAttributeValue(null,
+					mHeight = Float.valueOf(xpp.getAttributeValue(null,
 							"height"));
-					mWidth = Integer.valueOf(xpp.getAttributeValue(null,
+					mWidth = Float.valueOf(xpp.getAttributeValue(null,
 							"width"));
 				}
 				if (xpp.getName().equals("path")) {
@@ -260,12 +284,12 @@ public class IPMapView extends View {
 							i++;
 							aCoordinate[4] = (aPathRout[i].split(","))[0];
 							aCoordinate[5] = (aPathRout[i].split(","))[1];
-							aPath.cubicTo(Float.parseFloat(aCoordinate[4]),
-									Float.parseFloat(aCoordinate[5]),
-									Float.parseFloat(aCoordinate[0]),
+							aPath.cubicTo(Float.parseFloat(aCoordinate[0]),
 									Float.parseFloat(aCoordinate[1]),
 									Float.parseFloat(aCoordinate[2]),
-									Float.parseFloat(aCoordinate[3]));
+									Float.parseFloat(aCoordinate[3]),
+									Float.parseFloat(aCoordinate[4]),
+									Float.parseFloat(aCoordinate[5]));
 							break;
 						case 'c':
 							aPathRout[i] = aPathRout[i].substring(1);
@@ -283,12 +307,12 @@ public class IPMapView extends View {
 							aCoordinate[4] = (aPathRout[i].split(","))[0];
 							aCoordinate[5] = (aPathRout[i].split(","))[1];
 							aPath.cubicTo(
-									Float.parseFloat(aCoordinate[4]),
-									Float.parseFloat(aCoordinate[5]),
 									Float.parseFloat(aCoordinate[0]),
 									Float.parseFloat(aCoordinate[1]),
-									(Float.parseFloat(aCoordinate[2]) * mWidth),
-									(Float.parseFloat(aCoordinate[3]) * mHeight));
+									Float.parseFloat(aCoordinate[2]),
+									Float.parseFloat(aCoordinate[3]),
+									(Float.parseFloat(aCoordinate[4]) * mWidth),
+									(Float.parseFloat(aCoordinate[5]) * mHeight));
 							break;
 						case 'z':
 							aPath.close();
@@ -396,11 +420,13 @@ public class IPMapView extends View {
 		@Override
 		public boolean onScale(ScaleGestureDetector detector) {
 			mScaleFactor *= detector.getScaleFactor();
-			mXScaleFocus = detector.getFocusX();
-			mYScaleFocus = detector.getFocusY();
+			mXScaleFocus = -detector.getFocusX();
+			mYScaleFocus = -detector.getFocusY();
+			mXScaleFocus =0;
+			mYScaleFocus =0;
 			// Don't let the object get too small or too large.
 			mScaleFactor = Math.max(mMinScaleFactor,
-					Math.min(mScaleFactor, 5.0f));
+					Math.min(mScaleFactor, 10.0f));
 
 			invalidate();
 			return true;
