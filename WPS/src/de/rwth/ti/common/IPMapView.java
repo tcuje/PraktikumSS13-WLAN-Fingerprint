@@ -50,6 +50,10 @@ public class IPMapView extends View {
 	private Bitmap map;
 	private Rect zoomBounds;
 
+	private float mAccXPoint = 0;
+	private float mAccYPoint = 0;
+	private Rect mRect = new Rect();
+
 	public IPMapView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		myPaths = new ArrayList<Path>();
@@ -133,8 +137,13 @@ public class IPMapView extends View {
 		super.onDraw(canvas);
 		canvas.save();
 		// FIXME zoom
-		canvas.scale(mScaleFactor, mScaleFactor, mXScaleFocus, mYScaleFocus);
 		canvas.translate(mXFocus, mYFocus);
+		canvas.scale(mScaleFactor, mScaleFactor, mXScaleFocus, mYScaleFocus);
+
+		canvas.getClipBounds(mRect);
+		mAccXPoint = mRect.exactCenterX();
+		mAccYPoint = mRect.exactCenterY();
+
 		// draw pre rendered map from bitmap
 		if (map != null) {
 			canvas.drawBitmap(map, 0, 0, mPaint);
@@ -154,6 +163,13 @@ public class IPMapView extends View {
 				canvas.drawCircle(mMPoint.x, mMPoint.y, POINT_SIZE, mPaint);
 			}
 		}
+//		mPaint.setColor(Color.BLACK);
+//		for (int x = 0; x < mWidth; x += mScaleFactor) {
+//			canvas.drawLine(x, 0, x, mHeight, mPaint);
+//		}
+//		for (int y = 0; y < mHeight; y += mScaleFactor) {
+//			canvas.drawLine(0, y, mWidth, y, mPaint);
+//		}
 		// FIXME
 //		// draw current zoom factor
 //		canvas.translate(-mXFocus, -mYFocus);
@@ -200,18 +216,19 @@ public class IPMapView extends View {
 
 	protected void setMeasurePoint(float x, float y) {
 		mMPoint = new PointF();
-//		mMPoint.x = (x / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
-//				+ mAccXPoint;
-//		mMPoint.y = (y / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))
-//				+ mAccYPoint;
-		// FIXME zoom
-		mMPoint.x = (x - mXScaleFocus) / mScaleFactor - mXFocus;
-		mMPoint.y = (y - mYScaleFocus) / mScaleFactor - mYFocus;
+		mMPoint.x = (x / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
+				+ mAccXPoint;
+		mMPoint.y = (y / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))
+				+ mAccYPoint;
+//		// FIXME zoom
+//		mMPoint.x = (x - mXScaleFocus) / mScaleFactor - mXFocus;
+//		mMPoint.y = (y - mYScaleFocus) / mScaleFactor - mYFocus;
 		invalidate();
 	}
 
 	private class MyGestureListener extends
 			GestureDetector.SimpleOnGestureListener {
+
 		@Override
 		public void onLongPress(MotionEvent e) {
 			if (mMeasureMode && map != null) {
@@ -224,8 +241,10 @@ public class IPMapView extends View {
 		public boolean onScroll(MotionEvent e1, MotionEvent e2,
 				float distanceX, float distanceY) {
 			if (!mScaleDetector.isInProgress()) {
-				mXFocus -= distanceX / mScaleFactor;
-				mYFocus -= distanceY / mScaleFactor;
+//				mXFocus -= distanceX / mScaleFactor;
+//				mYFocus -= distanceY / mScaleFactor;
+				mXFocus -= distanceX;
+				mYFocus -= distanceY;
 				invalidate();
 			}
 			return true;

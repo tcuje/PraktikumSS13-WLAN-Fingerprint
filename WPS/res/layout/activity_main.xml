@@ -10,7 +10,7 @@
         android:id="@+id/viewMap"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/toggleLocalization" />
+        android:layout_alignParentTop="true" />
 
     <CheckBox
         android:id="@+id/toggleLocalization"

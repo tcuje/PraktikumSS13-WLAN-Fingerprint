@@ -103,7 +103,7 @@ public class Location {
 		List<ScanError> errorList = new LinkedList<ScanError>();
 		List<Scan> scanEntries = dataHandler.getScans(floor, compass);
 		for (Scan scan : scanEntries) {
-			double errorValue = 1;
+			double errorValue = 0;
 			// get 3 best access points ordered by level
 			List<AccessPoint> entries = dataHandler.getAccessPoints(scan, 3);
 			for (int k = 0; k < 3 && k < aps.size(); k++) {

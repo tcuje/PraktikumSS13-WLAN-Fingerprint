@@ -11,8 +11,6 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -70,6 +68,10 @@ public class MainActivity extends SuperActivity implements
 		}
 		this.registerReceiver(wifiReceiver, new IntentFilter(
 				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+		// FIXME remove this
+		Intent intent = new Intent(this, MeasureActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		startActivity(intent);
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
@@ -93,40 +95,6 @@ public class MainActivity extends SuperActivity implements
 				getScanManager().stopAutoScan();
 			}
 		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Start other Activities, when the related MenuItem is selected
-		Intent intent = null;
-		switch (item.getItemId()) {
-		case R.id.action_measure:
-			intent = new Intent(this, MeasureActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			break;
-		case R.id.action_new_floor:
-			intent = new Intent(this, NewFloorActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			break;
-		case R.id.action_debug:
-			intent = new Intent(this, DebugActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			break;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-		if (intent != null) {
-			startActivity(intent);
-		}
-		return true;
 	}
 
 	private class MyReceiver extends BroadcastReceiver {

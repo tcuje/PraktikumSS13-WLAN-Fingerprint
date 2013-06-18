@@ -1,7 +1,10 @@
 package de.rwth.ti.wps;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import de.rwth.ti.common.CompassManager;
 import de.rwth.ti.common.ScanManager;
 import de.rwth.ti.db.StorageHandler;
@@ -78,6 +81,40 @@ public abstract class SuperActivity extends Activity {
 
 	public CompassManager getCompassManager() {
 		return cmgr;
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Start other Activities, when the related MenuItem is selected
+		Intent intent = null;
+		switch (item.getItemId()) {
+		case R.id.action_measure:
+			intent = new Intent(this, MeasureActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			break;
+		case R.id.action_new_floor:
+			intent = new Intent(this, NewFloorActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			break;
+		case R.id.action_debug:
+			intent = new Intent(this, DebugActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			break;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+		if (intent != null) {
+			startActivity(intent);
+		}
+		return true;
 	}
 
 }
