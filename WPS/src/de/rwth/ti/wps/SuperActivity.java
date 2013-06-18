@@ -11,9 +11,9 @@ public abstract class SuperActivity extends Activity {
 	/*
 	 * Own classes
 	 */
-	protected ScanManager scm;
-	protected StorageHandler storage;
-	protected CompassManager cmgr;
+	private ScanManager scm;
+	private StorageHandler storage;
+	private CompassManager cmgr;
 
 	/** Called when the activity is first created. */
 	@Override

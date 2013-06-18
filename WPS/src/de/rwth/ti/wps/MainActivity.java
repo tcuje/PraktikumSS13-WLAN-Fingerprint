@@ -23,6 +23,7 @@ import de.rwth.ti.common.CompassManager;
 import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.IPMapView;
 import de.rwth.ti.db.Floor;
+import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.StorageHandler;
 import de.rwth.ti.loc.Location;
 import de.rwth.ti.loc.LocationResult;
@@ -139,7 +140,7 @@ public class MainActivity extends SuperActivity implements
 		public void onReceive(Context context, Intent intent) {
 			if (checkLoc.isChecked() == true) {
 				List<ScanResult> results = wifi.getScanResults();
-				Location myLoc = new Location(storage);
+				Location myLoc = new Location(sth);
 				LocationResult myLocRes = myLoc.getLocation(results,
 						(int) comp.getAzimut(), 0);
 				if (myLocRes == null) {
@@ -154,7 +155,11 @@ public class MainActivity extends SuperActivity implements
 						if (file != null) {
 							ByteArrayInputStream bin = new ByteArrayInputStream(
 									file);
-							viewMap.newMap(bin, sth.getMeasurePoints(map));
+							List<MeasurePoint> mps = sth.getMeasurePoints(map);
+							for (MeasurePoint mp : mps) {
+								mp.setQuality(sth.getQuality(mp));
+							}
+							viewMap.newMap(bin, mps);
 						} else {
 							Toast.makeText(MainActivity.this,
 									R.string.error_no_floor_file,

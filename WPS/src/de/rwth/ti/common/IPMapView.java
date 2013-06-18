@@ -107,9 +107,21 @@ public class IPMapView extends View {
 			}
 		}
 		if (myPoints != null) {
-			mPaint.setColor(Constants.COLOR_MEASURE_POINTS);
-			mPaint.setStyle(Paint.Style.FILL);
 			for (MeasurePoint mp : myPoints) {
+				mPaint.setColor(Constants.COLOR_MEASURE_POINTS);
+				mPaint.setStyle(Paint.Style.FILL);
+				canvas.drawCircle((float) mp.getPosx(), (float) mp.getPosy(),
+						POINT_SIZE, mPaint);
+				// draw quality marker
+				double q = mp.getQuality();
+				if (q <= 0.25) {
+					mPaint.setColor(Constants.COLOR_MEASURE_POINTS_BAD);
+				} else if (q <= 0.75) {
+					mPaint.setColor(Constants.COLOR_MEASURE_POINTS_MEDIUM);
+				} else {
+					mPaint.setColor(Constants.COLOR_MEASURE_POINTS_BEST);
+				}
+				mPaint.setStyle(Paint.Style.STROKE);
 				canvas.drawCircle((float) mp.getPosx(), (float) mp.getPosy(),
 						POINT_SIZE, mPaint);
 			}

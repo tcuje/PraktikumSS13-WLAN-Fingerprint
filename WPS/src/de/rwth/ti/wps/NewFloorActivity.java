@@ -92,7 +92,7 @@ public class NewFloorActivity extends SuperActivity implements
 		String message = null;
 		// check name
 		if (tBuildingName.length() != 0) {
-			Building b = storage.createBuilding(tBuildingName);
+			Building b = getStorage().createBuilding(tBuildingName);
 			// Gebäude konnte erfolgreich erstellt werden?
 			if (b != null) {
 				message = getString(R.string.success_create_building);
@@ -116,7 +116,7 @@ public class NewFloorActivity extends SuperActivity implements
 
 	private void refreshBuildingSpinner() {
 		buildingAdapter.clear();
-		buildingList = storage.getAllBuildings();
+		buildingList = getStorage().getAllBuildings();
 		for (Building b : buildingList) {
 			buildingAdapter.add(b.getName());
 		}
@@ -188,8 +188,8 @@ public class NewFloorActivity extends SuperActivity implements
 			if (!buildingList.isEmpty()) {
 				// Kartendatei ausgewählt
 				if (floorFile != null) {
-					Floor f = storage.createFloor(buildingSelected, floorName,
-							floorFile, floorLevel, north);
+					Floor f = getStorage().createFloor(buildingSelected,
+							floorName, floorFile, floorLevel, north);
 					// Floor erfolgreich erstellt
 					if (f != null) {
 						message = getString(R.string.success_create_floor);

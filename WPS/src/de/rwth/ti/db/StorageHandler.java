@@ -6,8 +6,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -558,31 +560,31 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	@Override
-	public long countScans() {
+	public long countAllScans() {
 		long result = countTable(Scan.TABLE_NAME);
 		return result;
 	}
 
 	@Override
-	public long countAccessPoints() {
+	public long countAllAccessPoints() {
 		long result = countTable(AccessPoint.TABLE_NAME);
 		return result;
 	}
 
 	@Override
-	public long countMeasurePoints() {
+	public long countAllMeasurePoints() {
 		long result = countTable(MeasurePoint.TABLE_NAME);
 		return result;
 	}
 
 	@Override
-	public long countFloors() {
+	public long countAllFloors() {
 		long result = countTable(Floor.TABLE_NAME);
 		return result;
 	}
 
 	@Override
-	public long countBuildings() {
+	public long countAllBuildings() {
 		long result = countTable(Building.TABLE_NAME);
 		return result;
 	}
@@ -793,5 +795,67 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	public void clearDatabase() {
 		storage.clearDatabase(db);
+	}
+
+	@Override
+	public double getQuality(MeasurePoint mp) {
+		double result = 1.0;
+		List<Scan> scans = getScans(mp);
+		// contains all access points for this scan
+		Map<String, List<AccessPoint>> allAps = new HashMap<String, List<AccessPoint>>();
+		// contains
+		Map<String, Double> levelAps = new HashMap<String, Double>();
+		for (Scan scan : scans) {
+			List<AccessPoint> aps = getAccessPoints(scan, 3);
+			for (AccessPoint ap : aps) {
+				String mac = ap.getBssid();
+				// get the list for this ap
+				List<AccessPoint> apList = allAps.get(mac);
+				if (apList == null) {
+					apList = new LinkedList<AccessPoint>();
+					allAps.put(mac, apList);
+				}
+				// add it
+				apList.add(ap);
+			}
+		}
+		// check the overall number of aps
+		if (allAps.size() < Math.floor(Constants.IMPORTANT_APS / 2 + 1)) {
+			// less than 50%
+			result *= 0.25;
+		} else if (allAps.size() < Constants.IMPORTANT_APS) {
+			// less than 100%
+			result *= 0.5;
+		}
+		// check all aps
+		double apsQuality = 0;
+		for (List<AccessPoint> apList : allAps.values()) {
+			double apScore = 1.0;
+			// check popularity for this ap
+			double pop = (double) apList.size() / scans.size();
+			if (pop < 0.25) {
+				// ap is in less than 25% scans
+				apScore *= 0.25;
+			} else if (pop < 0.5) {
+				// ap is in less than 50% scans
+				apScore *= 0.5;
+			}
+			// check signal strength for this ap
+			double avgLevel = 0;
+			for (AccessPoint ap : apList) {
+				avgLevel += ap.getLevel();
+			}
+			avgLevel /= apList.size();
+			if (avgLevel < -75) {
+				// ap average level is less than -50 db
+				apScore *= 0.25;
+			} else if (avgLevel < -40) {
+				apScore *= 0.5;
+			}
+			apsQuality += apScore;
+		}
+		apsQuality /= allAps.size();
+		result *= apsQuality;
+		return result;
 	}
 }

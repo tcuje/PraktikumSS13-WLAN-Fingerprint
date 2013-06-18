@@ -60,32 +60,33 @@ public class DebugActivity extends SuperActivity {
 
 	public void showDebug() {
 		textStatus.setText("Database:\n");
-		textStatus.append("\nBuildings: " + storage.countBuildings() + "\n");
-		for (Building b : storage.getAllBuildings()) {
+		textStatus.append("\nBuildings: " + getStorage().countAllBuildings()
+				+ "\n");
+		for (Building b : getStorage().getAllBuildings()) {
 			textStatus.append("Building\t" + b.getId() + "\t" + b.getName()
 					+ "\n");
 		}
-		textStatus.append("\nFloors: " + storage.countFloors() + "\n");
-		for (Floor m : storage.getAllFloors()) {
+		textStatus.append("\nFloors: " + getStorage().countAllFloors() + "\n");
+		for (Floor m : getStorage().getAllFloors()) {
 			byte[] f = m.getFile();
 			textStatus.append("Floor\t" + m.getId() + "\t" + m.getName() + "\t"
 					+ (f != null && f.length != 0) + "\n");
 		}
-		textStatus.append("\nMeasurePoints: " + storage.countMeasurePoints()
-				+ "\n");
-		for (MeasurePoint cp : storage.getAllMeasurePoints()) {
+		textStatus.append("\nMeasurePoints: "
+				+ getStorage().countAllMeasurePoints() + "\n");
+		for (MeasurePoint cp : getStorage().getAllMeasurePoints()) {
 			textStatus.append("MeasurePoint\t" + cp.getId() + "\t"
 					+ cp.getFloorId() + "\t" + cp.getPosx() + "\t"
 					+ cp.getPosy() + "\n");
 		}
-		textStatus.append("\nScans: " + storage.countScans() + "\n");
-		for (Scan scan : storage.getAllScans()) {
+		textStatus.append("\nScans: " + getStorage().countAllScans() + "\n");
+		for (Scan scan : getStorage().getAllScans()) {
 			textStatus.append("Scan\t" + scan.getId() + "\t" + scan.getMpid()
 					+ "\t" + scan.getTime() + "\t" + scan.getCompass() + "\n");
 		}
-		textStatus.append("\nAccessPoints: " + storage.countAccessPoints()
-				+ "\n");
-		List<AccessPoint> all = storage.getAllAccessPoints();
+		textStatus.append("\nAccessPoints: "
+				+ getStorage().countAllAccessPoints() + "\n");
+		List<AccessPoint> all = getStorage().getAllAccessPoints();
 		for (AccessPoint ap : all) {
 			textStatus.append("AP\t" + ap.getId() + "\t" + ap.getScanId()
 					+ "\t" + ap.getBssid() + "\t" + ap.getLevel() + "\t"
@@ -94,7 +95,7 @@ public class DebugActivity extends SuperActivity {
 		}
 		if (all.size() > 0) {
 			String bssid = all.get(0).getBssid();
-			List<AccessPoint> first = storage.getAccessPoint(bssid);
+			List<AccessPoint> first = getStorage().getAccessPoint(bssid);
 			textStatus.append("\n" + bssid + "\n");
 			for (AccessPoint ap : first) {
 				textStatus.append("AP\t" + ap.getId() + "\t" + ap.getScanId()
@@ -125,7 +126,8 @@ public class DebugActivity extends SuperActivity {
 										dbExportName += Constants.DB_SUFFIX;
 									}
 									try {
-										storage.exportDatabase(dbExportName);
+										getStorage().exportDatabase(
+												dbExportName);
 									} catch (IOException e) {
 										Toast.makeText(getBaseContext(),
 												e.toString(), Toast.LENGTH_LONG)
@@ -152,7 +154,7 @@ public class DebugActivity extends SuperActivity {
 					new ChooseFileDialog.ChosenFileListener() {
 						@Override
 						public void onChosenFile(String chosenFile) {
-							if (storage.importDatabase(chosenFile) == true) {
+							if (getStorage().importDatabase(chosenFile) == true) {
 								Toast.makeText(getBaseContext(),
 										R.string.database_import_success,
 										Toast.LENGTH_SHORT).show();
@@ -168,7 +170,7 @@ public class DebugActivity extends SuperActivity {
 					.setPositiveButton(R.string.yes, new OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							storage.clearDatabase();
+							getStorage().clearDatabase();
 							Toast.makeText(getBaseContext(),
 									R.string.database_clear_success,
 									Toast.LENGTH_SHORT).show();

@@ -123,7 +123,7 @@ public class MeasureActivity extends SuperActivity implements
 	public void onStart() {
 		super.onStart();
 		buildingAdapter.clear();
-		buildingList = storage.getAllBuildings();
+		buildingList = getStorage().getAllBuildings();
 		for (Building b : buildingList) {
 			buildingAdapter.add(b.getName());
 		}
@@ -183,14 +183,14 @@ public class MeasureActivity extends SuperActivity implements
 						Toast.LENGTH_LONG).show();
 				return;
 			}
-			boolean check = scm.startSingleScan();
+			boolean check = getScanManager().startSingleScan();
 			if (check == false) {
 				Toast.makeText(this, R.string.error_scanning, Toast.LENGTH_LONG)
 						.show();
 			} else {
 				if (lastMP == null) {
-					lastMP = storage.createMeasurePoint(floorSelected, p[0],
-							p[1]);
+					lastMP = getStorage().createMeasurePoint(floorSelected,
+							p[0], p[1]);
 				}
 				if (waitDialog != null) {
 					waitDialog.dismiss();
@@ -207,7 +207,7 @@ public class MeasureActivity extends SuperActivity implements
 		if (parent == buildingSpinner) {
 			buildingSelected = buildingList.get(pos);
 			// update floor spinner
-			floorList = storage.getFloors(buildingSelected);
+			floorList = getStorage().getFloors(buildingSelected);
 			floorAdapter.clear();
 			for (Floor f : floorList) {
 				floorAdapter.add(f.getName());
@@ -223,7 +223,12 @@ public class MeasureActivity extends SuperActivity implements
 			byte[] file = floorSelected.getFile();
 			if (file != null) {
 				ByteArrayInputStream bin = new ByteArrayInputStream(file);
-				mapView.newMap(bin, storage.getMeasurePoints(floorSelected));
+				List<MeasurePoint> mps = getStorage().getMeasurePoints(
+						floorSelected);
+				for (MeasurePoint mp : mps) {
+					mp.setQuality(getStorage().getQuality(mp));
+				}
+				mapView.newMap(bin, mps);
 			} else {
 				Toast.makeText(this, R.string.error_no_floor_file,
 						Toast.LENGTH_LONG).show();
