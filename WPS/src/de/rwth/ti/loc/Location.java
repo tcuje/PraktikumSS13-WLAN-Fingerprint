@@ -103,7 +103,7 @@ public class Location {
 		List<Scan> scanEntries = dataHandler.getScans(map, compass);
 		List<ScanError> errorList = new LinkedList<ScanError>();
 		for (int j = 0; j < scanEntries.size(); j++) {
-			double errorValue = 1;
+			double errorValue = 0;
 			List<AccessPoint> entries = dataHandler.getAccessPoints(scanEntries
 					.get(j));
 			for (int k = 0; k < 3 && k < aps.size(); k++) {
