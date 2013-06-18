@@ -104,7 +104,7 @@ public class Location {
 			double errorValue = 1;
 			// get 3 best access points ordered by level
 			List<AccessPoint> entries = dataHandler.getAccessPoints(scan, 3);
-			for (int k = 0; k < aps.size(); k++) {
+			for (int k = 0; k < 3 && k < aps.size(); k++) {
 				String mac = aps.get(k).BSSID;
 				int l;
 				boolean success = false;
