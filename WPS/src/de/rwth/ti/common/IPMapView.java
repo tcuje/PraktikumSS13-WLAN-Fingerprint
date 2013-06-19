@@ -107,6 +107,7 @@ public class IPMapView extends View {
 		canvas.getClipBounds(mRect);
 		mAccXPoint = mRect.exactCenterX();
 		mAccYPoint = mRect.exactCenterY();
+		//System.out.println("Mitte: "+mAccXPoint+","+mAccYPoint);
 
 		mPaint.setStrokeWidth(0.432f);
 		mPaint.setColor(android.graphics.Color.GRAY);
