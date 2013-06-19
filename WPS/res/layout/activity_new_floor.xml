@@ -10,13 +10,13 @@
     tools:context=".NewMapActivity" >
 
     <LinearLayout
-        android:id="@+id/LinearLayout1"
+        android:id="@+id/dataMainLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
         <EditText
-            android:id="@+id/createBuildingEdit"
+            android:id="@+id/dataBuildingRenameEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:hint="@string/activity_new_floor_floorlevel"
+            android:hint="@string/floorlevel"
             android:inputType="numberSigned"
             android:maxLength="6"
             android:maxLines="1" />

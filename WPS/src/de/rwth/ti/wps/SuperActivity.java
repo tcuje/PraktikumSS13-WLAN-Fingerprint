@@ -37,6 +37,11 @@ public abstract class SuperActivity extends Activity {
 			boolean hasScan, boolean hasStorage) {
 		super.onCreate(savedInstanceState);
 
+		// Setup compass manager
+		if (cmgr == null && hasCompass) {
+			cmgr = new CompassManager(this);
+		}
+		
 		// Setup Wifi
 		if (scm == null && hasScan) {
 			scm = new ScanManager(this);
@@ -45,11 +50,6 @@ public abstract class SuperActivity extends Activity {
 		// Setup database storage
 		if (storage == null && hasStorage) {
 			storage = new StorageHandler(this);
-		}
-
-		// Setup compass manager
-		if (cmgr == null && hasCompass) {
-			cmgr = new CompassManager(this);
 		}
 	}
 
@@ -65,18 +65,30 @@ public abstract class SuperActivity extends Activity {
 	@Override
 	public void onStart() {
 		super.onStart();
-		storage.onStart();
-		scm.onStart();
-		cmgr.onStart();
+		if (cmgr != null) {
+			cmgr.onStart();
+		}
+		if (scm != null) {
+			scm.onStart();
+		}
+		if (storage != null) {
+			storage.onStart();
+		}
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
 	@Override
 	public void onStop() {
 		super.onStop();
-		storage.onStop();
-		scm.onStop();
-		cmgr.onStop();
+		if (cmgr != null) {
+			cmgr.onStop();
+		}
+		if (scm != null) {
+			scm.onStop();
+		}
+		if (storage != null) {
+			storage.onStop();
+		}
 	}
 
 	public ScanManager getScanManager() {
@@ -125,6 +137,10 @@ public abstract class SuperActivity extends Activity {
 					Toast.LENGTH_SHORT).show();
 			break;
 		*/
+		case R.id.action_data:
+			intent = new Intent(this, DataActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			break;
 		case R.id.action_debug:
 			intent = new Intent(this, DebugActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
