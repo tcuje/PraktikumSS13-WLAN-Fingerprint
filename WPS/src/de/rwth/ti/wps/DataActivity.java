@@ -1,8 +1,8 @@
 package de.rwth.ti.wps;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -15,7 +15,7 @@ import de.rwth.ti.layouthelper.OnBuildingChangedListener;
 import de.rwth.ti.layouthelper.OnFloorChangedListener;
 
 public class DataActivity extends SuperActivity implements
-	OnBuildingChangedListener, OnFloorChangedListener {
+	OnBuildingChangedListener, OnFloorChangedListener, OnClickListener {
 
 	Building selectedBuilding;
 	Floor selectedFloor;
@@ -58,6 +58,12 @@ public class DataActivity extends SuperActivity implements
 		floorHelper = FloorSpinnerHelper.createInstance(this, this, storage, (Spinner) findViewById(R.id.dataFloorFloorSpinner));
 		floorHelper.addSpinner((Spinner) findViewById(R.id.dataMeasurePointFloorSpinner));
 		buildingHelper.addListener(floorHelper);
+		
+		
+		// init ClickListeners
+		findViewById(R.id.dataBuildingRenameButton).setOnClickListener(this);
+		findViewById(R.id.dataBuildingDeleteButton).setOnClickListener(this);
+		// TODO andere Buttons hinzufügen
 	}
 	
 	/** Called when the activity is first created or restarted */
@@ -87,5 +93,20 @@ public class DataActivity extends SuperActivity implements
 		if (selectedFloor != null) {
 			
 		}
+	}
+
+	@Override
+	public void onClick(View v) {
+		// TODO Funktionen einfügen
+		switch(v.getId()) {
+		case R.id.dataBuildingRenameButton:
+			// TODO Gebäude umbennen
+			break;
+		case R.id.dataBuildingDeleteButton:
+			// TODO Gebäude löschen
+			break;
+		// ...
+		}
+		
 	}
 }
