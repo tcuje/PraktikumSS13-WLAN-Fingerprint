@@ -376,7 +376,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean deleteFloor(Floor floor) {
-		int result = db.delete(Floor.TABLE_NAME, Floor.COLUMN_ID,
+		int result = db.delete(Floor.TABLE_NAME, Floor.COLUMN_ID+"=?",
 				new String[] { String.valueOf(floor.getId()) });
 		if (result == 1)
 			return true;
@@ -398,7 +398,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean deleteBuilding(Building building) {
-		int result = db.delete(Building.TABLE_NAME, Building.COLUMN_ID,
+		int result = db.delete(Building.TABLE_NAME, Building.COLUMN_ID+"=?",
 				new String[] { String.valueOf(building.getId()) });
 		if (result == 1)
 			return true;
@@ -449,7 +449,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean deleteMea1surePoint(MeasurePoint mp) {
-		int result = db.delete(MeasurePoint.TABLE_NAME, MeasurePoint.COLUMN_ID,
+		int result = db.delete(MeasurePoint.TABLE_NAME, MeasurePoint.COLUMN_ID+"=?",
 				new String[] { String.valueOf(mp.getId()) });
 		if (result == 1)
 			return true;
@@ -473,7 +473,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean deleteScan(Scan sc) {
-		int result = db.delete(Scan.TABLE_NAME, Scan.COLUMN_ID,
+		int result = db.delete(Scan.TABLE_NAME, Scan.COLUMN_ID+"=?",
 				new String[] { String.valueOf(sc.getId()) });
 		if (result == 1)
 			return true;

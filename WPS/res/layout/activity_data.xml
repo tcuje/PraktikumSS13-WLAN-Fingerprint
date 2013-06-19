@@ -55,26 +55,4 @@
 
     </RadioGroup>
 
-    <Button
-        android:id="@+id/dataUpdateButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-         android:onClick="updateOnClick"
-        android:layout_alignRight="@+id/radioGroup1"
-        android:text="@string/data_activity_update" />
-
-    <Button
-        android:id="@+id/dataDeleteButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/dataUpdateButton"
-        android:layout_alignBottom="@+id/dataUpdateButton"
-        android:layout_alignParentRight="true"
-        android:onClick="deleteOnClick"
-        android:layout_marginRight="31dp"
-        android:text="@string/data_activity_delete" />
-
-   
-
 </RelativeLayout>

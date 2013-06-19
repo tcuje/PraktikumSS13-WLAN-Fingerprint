@@ -28,7 +28,6 @@
     <string name="error_empty_input">Ein Feld ist leer, bitte ausfüllen</string>
     <string name="error_create_floor">Etage konnte nicht erstellt werden</string>
     <string name="success_create_floor">Etage erfolgreich erstellt</string>
-
     <string name="error_no_building">Keine Gebäude vorhanden/ausgewählt</string>
     <string name="title_activity_data">DataActivity</string>
     <string name="action_data">Daten bearbeiten</string>
@@ -39,22 +38,25 @@
     <string name="data_activity_update">Bearbeiten</string>
     <string name="data_activity_delete">Löschen</string>
     <string name="title_activity_notification">NotificationActivity</string>
-
     <string name="error_sd_dir">Kann SD Karte nicht beschreiben!</string>
     <string name="error_no_measure_point">Bitte einen Messpunkt wählen!</string>
     <string name="error_no_floor_file">Keine Kartendatei vorhanden!</string>
     <string name="error_scanning">Fehler beim Scannen!</string>
-	<string name="success_scanning">Erfolg beim Scannen!</string>
-	<string name="database_export_success">Datenbank erfolgreich exportiert</string>
-	<string name="database_import_success">Datenbank erfolgreich importiert</string>
-	<string name="toggle_localisation">Lokalisierung</string>
-	<string name="scan_wait">Bitte warten</string>
-	<string name="scan_no_ap">Keine Ergebnisse, bitte die Messung wiederholen</string>
-	<string name="button_center">Auf aktuelle Position zentrieren</string>
-	<string name="measure_face_north">Nach Norden ausrichten</string>
-	<string name="measure_face_east">Nach Osten ausrichten</string>
-	<string name="measure_face_south">Nach Süden ausrichten</string>
-	<string name="measure_face_west">Nach Westen ausrichten</string>
-    
+    <string name="success_scanning">Erfolg beim Scannen!</string>
+    <string name="database_export_success">Datenbank erfolgreich exportiert</string>
+    <string name="database_import_success">Datenbank erfolgreich importiert</string>
+    <string name="toggle_localisation">Lokalisierung</string>
+    <string name="scan_wait">Bitte warten</string>
+    <string name="scan_no_ap">Keine Ergebnisse, bitte die Messung wiederholen</string>
+    <string name="button_center">Auf aktuelle Position zentrieren</string>
+    <string name="measure_face_north">Nach Norden ausrichten</string>
+    <string name="measure_face_east">Nach Osten ausrichten</string>
+    <string name="measure_face_south">Nach Süden ausrichten</string>
+    <string name="measure_face_west">Nach Westen ausrichten</string>
+    <string name="title_activity_data_activity_popup">DataActivityPopup</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_data_update">MainActivity</string>
+    <string name="title_activity_data_delete">MainActivity</string>
 
 </resources>
