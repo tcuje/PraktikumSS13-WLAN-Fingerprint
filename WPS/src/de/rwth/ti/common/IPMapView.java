@@ -132,7 +132,7 @@ public class IPMapView extends View {
 		if (!mMeasureMode) {
 			mPaint.setColor(android.graphics.Color.BLUE);
 			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-			canvas.drawCircle(mXPoint, mYPoint, 10, mPaint);
+			canvas.drawCircle(mXPoint, mYPoint, 3, mPaint);
 		}
 		// Messpunkt einzeichen
 		if (mMeasureMode) {
@@ -360,14 +360,17 @@ public class IPMapView extends View {
 	}
 	
 	public void setPoint(float x, float y) {
-		mXFocus = -x + mViewWidth / 2;
-		mYFocus = -y + mViewHeight / 2;
 		mXPoint = x;
 		mYPoint = y;
+		invalidate();
+	}
+	public void focusPoint(){
+		mXFocus = -mXPoint + mViewWidth / 2;
+		mYFocus = -mYPoint + mViewHeight / 2;
 		mScaleFactor = 1.f;
 		invalidate();
 	}
-
+	
 	public boolean getMeasureMode(){
 		return mMeasureMode;
 	}

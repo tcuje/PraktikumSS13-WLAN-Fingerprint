@@ -162,7 +162,7 @@ public class MainActivity extends SuperActivity implements
 					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed focus position once
 						lastMap = map;
-						//viewMap.center();
+						viewMap.focusPoint();
 					}
 				}
 			}
@@ -171,7 +171,7 @@ public class MainActivity extends SuperActivity implements
 
 	public void centerPosition(View view) {
 		if (view == btCenter) {
-			//viewMap.center();
+			viewMap.focusPoint();
 		}
 	}
 
