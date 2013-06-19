@@ -1,4 +1,4 @@
-package de.rwth.ti.spinner;
+package de.rwth.ti.layouthelper;
 
 import java.util.ArrayList;
 import java.util.List;

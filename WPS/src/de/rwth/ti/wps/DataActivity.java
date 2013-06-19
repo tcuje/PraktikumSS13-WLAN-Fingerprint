@@ -8,10 +8,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
-import de.rwth.ti.spinner.BuildingSpinnerHelper;
-import de.rwth.ti.spinner.FloorSpinnerHelper;
-import de.rwth.ti.spinner.OnBuildingChangedListener;
-import de.rwth.ti.spinner.OnFloorChangedListener;
+import de.rwth.ti.layouthelper.BuildingSpinnerHelper;
+import de.rwth.ti.layouthelper.CustomTabHelper;
+import de.rwth.ti.layouthelper.FloorSpinnerHelper;
+import de.rwth.ti.layouthelper.OnBuildingChangedListener;
+import de.rwth.ti.layouthelper.OnFloorChangedListener;
 
 public class DataActivity extends SuperActivity implements
 	OnBuildingChangedListener, OnFloorChangedListener {
@@ -25,6 +26,8 @@ public class DataActivity extends SuperActivity implements
 	LinearLayout buildingLayout;
 	LinearLayout floorLayout;
 	LinearLayout measurePointLayout;
+	
+	CustomTabHelper tabHelper;
 	BuildingSpinnerHelper buildingHelper;
 	FloorSpinnerHelper floorHelper;
 	
@@ -38,16 +41,16 @@ public class DataActivity extends SuperActivity implements
 		selectedFloor = null;
 		
 		buildingHeader = (TextView) findViewById(R.id.dataBuildingHeader);
-		buildingHeader.setBackgroundColor(Color.LTGRAY);
 		floorHeader = (TextView) findViewById(R.id.dataFloorHeader);
-		floorHeader.setBackgroundColor(Color.LTGRAY);
 		measurePointHeader = (TextView) findViewById(R.id.dataMeasurePointHeader);
-		measurePointHeader.setBackgroundColor(Color.LTGRAY);
 		
 		buildingLayout = (LinearLayout) findViewById(R.id.dataBuildingLayout);
 		floorLayout = (LinearLayout) findViewById(R.id.dataFloorLayout);
 		measurePointLayout = (LinearLayout) findViewById(R.id.dataMeasurePointLayout);
 
+		tabHelper = CustomTabHelper.createInstance(buildingHeader, buildingLayout);
+		tabHelper.addTabItem(floorHeader, floorLayout);
+		tabHelper.addTabItem(measurePointHeader, measurePointLayout);
 		
 		buildingHelper = BuildingSpinnerHelper.createInstance(this, this, storage, (Spinner) findViewById(R.id.dataBuildingBuildingSpinner));
 		buildingHelper.addSpinner((Spinner) findViewById(R.id.dataFloorBuildingSpinner));

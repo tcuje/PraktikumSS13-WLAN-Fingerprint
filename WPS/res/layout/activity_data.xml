@@ -18,7 +18,12 @@
 	        android:id="@+id/dataBuildingHeader"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:paddingLeft="@dimen/activity_horizontal_margin"
+	        android:layout_marginBottom="@dimen/activity_data_header_margin_bottom"
+	        android:gravity="center_horizontal"
+	        android:paddingBottom="@dimen/activity_data_header_padding"
+	        android:paddingLeft="@dimen/activity_data_header_padding"
+	        android:paddingRight="@dimen/activity_data_header_padding"
+	        android:paddingTop="@dimen/activity_data_header_padding"
 	        android:text="@string/building"
 	        android:textAppearance="?android:attr/textAppearanceLarge"
 	        android:textStyle="bold" />
@@ -27,6 +32,7 @@
 	        android:id="@+id/dataBuildingLayout"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="@dimen/activity_data_content_margin_bottom"
 	        android:orientation="vertical" >
 
 	        <Spinner
@@ -68,6 +74,12 @@
 	        android:id="@+id/dataFloorHeader"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="@dimen/activity_data_header_margin_bottom"
+	        android:gravity="center_horizontal"
+	        android:paddingBottom="@dimen/activity_data_header_padding"
+	        android:paddingLeft="@dimen/activity_data_header_padding"
+	        android:paddingRight="@dimen/activity_data_header_padding"
+	        android:paddingTop="@dimen/activity_data_header_padding"
 	        android:text="@string/floors"
 	        android:textAppearance="?android:attr/textAppearanceLarge"
 	        android:textStyle="bold" />
@@ -76,6 +88,7 @@
 	        android:id="@+id/dataFloorLayout"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="@dimen/activity_data_content_margin_bottom"
 	        android:orientation="vertical" >
 
 	        <Spinner
@@ -133,6 +146,11 @@
 	        android:id="@+id/dataMeasurePointHeader"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
+	        android:gravity="center_horizontal"
+	        android:paddingBottom="@dimen/activity_data_header_padding"
+	        android:paddingLeft="@dimen/activity_data_header_padding"
+	        android:paddingRight="@dimen/activity_data_header_padding"
+	        android:paddingTop="@dimen/activity_data_header_padding"
 	        android:text="@string/measurepoints"
 	        android:textAppearance="?android:attr/textAppearanceLarge"
 	        android:textStyle="bold" />
