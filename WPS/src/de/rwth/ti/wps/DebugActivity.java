@@ -1,9 +1,15 @@
 package de.rwth.ti.wps;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
+import de.rwth.ti.common.Constants;
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
@@ -27,6 +33,14 @@ public class DebugActivity extends SuperActivity {
 		textStatus = (TextView) findViewById(R.id.textStatus);
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.debug, menu);
+		return true;
+	}
+
 	/** Called when the activity is first created or restarted */
 	@Override
 	public void onStart() {
@@ -38,6 +52,32 @@ public class DebugActivity extends SuperActivity {
 	@Override
 	public void onStop() {
 		super.onStop();
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_export:
+			try {
+				storage.exportDatabase(Constants.LOCAL_DB_NAME);
+				Toast.makeText(getBaseContext(),
+						R.string.database_export_success, Toast.LENGTH_SHORT)
+						.show();
+			} catch (IOException e) {
+				Toast.makeText(getBaseContext(), e.toString(),
+						Toast.LENGTH_LONG).show();
+			}
+			break;
+		case R.id.menu_import:
+			storage.importDatabase(Constants.SD_APP_DIR + File.separator
+					+ Constants.LOCAL_DB_NAME);
+			Toast.makeText(getBaseContext(), R.string.database_import_success,
+					Toast.LENGTH_SHORT).show();
+			break;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+		return true;
 	}
 
 	public void showDebug() {

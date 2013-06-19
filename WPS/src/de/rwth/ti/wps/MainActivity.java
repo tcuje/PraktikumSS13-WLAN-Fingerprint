@@ -8,9 +8,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.PointF;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -21,6 +24,7 @@ import de.rwth.ti.common.CompassManager;
 import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.IPMapView;
 import de.rwth.ti.db.Floor;
+import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.StorageHandler;
 import de.rwth.ti.loc.Location;
 import de.rwth.ti.loc.LocationResult;
@@ -58,6 +62,14 @@ public class MainActivity extends SuperActivity implements
 		wifiReceiver = new MyReceiver();
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
 	/** Called when the activity is first created or restarted */
 	@Override
 	public void onStart() {
@@ -92,6 +104,23 @@ public class MainActivity extends SuperActivity implements
 		}
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_localisation:
+			item.setChecked(!item.isChecked());
+			if (item.isChecked() == true) {
+				getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
+			} else {
+				getScanManager().stopAutoScan();
+			}
+			break;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+		return true;
+	}
+
 	private class MyReceiver extends BroadcastReceiver {
 		private WifiManager wifi = MainActivity.this.getScanManager().getWifi();
 		private CompassManager comp = MainActivity.this.getCompassManager();
@@ -117,7 +146,11 @@ public class MainActivity extends SuperActivity implements
 						if (file != null) {
 							ByteArrayInputStream bin = new ByteArrayInputStream(
 									file);
-							viewMap.newMap(bin, sth.getMeasurePoints(map));
+							viewMap.newMap(bin);
+							List<MeasurePoint> mpl = storage.getMeasurePoints(map);
+							for(MeasurePoint mp : mpl){
+								viewMap.addOldPoint(new PointF((float)mp.getPosx(),(float)mp.getPosy()));
+							}
 						} else {
 							Toast.makeText(MainActivity.this,
 									R.string.error_no_floor_file,
@@ -129,7 +162,7 @@ public class MainActivity extends SuperActivity implements
 					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed focus position once
 						lastMap = map;
-						viewMap.center();
+						viewMap.focusPoint();
 					}
 				}
 			}
@@ -138,7 +171,7 @@ public class MainActivity extends SuperActivity implements
 
 	public void centerPosition(View view) {
 		if (view == btCenter) {
-			viewMap.center();
+			viewMap.focusPoint();
 		}
 	}
 

@@ -11,6 +11,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.PointF;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -88,7 +89,7 @@ public class MeasureActivity extends SuperActivity implements
 
 	private void updateCompass() {
 		lastAzimuth = this.getCompassManager().getAzimut();
-		compassText.setText(String.valueOf((int) lastAzimuth));
+		compassText.setText("N " + (int) lastAzimuth + "°");
 		// compare azimuth to direction
 		btMeasure.setEnabled(false);
 		switch (direction) {
@@ -123,7 +124,7 @@ public class MeasureActivity extends SuperActivity implements
 	public void onStart() {
 		super.onStart();
 		buildingAdapter.clear();
-		buildingList = storage.getAllBuildings();
+		buildingList = getStorage().getAllBuildings();
 		for (Building b : buildingList) {
 			buildingAdapter.add(b.getName());
 		}
@@ -135,9 +136,11 @@ public class MeasureActivity extends SuperActivity implements
 		this.registerReceiver(this.wifiReceiver, new IntentFilter(
 				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 		updateComp = new TimerTask() {
+
 			@Override
 			public void run() {
 				runOnUiThread(new Runnable() {
+
 					@Override
 					public void run() {
 						updateCompass();
@@ -181,13 +184,18 @@ public class MeasureActivity extends SuperActivity implements
 						Toast.LENGTH_LONG).show();
 				return;
 			}
-			lastMP = storage.createMeasurePoint(floorSelected, p[0], p[1]);
-			boolean check = scm.startSingleScan();
+			boolean check = getScanManager().startSingleScan();
 			if (check == false) {
-				lastMP = null;
 				Toast.makeText(this, R.string.error_scanning, Toast.LENGTH_LONG)
 						.show();
 			} else {
+				if (lastMP == null) {
+					lastMP = getStorage().createMeasurePoint(floorSelected,
+							p[0], p[1]);
+				}
+				if (waitDialog != null) {
+					waitDialog.dismiss();
+				}
 				waitDialog = new AlertDialog.Builder(this).setTitle(
 						R.string.scan_wait).show();
 			}
@@ -200,7 +208,7 @@ public class MeasureActivity extends SuperActivity implements
 		if (parent == buildingSpinner) {
 			buildingSelected = buildingList.get(pos);
 			// update floor spinner
-			floorList = storage.getFloors(buildingSelected);
+			floorList = getStorage().getFloors(buildingSelected);
 			floorAdapter.clear();
 			for (Floor f : floorList) {
 				floorAdapter.add(f.getName());
@@ -216,7 +224,14 @@ public class MeasureActivity extends SuperActivity implements
 			byte[] file = floorSelected.getFile();
 			if (file != null) {
 				ByteArrayInputStream bin = new ByteArrayInputStream(file);
-				mapView.newMap(bin, storage.getMeasurePoints(floorSelected));
+				//List<MeasurePoint> mps = getStorage().getMeasurePoints(
+					//	floorSelected);
+				//mapView.newMap(bin, mps);
+				mapView.newMap(bin);
+				List<MeasurePoint> mpl = storage.getMeasurePoints(floorSelected);
+				for(MeasurePoint mp : mpl){
+					mapView.addOldPoint(new PointF((float)mp.getPosx(),(float)mp.getPosy()));
+				}
 			} else {
 				Toast.makeText(this, R.string.error_no_floor_file,
 						Toast.LENGTH_LONG).show();
@@ -235,7 +250,7 @@ public class MeasureActivity extends SuperActivity implements
 		} else if (parent == floorSpinner) {
 			buildingSelected = null;
 			floorSelected = null;
-			mapView.clear();
+			mapView.clearMap();
 		}
 	}
 
@@ -249,7 +264,8 @@ public class MeasureActivity extends SuperActivity implements
 			List<ScanResult> results = wifi.getScanResults();
 			// measure mode, save the access points to database
 			if (results != null && !results.isEmpty()) {
-				if (lastMP != null) {
+				if (lastMP != null && waitDialog != null
+						&& waitDialog.isShowing()) {
 					Date d = new Date();
 					Scan scan = MeasureActivity.this.getStorage().createScan(
 							lastMP,
@@ -262,14 +278,15 @@ public class MeasureActivity extends SuperActivity implements
 								result.frequency, result.SSID,
 								result.capabilities);
 					}
-					lastMP = null;
-					if (waitDialog != null) {
-						waitDialog.dismiss();
-						waitDialog = null;
-					}
+					waitDialog.dismiss();
+					waitDialog = null;
 					Toast.makeText(MeasureActivity.this,
 							R.string.success_scanning, Toast.LENGTH_SHORT)
 							.show();
+					if (direction.ordinal() + 1 > CompassManager.Direction
+							.values().length) {
+						lastMP = null;
+					}
 					direction = CompassManager.Direction.values()[(direction
 							.ordinal() + 1) % 4];
 					switch (direction) {
