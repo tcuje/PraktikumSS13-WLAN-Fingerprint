@@ -42,14 +42,12 @@ public class Location {
 					compass);
 			timeSinceFloor = theTime;
 			timeSinceBuilding = theTime;
-			return result;
 		} else if (theTime > timeSinceFloor + 10000 || kontrollvariable == 2) {
 			tempFloor = findMap(aps, tempBuilding);
 			LocationResult result = findMP(aps, tempFloor, tempBuilding,
 					compass);
 			timeSinceFloor = theTime;
 			timeSinceBuilding = theTime;
-			return result;
 		}
 		LocationResult result = findMP(aps, tempFloor, tempBuilding, compass);
 		return result;
@@ -121,7 +119,7 @@ public class Location {
 							* (Math.abs((int) ((aps.get(k).level) - entries
 									.get(l).getLevel())));
 				} else {
-					errorValue += (double) ((100 + aps.get(k).level) / 100)
+					errorValue += (double) ((100 + (double)aps.get(k).level) / 100)
 							* (Math.abs((int) ((aps.get(k).level) + 100)));
 				}
 			}
