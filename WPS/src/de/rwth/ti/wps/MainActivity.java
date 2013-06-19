@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.PointF;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import de.rwth.ti.common.CompassManager;
 import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.IPMapView;
 import de.rwth.ti.db.Floor;
+import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.StorageHandler;
 import de.rwth.ti.loc.Location;
 import de.rwth.ti.loc.LocationResult;
@@ -144,7 +146,11 @@ public class MainActivity extends SuperActivity implements
 						if (file != null) {
 							ByteArrayInputStream bin = new ByteArrayInputStream(
 									file);
-							viewMap.newMap(bin, sth.getMeasurePoints(map));
+							viewMap.newMap(bin);
+							List<MeasurePoint> mpl = storage.getMeasurePoints(map);
+							for(MeasurePoint mp : mpl){
+								viewMap.addOldPoint(new PointF((float)mp.getPosx(),(float)mp.getPosy()));
+							}
 						} else {
 							Toast.makeText(MainActivity.this,
 									R.string.error_no_floor_file,
@@ -156,7 +162,7 @@ public class MainActivity extends SuperActivity implements
 					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed focus position once
 						lastMap = map;
-						viewMap.center();
+						viewMap.focusPoint();
 					}
 				}
 			}
@@ -165,7 +171,7 @@ public class MainActivity extends SuperActivity implements
 
 	public void centerPosition(View view) {
 		if (view == btCenter) {
-			viewMap.center();
+			viewMap.focusPoint();
 		}
 	}
 
