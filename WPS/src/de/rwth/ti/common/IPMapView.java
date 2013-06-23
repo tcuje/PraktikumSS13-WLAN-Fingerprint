@@ -111,9 +111,10 @@ public class IPMapView extends View {
 		
 		canvas.getClipBounds(mRect);
 		if(test){
-		mAccXPoint = mRect.exactCenterX();
-		mAccYPoint = mRect.exactCenterY();
-		System.out.println("Mitte: "+mAccXPoint+","+mAccYPoint);}
+			mAccXPoint = mRect.exactCenterX();
+			mAccYPoint = mRect.exactCenterY();
+			//System.out.println("Mitte: "+mAccXPoint+","+mAccYPoint);
+		}
 
 		mPaint.setStrokeWidth(0.432f);
 		mPaint.setColor(android.graphics.Color.GRAY);
@@ -150,8 +151,6 @@ public class IPMapView extends View {
 		for (PointF aPoint : myOldPoints) {
 			canvas.drawCircle(aPoint.x, aPoint.y, 2, mPaint);
 		}
-		mPaint.setColor(android.graphics.Color.CYAN);
-		canvas.drawCircle(mAccXPoint, mAccYPoint, 10, mPaint);
 		canvas.restore();
 	}
 
@@ -406,12 +405,14 @@ public class IPMapView extends View {
 
 	private class MyGestureListener extends
 			GestureDetector.SimpleOnGestureListener {
+
 		@Override
-		public void onLongPress(MotionEvent e) {
+		public boolean onSingleTapConfirmed(MotionEvent e) {
 			if (mMeasureMode) {
 				setMeasurePoint(e.getX(), e.getY());
 			}
-			super.onLongPress(e);
+			super.onSingleTapConfirmed(e);
+			return true;
 		}
 
 		@Override
