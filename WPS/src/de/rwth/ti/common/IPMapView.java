@@ -101,13 +101,19 @@ public class IPMapView extends View {
 		super.onDraw(canvas);
 		canvas.save();
 		// canvas.drawColor(android.graphics.Color.GRAY);
+		boolean test = false;
+		canvas.getClipBounds(mRect);
+		if(mRect.top == 0 && mRect.left == 0 && mRect.right == mViewWidth && mRect.bottom == mViewHeight){
+			test = true;
+		}
 		canvas.translate(mXFocus, mYFocus);
 		canvas.scale(mScaleFactor, mScaleFactor, mXScaleFocus, mYScaleFocus);
-
+		
 		canvas.getClipBounds(mRect);
+		if(test){
 		mAccXPoint = mRect.exactCenterX();
 		mAccYPoint = mRect.exactCenterY();
-		//System.out.println("Mitte: "+mAccXPoint+","+mAccYPoint);
+		System.out.println("Mitte: "+mAccXPoint+","+mAccYPoint);}
 
 		mPaint.setStrokeWidth(0.432f);
 		mPaint.setColor(android.graphics.Color.GRAY);
@@ -144,6 +150,8 @@ public class IPMapView extends View {
 		for (PointF aPoint : myOldPoints) {
 			canvas.drawCircle(aPoint.x, aPoint.y, 2, mPaint);
 		}
+		mPaint.setColor(android.graphics.Color.CYAN);
+		canvas.drawCircle(mAccXPoint, mAccYPoint, 10, mPaint);
 		canvas.restore();
 	}
 

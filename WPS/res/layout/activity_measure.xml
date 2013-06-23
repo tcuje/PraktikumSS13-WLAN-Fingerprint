@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     
-   <RelativeLayout
+   <!-- <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
     
@@ -45,9 +45,9 @@
             android:layout_alignParentLeft="true"
             android:textAppearance="?android:attr/textAppearanceLarge" />
         
-         </RelativeLayout>
+         </RelativeLayout> -->
         
-        <!-- <RelativeLayout
+       <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
@@ -75,7 +75,7 @@
             android:onClick="measure"
             android:text="@string/text_measure_button" />
 
-        <TextView
+      <TextView
             android:id="@+id/compass_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -83,11 +83,11 @@
             android:layout_alignParentLeft="true"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    </RelativeLayout> -->
+    </RelativeLayout> 
   
-     <de.rwth.ti.common.IPMapView
+    <!-- <de.rwth.ti.common.IPMapView
             android:id="@+id/map_view"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"/>
+            android:layout_height="fill_parent"/> -->
 
 </LinearLayout>
