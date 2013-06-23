@@ -192,6 +192,9 @@ public class MeasureActivity extends SuperActivity implements
 				if (lastMP == null) {
 					lastMP = getStorage().createMeasurePoint(floorSelected,
 							p[0], p[1]);
+				}else if(lastMP.getPosx() != p[0] || lastMP.getPosy() != p[1]){
+					lastMP = getStorage().createMeasurePoint(floorSelected,
+							p[0], p[1]);
 				}
 				if (waitDialog != null) {
 					waitDialog.dismiss();
