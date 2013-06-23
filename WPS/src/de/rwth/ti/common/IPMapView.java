@@ -378,12 +378,11 @@ public class IPMapView extends View {
 		mMeasureMode = measuremode;
 	}
 
-	public float[] getMeasurePoint() {
+	public PointF getMeasurePoint() {
 		if(mXMPoint==0 && mYMPoint == 0){
 			return null;
 		}else{
-			float ret[] = { mXMPoint, mYMPoint };
-			return ret;
+			return new PointF(mXMPoint, mYMPoint);
 		}
 	}
 

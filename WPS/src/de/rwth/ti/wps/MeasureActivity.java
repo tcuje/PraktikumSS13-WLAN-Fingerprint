@@ -178,7 +178,7 @@ public class MeasureActivity extends SuperActivity implements
 						Toast.LENGTH_LONG).show();
 				return;
 			}
-			float[] p = mapView.getMeasurePoint();
+			PointF p = mapView.getMeasurePoint();
 			if (p == null) {
 				Toast.makeText(this, R.string.error_no_measure_point,
 						Toast.LENGTH_LONG).show();
@@ -191,10 +191,12 @@ public class MeasureActivity extends SuperActivity implements
 			} else {
 				if (lastMP == null) {
 					lastMP = getStorage().createMeasurePoint(floorSelected,
-							p[0], p[1]);
-				}else if(lastMP.getPosx() != p[0] || lastMP.getPosy() != p[1]){
+							p.x, p.y);
+					mapView.addOldPoint(p);
+				}else if(lastMP.getPosx() != p.x || lastMP.getPosy() != p.y){
 					lastMP = getStorage().createMeasurePoint(floorSelected,
-							p[0], p[1]);
+							p.x, p.y);
+					mapView.addOldPoint(p);
 				}
 				if (waitDialog != null) {
 					waitDialog.dismiss();
