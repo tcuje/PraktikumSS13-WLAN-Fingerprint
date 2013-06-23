@@ -106,9 +106,12 @@ public class IPMapView extends View {
 		if(mRect.top == 0 && mRect.left == 0 && mRect.right == mViewWidth && mRect.bottom == mViewHeight){
 			test = true;
 		}
-		canvas.translate(mXFocus, mYFocus);
-		canvas.scale(mScaleFactor, mScaleFactor, mXScaleFocus, mYScaleFocus);
 		
+		//mXScaleFocus -= mXFocus;
+		//mYScaleFocus -= mYFocus;
+		//canvas.scale(mScaleFactor, mScaleFactor);
+		canvas.scale(mScaleFactor, mScaleFactor, mXScaleFocus, mYScaleFocus);
+		canvas.translate(mXFocus, mYFocus);
 		canvas.getClipBounds(mRect);
 		if(test){
 			mAccXPoint = mRect.exactCenterX();
@@ -152,6 +155,8 @@ public class IPMapView extends View {
 			canvas.drawCircle(aPoint.x, aPoint.y, 2, mPaint);
 		}
 		canvas.restore();
+		
+		canvas.save();
 	}
 
 	public void clearMap(){
@@ -419,8 +424,8 @@ public class IPMapView extends View {
 		public boolean onScroll(MotionEvent e1, MotionEvent e2,
 				float distanceX, float distanceY) {
 			if (!mScaleDetector.isInProgress()) {
-				mXFocus -= distanceX;
-				mYFocus -= distanceY;
+				mXFocus -= distanceX/mScaleFactor;
+				mYFocus -= distanceY/mScaleFactor;
 				invalidate();
 			}
 			return true;
@@ -431,9 +436,19 @@ public class IPMapView extends View {
 			ScaleGestureDetector.SimpleOnScaleGestureListener {
 		@Override
 		public boolean onScale(ScaleGestureDetector detector) {
+			
+			//mXScaleFocus = detector.getFocusX();
+			//mYScaleFocus = detector.getFocusY();
+			
+			mXScaleFocus = ((detector.getFocusX()) / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
+					+ mAccXPoint;
+			mYScaleFocus = ((detector.getFocusY()) / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))
+					+ mAccYPoint;
+			
+			mXScaleFocus /= mScaleFactor;
+			mYScaleFocus /= mScaleFactor;
+			
 			mScaleFactor *= detector.getScaleFactor();
-			mXScaleFocus = -detector.getFocusX();
-			mYScaleFocus = -detector.getFocusY();
 			//mXScaleFocus =0;
 			//mYScaleFocus =0;
 			// Don't let the object get too small or too large.
