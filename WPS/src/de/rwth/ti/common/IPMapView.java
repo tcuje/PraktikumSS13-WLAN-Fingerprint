@@ -28,6 +28,7 @@ public class IPMapView extends View {
 	private GestureDetector mGestureDetector;
 	private float mScaleFactor = 1.f;
 	private float mMinScaleFactor = 1.f;
+	private float mMaxScaleFactor = 10.f;
 	private float mXFocus = 0;
 	private float mYFocus = 0;
 	private float mXScaleFocus = 0;
@@ -86,7 +87,9 @@ public class IPMapView extends View {
 	@Override
 	protected void onSizeChanged(int xNew, int yNew, int xOld, int yOld) {
 		super.onSizeChanged(xNew, yNew, xOld, yOld);
-		mMinScaleFactor = xNew / ((float) mWidth);
+		if(mWidth != 0){
+			mMinScaleFactor = xNew / ((float) mWidth);
+		}
 		mScaleFactor = mMinScaleFactor;
 		mViewHeight = yNew;
 		mViewWidth = xNew;
@@ -223,6 +226,9 @@ public class IPMapView extends View {
 							"height"));
 					mWidth = Float.valueOf(xpp.getAttributeValue(null,
 							"width"));
+					if(mWidth != 0){
+						mMinScaleFactor = mViewWidth / ((float) mWidth);
+					}
 				}
 				if (xpp.getName().equals("path")) {
 					Path aPath = new Path();
@@ -371,9 +377,9 @@ public class IPMapView extends View {
 		invalidate();
 	}
 	public void focusPoint(){
-		mXFocus = -mXPoint + mViewWidth / 2;
-		mYFocus = -mYPoint + mViewHeight / 2;
-		mScaleFactor = 1.f;
+		mScaleFactor = mMaxScaleFactor;
+		mXFocus = -mXPoint + mViewWidth / (2 * mScaleFactor);
+		mYFocus = -mYPoint + mViewHeight / (2 * mScaleFactor);
 		invalidate();
 	}
 	
@@ -451,7 +457,7 @@ public class IPMapView extends View {
 			//mYScaleFocus =0;
 			// Don't let the object get too small or too large.
 			mScaleFactor = Math.max(mMinScaleFactor,
-					Math.min(mScaleFactor, 10.0f));
+					Math.min(mScaleFactor, mMaxScaleFactor));
 
 			invalidate();
 			return true;
