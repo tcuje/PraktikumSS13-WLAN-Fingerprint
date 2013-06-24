@@ -43,7 +43,6 @@ public class IPMapView extends View {
 	private float mViewHeight = 0;
 	private float mViewWidth = 0;
 	private boolean mMeasureMode = true;
-	private Context myContext;
 	private ArrayList<Path> myPaths;
 	private ArrayList<Path> myFillPaths;
 	private ArrayList<PointF> myOldPoints;
@@ -55,7 +54,6 @@ public class IPMapView extends View {
 		myPaths = new ArrayList<Path>();
 		myFillPaths = new ArrayList<Path>();
 		myOldPoints = new ArrayList<PointF>();
-		myContext = context;
 		mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
 		mGestureDetector = new GestureDetector(context, new MyGestureListener());
 		
@@ -67,7 +65,6 @@ public class IPMapView extends View {
 		super(context, attrs);
 		myPaths = new ArrayList<Path>();
 		myFillPaths = new ArrayList<Path>();
-		myContext = context;
 		mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
 		mGestureDetector = new GestureDetector(context, new MyGestureListener());
 		newMap(inputStream);
@@ -106,11 +103,10 @@ public class IPMapView extends View {
 		if(mRect.top == 0 && mRect.left == 0 && mRect.right == mViewWidth && mRect.bottom == mViewHeight){
 			test = true;
 		}
-		
 		//mXScaleFocus -= mXFocus;
 		//mYScaleFocus -= mYFocus;
-		//canvas.scale(mScaleFactor, mScaleFactor);
-		canvas.scale(mScaleFactor, mScaleFactor, mXScaleFocus, mYScaleFocus);
+		canvas.scale(mScaleFactor, mScaleFactor);
+		//canvas.scale(mScaleFactor, mScaleFactor, mXScaleFocus, mYScaleFocus);
 		canvas.translate(mXFocus, mYFocus);
 		canvas.getClipBounds(mRect);
 		if(test){
@@ -155,8 +151,6 @@ public class IPMapView extends View {
 			canvas.drawCircle(aPoint.x, aPoint.y, 2, mPaint);
 		}
 		canvas.restore();
-		
-		canvas.save();
 	}
 
 	public void clearMap(){
@@ -436,19 +430,23 @@ public class IPMapView extends View {
 			ScaleGestureDetector.SimpleOnScaleGestureListener {
 		@Override
 		public boolean onScale(ScaleGestureDetector detector) {
-			
+			 
 			//mXScaleFocus = detector.getFocusX();
 			//mYScaleFocus = detector.getFocusY();
+			if(detector.getTimeDelta()==0){
+			mXScaleFocus = (((detector.getFocusX()) / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
+					+ mAccXPoint);
+			mYScaleFocus =(((detector.getFocusY()) / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))
+					+ mAccYPoint);
+			}
 			
-			mXScaleFocus = ((detector.getFocusX()) / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
-					+ mAccXPoint;
-			mYScaleFocus = ((detector.getFocusY()) / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))
-					+ mAccYPoint;
-			
-			mXScaleFocus /= mScaleFactor;
-			mYScaleFocus /= mScaleFactor;
+			//mXScaleFocus /= mScaleFactor;
+			//mYScaleFocus /= mScaleFactor;
 			
 			mScaleFactor *= detector.getScaleFactor();
+			
+			mXFocus = -mXScaleFocus  + detector.getFocusX()/ mScaleFactor;
+			mYFocus = -mYScaleFocus  + detector.getFocusY() / mScaleFactor;
 			//mXScaleFocus =0;
 			//mYScaleFocus =0;
 			// Don't let the object get too small or too large.
