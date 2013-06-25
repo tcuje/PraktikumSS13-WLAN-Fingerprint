@@ -34,7 +34,6 @@ public class Location {
 		theTime = time.getTime().getTime(); // 1 erzwingt Gebaeudesuche
 											// 2 erzwingt FloorSuche
 		aps = deleteDoubles(aps);
-
 		if (theTime > timeSinceBuilding + 40000 || kontrollvariable == 1) {
 			tempBuilding = findBuilding(aps);
 			tempFloor = findFloor(aps, tempBuilding);
@@ -126,9 +125,9 @@ public class Location {
 				}
 			}
 			if (errorValue == 0) {
-				MeasurePoint mp = dataHandler.getMeasurePoint(scan);
 				LocationResult result = new LocationResult(building, floor,
-						mp.getPosx(), mp.getPosy());
+						dataHandler.getMeasurePoint(scan).getPosx(),
+						dataHandler.getMeasurePoint(scan).getPosy());
 				return result;
 			}
 			ScanError scanErrorObject = new ScanError();
