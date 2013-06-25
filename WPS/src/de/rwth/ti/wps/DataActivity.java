@@ -1,13 +1,21 @@
 package de.rwth.ti.wps;
 
+import java.util.List;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
+import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.layouthelper.BuildingSpinnerHelper;
 import de.rwth.ti.layouthelper.CustomTabHelper;
 import de.rwth.ti.layouthelper.FloorSpinnerHelper;
@@ -18,8 +26,13 @@ public class DataActivity extends SuperActivity implements
 	OnBuildingChangedListener, OnFloorChangedListener, OnClickListener {
 
 	Building selectedBuilding;
+	Building newBuilding;
 	Floor selectedFloor;
+	Floor newFloor;
+	List<MeasurePoint> MPList;
+	List<Floor> FloorList;
 	
+		
 	TextView buildingHeader;
 	TextView floorHeader;
 	TextView measurePointHeader;
@@ -30,6 +43,23 @@ public class DataActivity extends SuperActivity implements
 	CustomTabHelper tabHelper;
 	BuildingSpinnerHelper buildingHelper;
 	FloorSpinnerHelper floorHelper;
+	Spinner buildingSpinner;
+	
+	Button BuildingRenameButton;
+	Button BuildingDeleteButton;
+	Button FloorSaveButton;
+	Button FloorDeleteButton;
+	Button MeasurePointDeleteOnFloorButton;
+	Button MeasurePointDeleteLastButton;
+	Button MeasurePointDeleteAllButton;
+	
+	EditText buildingEdit;
+	EditText floorEdit;
+	EditText floorLevelEdit;
+
+	
+	
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +69,8 @@ public class DataActivity extends SuperActivity implements
 		
 		selectedBuilding = null;
 		selectedFloor = null;
+		
+		
 		
 		buildingHeader = (TextView) findViewById(R.id.dataBuildingHeader);
 		floorHeader = (TextView) findViewById(R.id.dataFloorHeader);
@@ -59,11 +91,33 @@ public class DataActivity extends SuperActivity implements
 		floorHelper.addSpinner((Spinner) findViewById(R.id.dataMeasurePointFloorSpinner));
 		buildingHelper.addListener(floorHelper);
 		
+		BuildingDeleteButton = (Button) findViewById(R.id.dataBuildingDeleteButton);
+		buildingEdit = (EditText) findViewById(R.id.dataBuildingRenameEdit);
+		floorEdit = (EditText) findViewById(R.id.dataFloorRenameEdit);
+		floorLevelEdit = (EditText) findViewById(R.id.dataFloorFloorLevelEdit);
+		
+				
+		BuildingRenameButton= (Button) findViewById(R.id.dataBuildingRenameButton);
+		FloorSaveButton= (Button) findViewById(R.id.dataFloorSaveButton);
+		FloorDeleteButton= (Button) findViewById(R.id.dataFloorDeleteButton);
+		MeasurePointDeleteOnFloorButton= (Button) findViewById(R.id.dataMeasurePointDeleteOnFloorButton);
+		MeasurePointDeleteLastButton= (Button) findViewById(R.id.dataMeasurePointDeleteLastButton);
+		MeasurePointDeleteAllButton= (Button) findViewById(R.id.dataMeasurePointDeleteAllButton);
 		
 		// init ClickListeners
-		findViewById(R.id.dataBuildingRenameButton).setOnClickListener(this);
+	/*	findViewById(R.id.dataBuildingRenameButton).setOnClickListener(this);
 		findViewById(R.id.dataBuildingDeleteButton).setOnClickListener(this);
-		// TODO andere Buttons hinzufügen
+		
+		findViewById(R.id.dataFloorSaveButton).setOnClickListener(this);
+		findViewById(R.id.dataFloorDeleteButton).setOnClickListener(this);
+		
+		findViewById(R.id.dataMeasurePointDeleteOnFloorButton).setOnClickListener(this);	
+		findViewById(R.id.dataMeasurePointDeleteLastButton).setOnClickListener(this);
+		findViewById(R.id.dataMeasurePointDeleteAllButton).setOnClickListener(this);
+		
+		// TODO andere Buttons hinzufügen- done
+		 * 
+		 */
 	}
 	
 	/** Called when the activity is first created or restarted */
@@ -94,19 +148,118 @@ public class DataActivity extends SuperActivity implements
 			
 		}
 	}
+	
+	
+	/////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////
+	
+	public void dataDeleteBuilding (View v){
+	
+		if(selectedBuilding != null){
+			storage.deleteBuilding(selectedBuilding);
+		buildingHelper.refresh();
+		}
+	}
+	
+	public void dataRenameBuilding (View v){
+		String BuildingName = buildingEdit.getText().toString().trim();
+		newBuilding=new Building();
+		newBuilding.setName(BuildingName);
+		newBuilding.setId(selectedBuilding.getId());
+		storage.changeBuilding(newBuilding);
+	}
+	
+	public void dataDeleteAllMP(View v){
+		MPList=storage.getAllMeasurePoints();
+		for (MeasurePoint MP : MPList)
+		storage.deleteMea1surePoint(MP);
+	}
+	
+	public void dataDeleteFloorMP (View v){
+		if (selectedBuilding!=null){
+			FloorList=storage.getFloors(selectedBuilding);
+			if (selectedFloor!=null) {
+				MPList=storage.getMeasurePoints(selectedFloor);
+				for (MeasurePoint MP : MPList)
+					storage.deleteMea1surePoint(MP);
+			}
+		}
+		
+		
+	}
 
+	public void dataDeleteLastMP(View v){
+		MPList=storage.getAllMeasurePoints();
+		MeasurePoint deleteMP=MPList.get(MPList.size() - 1);
+		storage.deleteMea1surePoint(deleteMP);
+	}
+	
+	
+	public void dataDeleteFloor (View v){
+		if (selectedBuilding!=null){
+			FloorList=storage.getFloors(selectedBuilding);
+			if (selectedFloor!=null) {
+					storage.deleteFloor(selectedFloor);
+			}
+		}
+	}
+		
+	public void dataFloorSave (View v){
+		String FloorName = floorEdit.getText().toString().trim();
+		long FloorLevel =Long.valueOf( floorLevelEdit.getText().toString().trim()).longValue();;
+		if (selectedBuilding!=null){
+			if (selectedFloor!=null) {
+				newFloor= new Floor();
+				newFloor.setId(selectedFloor.getId());
+				newFloor.setLevel(FloorLevel);
+				newFloor.setName(FloorName);
+				storage.changeFloor(newFloor);
+				
+				
+			}			
+		}
+	}
+	
 	@Override
 	public void onClick(View v) {
+		Toast.makeText(this, "D", Toast.LENGTH_LONG).show();
 		// TODO Funktionen einfügen
+		/*
 		switch(v.getId()) {
 		case R.id.dataBuildingRenameButton:
 			// TODO Gebäude umbennen
 			break;
-		case R.id.dataBuildingDeleteButton:
-			// TODO Gebäude löschen
+	/*	case R.id.dataBuildingDeleteButton:
+			{ Toast.makeText(this, "B", Toast.LENGTH_LONG).show();
+				if(selectedBuilding != null)
+					Toast.makeText(this, "C", Toast.LENGTH_LONG).show();
+				storage.deleteBuilding(selectedBuilding);
+				buildingHelper.refresh();
+				
+			}
 			break;
-		// ...
-		}
-		
+		case R.id.dataFloorSaveButton:
+			// TODO Gebäude umbennen
+			break;
+		case R.id.dataFloorDeleteButton:
+			if(selectedFloor != null)			
+				storage.deleteFloor(selectedFloor);
+			break;
+		case R.id.dataMeasurePointDeleteOnFloorButton:
+			// TODO Gebäude umbennen
+			break;
+		case R.id.dataMeasurePointDeleteLastButton:
+			// TODO Gebäude umbennen
+			break;
+		case R.id.dataMeasurePointDeleteAllButton:
+			{
+				MPList=storage.getAllMeasurePoints();
+			for (MeasurePoint MP : MPList)
+			storage.deleteMea1surePoint(MP);
+			}
+			break;
+
+		} 
+		*/
 	}
 }

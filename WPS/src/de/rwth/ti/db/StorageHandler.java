@@ -15,6 +15,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.util.Log;
 import android.widget.Toast;
 import de.rwth.ti.common.Constants;
 import de.rwth.ti.share.IGUIDataHandler;
@@ -376,7 +377,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean deleteFloor(Floor floor) {
-		int result = db.delete(Floor.TABLE_NAME, Floor.COLUMN_ID,
+		int result = db.delete(Floor.TABLE_NAME, Floor.COLUMN_ID + "=?",
 				new String[] { String.valueOf(floor.getId()) });
 		if (result == 1)
 			return true;
@@ -395,10 +396,19 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		else
 			return false;
 	}
+	
+	private static final String TAG = "deletedBuilding";
 
 	@Override
 	public boolean deleteBuilding(Building building) {
-		int result = db.delete(Building.TABLE_NAME, Building.COLUMN_ID,
+
+		Log.i(TAG, String.valueOf(building.getName()));
+		
+		Cursor cursor = db.query(Building.TABLE_NAME, null, null, null, null, null, null);
+		int len = cursor.getCount();
+		Log.i("len", String.valueOf(len));
+		
+		int result = db.delete(Building.TABLE_NAME, Building.COLUMN_ID + "=?",
 				new String[] { String.valueOf(building.getId()) });
 		if (result == 1)
 			return true;
@@ -426,7 +436,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean deleteAccessPoint(AccessPoint ap) {
-		int result = db.delete(AccessPoint.TABLE_NAME, AccessPoint.COLUMN_ID,
+		int result = db.delete(AccessPoint.TABLE_NAME, AccessPoint.COLUMN_ID + "=?",
 				new String[] { String.valueOf(ap.getId()) });
 		if (result == 1)
 			return true;
@@ -449,7 +459,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean deleteMea1surePoint(MeasurePoint mp) {
-		int result = db.delete(MeasurePoint.TABLE_NAME, MeasurePoint.COLUMN_ID,
+		int result = db.delete(MeasurePoint.TABLE_NAME, MeasurePoint.COLUMN_ID + "=?",
 				new String[] { String.valueOf(mp.getId()) });
 		if (result == 1)
 			return true;
@@ -473,7 +483,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean deleteScan(Scan sc) {
-		int result = db.delete(Scan.TABLE_NAME, Scan.COLUMN_ID,
+		int result = db.delete(Scan.TABLE_NAME, Scan.COLUMN_ID + "=?",
 				new String[] { String.valueOf(sc.getId()) });
 		if (result == 1)
 			return true;

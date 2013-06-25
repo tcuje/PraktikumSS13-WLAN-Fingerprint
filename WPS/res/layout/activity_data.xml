@@ -59,6 +59,7 @@
 	                android:layout_width="match_parent"
 	                android:layout_height="wrap_content"
 	                android:layout_weight="1"
+	                android:onClick="dataRenameBuilding"
 	                android:text="@string/rename" />
 
 	            <Button
@@ -66,6 +67,7 @@
 	                android:layout_width="match_parent"
 	                android:layout_height="wrap_content"
 	                android:layout_weight="1"
+	                android:onClick="dataDeleteBuilding"
 	                android:text="@string/delete" />
 	        </LinearLayout>
 	    </LinearLayout>
@@ -131,6 +133,7 @@
 	                android:layout_width="match_parent"
 	                android:layout_height="wrap_content"
 	                android:layout_weight="1"
+	                android:onClick="dataFloorSave"
 	                android:text="@string/save" />
 
 	            <Button
@@ -138,6 +141,7 @@
 	                android:layout_width="match_parent"
 	                android:layout_height="wrap_content"
 	                android:layout_weight="1"
+	                android:onClick="dataDeleteFloor"
 	                android:text="@string/delete" />
 	        </LinearLayout>
 	    </LinearLayout>
@@ -177,6 +181,7 @@
 	            android:layout_height="0dp"
 	            android:layout_marginBottom="5dp"
 	            android:layout_weight="1"
+	            android:onClick="dataDeleteFloorMP"
 	            android:text="@string/delete_measurepoints_on_floor" />
 
 	        <Button
@@ -184,6 +189,7 @@
 	            android:layout_width="match_parent"
 	            android:layout_height="0dp"
 	            android:layout_weight="1"
+	            android:onClick="dataDeleteLastMP"
 	            android:text="@string/delete_last_measurepoint" />
 
 	        <Button
@@ -191,6 +197,7 @@
 	            android:layout_width="match_parent"
 	            android:layout_height="0dp"
 	            android:layout_weight="1"
+	            android:onClick="dataDeleteAllMP"
 	            android:text="@string/delete_all" />
 	    </LinearLayout>
 	</LinearLayout>

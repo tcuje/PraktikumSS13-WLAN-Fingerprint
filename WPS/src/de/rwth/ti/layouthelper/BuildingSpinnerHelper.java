@@ -22,6 +22,7 @@ public class BuildingSpinnerHelper implements
 	private List<Building> buildingList;
 	private ArrayAdapter<CharSequence> adapter;
 	private Building selectedBuilding;
+	
 
 	private BuildingSpinnerHelper(Context context, StorageHandler storage, List<Spinner> spinner) {
 		this.storage = storage;
@@ -103,9 +104,9 @@ public class BuildingSpinnerHelper implements
 		}
 		
 		if (buildingList.size() == 0) {
-			selectedBuilding = null;
+			setBuildingSelected(null);
 		} else {
-			selectedBuilding = buildingList.get(0);
+			setBuildingSelected (buildingList.get(0));
 		}
 	}
 	
@@ -118,7 +119,7 @@ public class BuildingSpinnerHelper implements
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int pos,
 			long id) {
-		selectedBuilding = buildingList.get(pos);
+		setBuildingSelected(buildingList.get(pos));
 		
 		for (Spinner tSpinner : spinnerList) {
 			tSpinner.setSelection(pos);
@@ -131,5 +132,9 @@ public class BuildingSpinnerHelper implements
 	public void onNothingSelected(AdapterView<?> parent) {
 		selectedBuilding = null;
 		notifyListener();
+	}
+	
+	public void setBuildingSelected(Building buildingSelected) {
+		this.selectedBuilding = buildingSelected;
 	}
 }
