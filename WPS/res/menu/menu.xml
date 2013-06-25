@@ -19,17 +19,13 @@
                 android:id="@+id/action_measure"
                 android:title="@string/action_measure"/>
             <item
-                android:id="@+id/menu_export"
-                android:title="@string/menu_export"/>
-            <item
-                android:id="@+id/menu_import"
-                android:title="@string/menu_import"/>
-            <item
-                android:id="@+id/action_debug"
-                android:title="@string/menu_debug"/>
-            <item
                 android:id="@+id/action_data"
                 android:title="@string/action_data"/>
+            <item
+                android:id="@+id/action_debug"
+
+
+                android:title="@string/action_debug"/>
 
         </menu>
     </item>

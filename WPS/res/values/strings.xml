@@ -7,7 +7,7 @@
     <string name="action_localisation">Lokalisation</string>
     <string name="action_new_floor">Neue Karte</string>
     <string name="action_measure">Messmodus</string>
-    <string name="action_debug">Debug</string>
+    <string name="action_debug">Datenbank anzeigen</string>
     <string name="building">Gebäude</string>
     <string name="activity_new_floor_create_building">Gebäude erstellen</string>
     <string name="activity_new_floor_create_floor">Neue Etage erstellen</string>
@@ -15,14 +15,13 @@
     <string name="menu_export">Datenbank exportieren</string>
     <string name="menu_import">Datenbank importieren</string>
     <string name="menu_building">Gebäude</string>
-    <string name="activity_new_floor_floorlevel">Etagennummer</string>
+    <string name="floorlevel">Etagennummer</string>
     <string name="activity_new_floor_floorname">Etagenname</string>
     <string name="activity_new_floor_floorpath">Kartenpfad</string>
     <string name="floor_ground">Erdgeschoss</string>
     <string name="floor_upper">Obergeschoss</string>
     <string name="floor_basement">Untergeschoss</string>
     <string name="activity_new_floor_north">Nordausrichtung</string>
-    <string name="menu_debug">Datenbank anzeigen</string>
     <string name="error_create_building">Gebäude konnte nicht erstellt werden</string>
     <string name="success_create_building">Gebäude erfolgreich erstellt</string>
     <string name="error_empty_input">Ein Feld ist leer, bitte ausfüllen</string>
@@ -53,10 +52,14 @@
     <string name="measure_face_east">Nach Osten ausrichten</string>
     <string name="measure_face_south">Nach Süden ausrichten</string>
     <string name="measure_face_west">Nach Westen ausrichten</string>
-    <string name="title_activity_data_activity_popup">DataActivityPopup</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="title_activity_data_update">MainActivity</string>
-    <string name="title_activity_data_delete">MainActivity</string>
+    <string name="floors">Etagen</string>
+    <string name="new_name">Neuer Name</string>
+    <string name="rename">Umbennen</string>
+    <string name="delete">Löschen</string>
+    <string name="save">Speichern</string>
+    <string name="measurepoints">Messpunkte</string>
+    <string name="delete_all">Alle löschen</string>
+    <string name="delete_last_measurepoint">Letzten Messpunkt löschen</string>
+    <string name="delete_measurepoints_on_floor">Messpunkte der Etage löschen </string>
 
 </resources>

@@ -1,16 +1,11 @@
 package de.rwth.ti.wps;
 
-import java.io.File;
-import java.io.IOException;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 import de.rwth.ti.common.CompassManager;
-import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.ScanManager;
 import de.rwth.ti.db.StorageHandler;
 
@@ -42,6 +37,11 @@ public abstract class SuperActivity extends Activity {
 			boolean hasScan, boolean hasStorage) {
 		super.onCreate(savedInstanceState);
 
+		// Setup compass manager
+		if (cmgr == null && hasCompass) {
+			cmgr = new CompassManager(this);
+		}
+		
 		// Setup Wifi
 		if (scm == null && hasScan) {
 			scm = new ScanManager(this);
@@ -50,11 +50,6 @@ public abstract class SuperActivity extends Activity {
 		// Setup database storage
 		if (storage == null && hasStorage) {
 			storage = new StorageHandler(this);
-		}
-
-		// Setup compass manager
-		if (cmgr == null && hasCompass) {
-			cmgr = new CompassManager(this);
 		}
 	}
 
@@ -70,18 +65,30 @@ public abstract class SuperActivity extends Activity {
 	@Override
 	public void onStart() {
 		super.onStart();
-		storage.onStart();
-		scm.onStart();
-		cmgr.onStart();
+		if (cmgr != null) {
+			cmgr.onStart();
+		}
+		if (scm != null) {
+			scm.onStart();
+		}
+		if (storage != null) {
+			storage.onStart();
+		}
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
 	@Override
 	public void onStop() {
 		super.onStop();
-		storage.onStop();
-		scm.onStop();
-		cmgr.onStop();
+		if (cmgr != null) {
+			cmgr.onStop();
+		}
+		if (scm != null) {
+			scm.onStop();
+		}
+		if (storage != null) {
+			storage.onStop();
+		}
 	}
 
 	public ScanManager getScanManager() {
@@ -109,6 +116,9 @@ public abstract class SuperActivity extends Activity {
 			intent = new Intent(this, NewFloorActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			break;
+		/*
+		 * In DebugActivity verlegt, da nur dort nötig
+		 * und garantiert nicht in Navigation einzuordnen
 		case R.id.menu_export:
 			try {
 				storage.exportDatabase(Constants.LOCAL_DB_NAME);
@@ -126,12 +136,14 @@ public abstract class SuperActivity extends Activity {
 			Toast.makeText(getBaseContext(), R.string.database_import_success,
 					Toast.LENGTH_SHORT).show();
 			break;
+		*/
+		case R.id.action_data:
+			intent = new Intent(this, DataActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			break;
 		case R.id.action_debug:
 			intent = new Intent(this, DebugActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			break;
-		case R.id.action_data:
-			intent = new Intent(this, DataActivity.class);
 			break;
 		default:
 			return super.onOptionsItemSelected(item);

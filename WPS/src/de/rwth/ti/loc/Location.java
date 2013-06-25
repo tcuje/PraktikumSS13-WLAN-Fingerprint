@@ -33,6 +33,8 @@ public class Location {
 									// Zeitvariablen
 		theTime = time.getTime().getTime(); // 1 erzwingt Gebaeudesuche
 											// 2 erzwingt FloorSuche
+		aps = deleteDoubles(aps);
+		
 		if (theTime > timeSinceBuilding + 40000 || kontrollvariable == 1) {
 			tempBuilding = findBuilding(aps);
 			tempFloor = findMap(aps, tempBuilding);
@@ -101,31 +103,34 @@ public class Location {
 		List<Scan> scanEntries = dataHandler.getScans(map, compass);
 		List<ScanError> errorList = new LinkedList<ScanError>();
 		for (int j = 0; j < scanEntries.size(); j++) {
-			double errorValue = 1;
+			double errorValue = 0;
 			List<AccessPoint> entries = dataHandler.getAccessPoints(scanEntries
 					.get(j));
-			// FIXME what if aps.size() <= 2 !?
-			if (aps.size() >= 3) {
-				for (int k = 0; k < 3; k++) {
-					String mac = aps.get(k).BSSID;
-					int l;
-					boolean success = false;
-					for (l = 0; l < entries.size(); l++) {
-						if (mac.compareTo(entries.get(l).getBssid()) == 0) {
-							success = true;
-							break;
-						}
-					}
-					if (success) {
-						errorValue += (double) ((100 + (double) aps.get(k).level) / 100)
-								* (Math.abs((int) ((aps.get(k).level) - entries
-										.get(l).getLevel())));
-					} else {
-						errorValue += (double) ((100 + aps.get(k).level) / 100)
-								* (Math.abs((int) ((aps.get(k).level) + 100)));
+			for (int k = 0; k < 3 && k < aps.size(); k++) {
+				String mac = aps.get(k).BSSID;
+				int l;
+				boolean success = false;
+				for (l = 0; l < entries.size(); l++) {
+					if (mac.compareTo(entries.get(l).getBssid()) == 0) {
+						success = true;
+						break;
 					}
 				}
+				if (success) {
+					errorValue += (double) ((100 + (double) aps.get(k).level) / 100)
+							* (Math.abs((int) ((aps.get(k).level) - entries
+									.get(l).getLevel())));
+				} else {
+					errorValue += (double) ((100 + aps.get(k).level) / 100)
+							* (Math.abs((int) ((aps.get(k).level) + 100)));
+				}
 			}
+			if (errorValue==0){
+				LocationResult result = new LocationResult(building, map, dataHandler.getMeasurePoint(scanEntries.get(j)).getPosx(),
+						dataHandler.getMeasurePoint(scanEntries.get(j)).getPosy());
+				return result;
+			}
+			
 			ScanError scanErrorObject = new ScanError();
 			scanErrorObject.setScanError(scanEntries.get(j), errorValue);
 			errorList.add(scanErrorObject);
@@ -155,6 +160,27 @@ public class Location {
 
 	}
 
+	private List<ScanResult> deleteDoubles (List <ScanResult> aps){
+		List <ScanResult> tempListe = new LinkedList<ScanResult>();
+		//tempListe.add(aps.get(0));
+		for (int i=0; i<aps.size(); i++){
+			boolean elementVorhanden=false;
+			for (int j=0; j<tempListe.size(); j++){				
+				if ((aps.get(i).BSSID.substring(0, (aps.get(i).BSSID.length()-1)).compareTo(
+						tempListe.get(j).BSSID.substring(0, (tempListe.get(j).BSSID.length()-1)))==0)){
+					elementVorhanden=true;
+				}
+				if(elementVorhanden){
+					break;
+				}
+			}
+			if(!elementVorhanden){
+				tempListe.add(aps.get(i));
+			}
+		}
+		return tempListe;
+	}
+	
 	private List<ScanError> sortScanError(List<ScanError> scanErrorList) {
 		for (int i = 0; i < scanErrorList.size(); i++) {
 			for (int j = 0; j < scanErrorList.size() - 1; j++) {

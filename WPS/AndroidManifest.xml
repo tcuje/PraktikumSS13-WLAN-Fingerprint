@@ -62,23 +62,11 @@
         </activity>
         <activity
             android:name="de.rwth.ti.wps.DataActivity"
-            android:label="@string/title_activity_data"
+            android:label="@string/action_data"
             android:parentActivityName="de.rwth.ti.wps.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.rwth.ti.wps.MainActivity" />
-        </activity>
-        <activity
-            android:name="de.rwth.ti.wps.DataActivityPopup"
-            android:label="@string/title_activity_data_activity_popup" >
-        </activity>
-        <activity
-            android:name="de.rwth.ti.wps.DataUpdateActivity"
-            android:label="@string/title_activity_data_update" >
-        </activity>
-        <activity
-            android:name="de.rwth.ti.wps.DataDeleteActivity"
-            android:label="@string/title_activity_data_delete" >
         </activity>
     </application>
 
