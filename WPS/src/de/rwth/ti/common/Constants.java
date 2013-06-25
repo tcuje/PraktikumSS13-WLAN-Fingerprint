@@ -20,6 +20,7 @@ public class Constants {
 	public static final int ANGLE_DIFF = 30;
 	public static final String MAP_SUFFIX = ".svg";
 	public static final int IMPORTANT_APS = 3;
+	public static final long COMPASS_TIMESPAN = 100;
 
 	// MapView color schema
 	public static final int COLOR_FLOOR_FILL = Color.WHITE;

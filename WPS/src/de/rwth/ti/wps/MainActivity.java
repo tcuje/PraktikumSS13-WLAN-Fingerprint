@@ -124,7 +124,7 @@ public class MainActivity extends SuperActivity implements
 				List<ScanResult> results = wifi.getScanResults();
 				Location myLoc = new Location(sth);
 				LocationResult myLocRes = myLoc.getLocation(results,
-						(int) comp.getAzimut(), 0);
+						(int) comp.getMeanAzimut(), 0);
 				if (myLocRes == null) {
 					Toast.makeText(MainActivity.this,
 							"Position nicht gefunden", Toast.LENGTH_LONG)

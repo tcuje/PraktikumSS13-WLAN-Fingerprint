@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import de.rwth.ti.common.CompassManager;
+import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.ScanManager;
 import de.rwth.ti.db.StorageHandler;
 
@@ -49,7 +50,7 @@ public abstract class SuperActivity extends Activity {
 
 		// Setup compass manager
 		if (cmgr == null && hasCompass) {
-			cmgr = new CompassManager(this);
+			cmgr = new CompassManager(this, Constants.COMPASS_TIMESPAN);
 		}
 	}
 

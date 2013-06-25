@@ -26,13 +26,18 @@ public class Location {
 		this.dataHandler = dataHandler;
 	}
 
+	/**
+	 * 
+	 * @param aps
+	 * @param compass
+	 * @param kontrollvariable
+	 *            0,1,2 steuert das Verhalten der Funktion 0 ueberlaesst den
+	 *            Ablauf den Zeitvariablen
+	 * @return
+	 */
 	public LocationResult getLocation(List<ScanResult> aps, int compass,
-			int kontrollvariable) { // kontrollvariable 0,1,2 steuert das
-									// Verhalten der Funktion
-									// 0 ueberlaesst den Ablauf den
-									// Zeitvariablen
-		theTime = time.getTime().getTime(); // 1 erzwingt Gebaeudesuche
-											// 2 erzwingt FloorSuche
+			int kontrollvariable) {
+		theTime = time.getTime().getTime();
 		aps = deleteDoubles(aps);
 		if (theTime > timeSinceBuilding + 40000 || kontrollvariable == 1) {
 			tempBuilding = findBuilding(aps);
@@ -157,24 +162,20 @@ public class Location {
 
 	}
 
-	private List<ScanResult> deleteDoubles(List<ScanResult> aps) {
+	public static List<ScanResult> deleteDoubles(List<ScanResult> aps) {
 		List<ScanResult> tempListe = new LinkedList<ScanResult>();
-		// tempListe.add(aps.get(0));
-		for (int i = 0; i < aps.size(); i++) {
+		for (ScanResult ap : aps) {
 			boolean elementVorhanden = false;
-			for (int j = 0; j < tempListe.size(); j++) {
-				if ((aps.get(i).BSSID.substring(0,
-						(aps.get(i).BSSID.length() - 1)).compareTo(
-						tempListe.get(j).BSSID.substring(0,
-								(tempListe.get(j).BSSID.length() - 1))) == 0)) {
+			for (ScanResult known : tempListe) {
+				String id1 = ap.BSSID.substring(0, ap.BSSID.length() - 1);
+				String id2 = known.BSSID.substring(0, known.BSSID.length() - 1);
+				if (id1.equals(id2) == true) {
 					elementVorhanden = true;
-				}
-				if (elementVorhanden) {
 					break;
 				}
 			}
 			if (!elementVorhanden) {
-				tempListe.add(aps.get(i));
+				tempListe.add(ap);
 			}
 		}
 		return tempListe;

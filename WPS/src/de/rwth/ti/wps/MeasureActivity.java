@@ -11,6 +11,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.graphics.PointF;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -30,6 +31,7 @@ import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.Scan;
+import de.rwth.ti.loc.Location;
 
 public class MeasureActivity extends SuperActivity implements
 		OnItemSelectedListener {
@@ -88,13 +90,14 @@ public class MeasureActivity extends SuperActivity implements
 	}
 
 	private void updateCompass() {
-		lastAzimuth = this.getCompassManager().getAzimut();
+		lastAzimuth = this.getCompassManager().getMeanAzimut();
 		compassText.setText("N " + (int) lastAzimuth + "°");
 		// compare azimuth to direction
-		btMeasure.setEnabled(false);
+		int color = Color.RED;
 		if (mapView.getMeasurePoint() == null) {
 			// don't enable measure button with no measure point
 			directionText.setText(R.string.measure_mark_point);
+			btMeasure.setBackgroundColor(color);
 			return;
 		}
 		updateDirectionText();
@@ -103,28 +106,29 @@ public class MeasureActivity extends SuperActivity implements
 		case NORTH:
 			if (lastAzimuth > -Constants.ANGLE_DIFF
 					&& lastAzimuth < Constants.ANGLE_DIFF) {
-				btMeasure.setEnabled(true);
+				color = Color.GREEN;
 			}
 			break;
 		case EAST:
 			if (lastAzimuth > 90 - Constants.ANGLE_DIFF
 					&& lastAzimuth < 90 + Constants.ANGLE_DIFF) {
-				btMeasure.setEnabled(true);
+				color = Color.GREEN;
 			}
 			break;
 		case SOUTH:
 			if (lastAzimuth > 180 - Constants.ANGLE_DIFF
 					|| lastAzimuth < -180 + Constants.ANGLE_DIFF) {
-				btMeasure.setEnabled(true);
+				color = Color.GREEN;
 			}
 			break;
 		case WEST:
 			if (lastAzimuth > -90 - Constants.ANGLE_DIFF
 					&& lastAzimuth < -90 + Constants.ANGLE_DIFF) {
-				btMeasure.setEnabled(true);
+				color = Color.GREEN;
 			}
 			break;
 		}
+		btMeasure.setBackgroundColor(color);
 	}
 
 	@Override
@@ -285,7 +289,7 @@ public class MeasureActivity extends SuperActivity implements
 							lastMP,
 							d.getTime() / 1000,
 							MeasureActivity.this.getCompassManager()
-									.getAzimut());
+									.getMeanAzimut());
 					for (ScanResult result : results) {
 						MeasureActivity.this.getStorage().createAccessPoint(
 								scan, result.BSSID, result.level,
@@ -294,7 +298,8 @@ public class MeasureActivity extends SuperActivity implements
 					}
 					waitDialog.dismiss();
 					waitDialog = null;
-					String msg = results.size() + " "
+					List<ScanResult> real = Location.deleteDoubles(results);
+					String msg = real.size() + " "
 							+ getString(R.string.success_scanning);
 					Toast.makeText(MeasureActivity.this, msg,
 							Toast.LENGTH_SHORT).show();
