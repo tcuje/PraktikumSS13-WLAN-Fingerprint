@@ -48,7 +48,7 @@ public class NewFloorActivity extends SuperActivity implements
 
 		createBuildingEdit = (EditText) findViewById(R.id.createBuildingEdit);
 		buildingAdapter = new ArrayAdapter<CharSequence>(this,
-				android.R.layout.simple_spinner_item);
+				R.layout.spinner_item);
 		buildingSpinner = (Spinner) findViewById(R.id.buildingSelectSpinner);
 		buildingSpinner.setAdapter(buildingAdapter);
 		buildingSpinner.setOnItemSelectedListener(this);
@@ -56,7 +56,7 @@ public class NewFloorActivity extends SuperActivity implements
 		floorLevelEdit = (EditText) findViewById(R.id.floorLevelEdit);
 		floorNameEdit = (EditText) findViewById(R.id.floorNameEdit);
 		northEdit = (EditText) findViewById(R.id.northEdit);
-		floorFilenameView = (TextView) findViewById(R.id.mapPathView);
+		floorFilenameView = (TextView) findViewById(R.id.filePathEdit);
 
 		TextWatcher textWatch = new TextWatcher() {
 			public void afterTextChanged(Editable s) {
@@ -92,7 +92,7 @@ public class NewFloorActivity extends SuperActivity implements
 		String message = null;
 		// check name
 		if (tBuildingName.length() != 0) {
-			Building b = storage.createBuilding(tBuildingName);
+			Building b = getStorage().createBuilding(tBuildingName);
 			// Gebäude konnte erfolgreich erstellt werden?
 			if (b != null) {
 				message = getString(R.string.success_create_building);
@@ -116,7 +116,7 @@ public class NewFloorActivity extends SuperActivity implements
 
 	private void refreshBuildingSpinner() {
 		buildingAdapter.clear();
-		buildingList = storage.getAllBuildings();
+		buildingList = getStorage().getAllBuildings();
 		for (Building b : buildingList) {
 			buildingAdapter.add(b.getName());
 		}
@@ -188,14 +188,14 @@ public class NewFloorActivity extends SuperActivity implements
 			if (!buildingList.isEmpty()) {
 				// Kartendatei ausgewählt
 				if (floorFile != null) {
-					Floor f = storage.createFloor(buildingSelected, floorName,
-							floorFile, floorLevel, north);
+					Floor f = getStorage().createFloor(buildingSelected,
+							floorName, floorFile, floorLevel, north);
 					// Floor erfolgreich erstellt
 					if (f != null) {
 						message = getString(R.string.success_create_floor);
 						// Eingaben löschen
-						buildingSpinner.setSelection(0);
 						floorLevelEdit.setText("");
+						floorLevelEdit.requestFocus();
 						floorNameEdit.setText("");
 						northEdit.setText("");
 						floorFilenameView.setText("");
@@ -227,8 +227,8 @@ public class NewFloorActivity extends SuperActivity implements
 				NewFloorActivity.this,
 				new ChooseFileDialog.ChosenFileListener() {
 					@Override
-					public void onChosenFile(String chosenDir) {
-						File f = new File(chosenDir);
+					public void onChosenFile(String chosenFile) {
+						File f = new File(chosenFile);
 						if (f.exists() && f.isFile()) {
 							// TODO show file loading state in progress bar
 							ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -248,7 +248,7 @@ public class NewFloorActivity extends SuperActivity implements
 							} catch (IOException ex) {
 								// XXX handle error
 							}
-							floorFilenameView.setText(new File(chosenDir)
+							floorFilenameView.setText(new File(chosenFile)
 									.getName());
 							floorFile = baos.toByteArray();
 							try {
@@ -258,7 +258,7 @@ public class NewFloorActivity extends SuperActivity implements
 							}
 						}
 					}
-				});
+				}, Constants.MAP_SUFFIX);
 		directoryChooserDialog.chooseDirectory(Constants.SD_APP_DIR);
 	}
 }

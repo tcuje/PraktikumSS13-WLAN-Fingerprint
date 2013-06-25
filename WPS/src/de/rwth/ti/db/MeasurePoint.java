@@ -26,6 +26,7 @@ public class MeasurePoint {
 	private long floorId;
 	private double posx;
 	private double posy;
+	private double quality;
 
 	public long getId() {
 		return id;
@@ -57,6 +58,14 @@ public class MeasurePoint {
 
 	public void setPosy(double posy) {
 		this.posy = posy;
+	}
+
+	public double getQuality() {
+		return quality;
+	}
+
+	public void setQuality(double quality) {
+		this.quality = quality;
 	}
 
 	/**

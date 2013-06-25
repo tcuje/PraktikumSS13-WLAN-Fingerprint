@@ -60,13 +60,13 @@ public class MeasureActivity extends SuperActivity implements
 		setContentView(R.layout.activity_measure);
 
 		buildingAdapter = new ArrayAdapter<CharSequence>(this,
-				android.R.layout.simple_spinner_item);
+				R.layout.spinner_item);
 		buildingSpinner = (Spinner) findViewById(R.id.buildingSelectSpinner);
 		buildingSpinner.setAdapter(buildingAdapter);
 		buildingSpinner.setOnItemSelectedListener(this);
 
 		floorAdapter = new ArrayAdapter<CharSequence>(this,
-				android.R.layout.simple_spinner_item);
+				R.layout.spinner_item);
 		floorSpinner = (Spinner) findViewById(R.id.floorSelectSpinner);
 		floorSpinner.setAdapter(floorAdapter);
 		floorSpinner.setOnItemSelectedListener(this);
@@ -92,6 +92,10 @@ public class MeasureActivity extends SuperActivity implements
 		compassText.setText("N " + (int) lastAzimuth + "°");
 		// compare azimuth to direction
 		btMeasure.setEnabled(false);
+		if (lastMP == null) {
+			// don't activate btMeasure until MeasurePoint is selected
+			return;
+		}
 		switch (direction) {
 		case NORTH:
 			if (lastAzimuth > -Constants.ANGLE_DIFF
@@ -224,13 +228,15 @@ public class MeasureActivity extends SuperActivity implements
 			byte[] file = floorSelected.getFile();
 			if (file != null) {
 				ByteArrayInputStream bin = new ByteArrayInputStream(file);
-				//List<MeasurePoint> mps = getStorage().getMeasurePoints(
-					//	floorSelected);
-				//mapView.newMap(bin, mps);
+				// List<MeasurePoint> mps = getStorage().getMeasurePoints(
+				// floorSelected);
+				// mapView.newMap(bin, mps);
 				mapView.newMap(bin);
-				List<MeasurePoint> mpl = storage.getMeasurePoints(floorSelected);
-				for(MeasurePoint mp : mpl){
-					mapView.addOldPoint(new PointF((float)mp.getPosx(),(float)mp.getPosy()));
+				List<MeasurePoint> mpl = getStorage().getMeasurePoints(
+						floorSelected);
+				for (MeasurePoint mp : mpl) {
+					mapView.addOldPoint(new PointF((float) mp.getPosx(),
+							(float) mp.getPosy()));
 				}
 			} else {
 				Toast.makeText(this, R.string.error_no_floor_file,

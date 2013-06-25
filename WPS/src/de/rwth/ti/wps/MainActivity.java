@@ -12,8 +12,6 @@ import android.graphics.PointF;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -62,14 +60,6 @@ public class MainActivity extends SuperActivity implements
 		wifiReceiver = new MyReceiver();
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
 	/** Called when the activity is first created or restarted */
 	@Override
 	public void onStart() {
@@ -79,6 +69,10 @@ public class MainActivity extends SuperActivity implements
 		}
 		this.registerReceiver(wifiReceiver, new IntentFilter(
 				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+//		// launch default activity for debugging only
+//		Intent intent = new Intent(this, MeasureActivity.class);
+//		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//		startActivity(intent);
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
@@ -104,24 +98,8 @@ public class MainActivity extends SuperActivity implements
 		}
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.menu_localisation:
-			item.setChecked(!item.isChecked());
-			if (item.isChecked() == true) {
-				getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
-			} else {
-				getScanManager().stopAutoScan();
-			}
-			break;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-		return true;
-	}
-
 	private class MyReceiver extends BroadcastReceiver {
+
 		private WifiManager wifi = MainActivity.this.getScanManager().getWifi();
 		private CompassManager comp = MainActivity.this.getCompassManager();
 		private StorageHandler sth = MainActivity.this.getStorage();
@@ -131,7 +109,7 @@ public class MainActivity extends SuperActivity implements
 		public void onReceive(Context context, Intent intent) {
 			if (checkLoc.isChecked() == true) {
 				List<ScanResult> results = wifi.getScanResults();
-				Location myLoc = new Location(storage);
+				Location myLoc = new Location(sth);
 				LocationResult myLocRes = myLoc.getLocation(results,
 						(int) comp.getAzimut(), 0);
 				if (myLocRes == null) {
@@ -139,17 +117,19 @@ public class MainActivity extends SuperActivity implements
 							"Position nicht gefunden", Toast.LENGTH_LONG)
 							.show();
 				} else {
-					Floor map = myLocRes.getMap();
+					Floor map = myLocRes.getFloor();
 					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed reload it
-						byte[] file = myLocRes.getMap().getFile();
+						byte[] file = myLocRes.getFloor().getFile();
 						if (file != null) {
 							ByteArrayInputStream bin = new ByteArrayInputStream(
 									file);
 							viewMap.newMap(bin);
-							List<MeasurePoint> mpl = storage.getMeasurePoints(map);
-							for(MeasurePoint mp : mpl){
-								viewMap.addOldPoint(new PointF((float)mp.getPosx(),(float)mp.getPosy()));
+							List<MeasurePoint> mpl = getStorage()
+									.getMeasurePoints(map);
+							for (MeasurePoint mp : mpl) {
+								viewMap.addOldPoint(new PointF((float) mp
+										.getPosx(), (float) mp.getPosy()));
 							}
 						} else {
 							Toast.makeText(MainActivity.this,

@@ -54,8 +54,7 @@
        <de.rwth.ti.common.IPMapView
             android:id="@+id/map_view"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_alignParentLeft="true" />
+            android:layout_height="fill_parent" />
 
         <TextView
             android:id="@+id/direction_text_view"

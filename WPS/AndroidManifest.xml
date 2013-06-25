@@ -58,15 +58,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.rwth.ti.wps.MainActivity" />
         </activity>
-        <activity
-            android:name="de.rwth.ti.wps.LocationActivity"
-            android:label="@string/action_localisation"
-            android:parentActivityName="de.rwth.ti.wps.MainActivity"
-            android:launchMode="standard" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="de.rwth.ti.wps.MainActivity" />
-        </activity>
         
     </application>
 
