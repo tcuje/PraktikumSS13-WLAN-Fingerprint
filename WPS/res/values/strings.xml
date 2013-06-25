@@ -41,6 +41,7 @@
     <string name="scan_wait">Bitte warten</string>
     <string name="scan_no_ap">Keine Ergebnisse, bitte die Messung wiederholen</string>
     <string name="button_center">Auf aktuelle Position zentrieren</string>
+    <string name="measure_mark_point">Messpunkt markieren</string>
     <string name="measure_face_north">Nach Norden ausrichten</string>
     <string name="measure_face_east">Nach Osten ausrichten</string>
     <string name="measure_face_south">Nach Süden ausrichten</string>

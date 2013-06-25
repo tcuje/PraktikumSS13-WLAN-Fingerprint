@@ -107,7 +107,7 @@ public class Location {
 			List<AccessPoint> entries = dataHandler.getAccessPoints(scan, 3);
 			for (int k = 0; k < 3 && k < aps.size(); k++) {
 				String mac = aps.get(k).BSSID;
-				int l;
+				int l = 0;
 				boolean success = false;
 				for (l = 0; l < entries.size(); l++) {
 					if (mac.compareTo(entries.get(l).getBssid()) == 0) {
@@ -120,7 +120,7 @@ public class Location {
 							* (Math.abs((int) ((aps.get(k).level) - entries
 									.get(l).getLevel())));
 				} else {
-					errorValue += (double) ((100 + aps.get(k).level) / 100)
+					errorValue += (double) ((100 + (double) aps.get(k).level) / 100)
 							* (Math.abs((int) ((aps.get(k).level) + 100)));
 				}
 			}

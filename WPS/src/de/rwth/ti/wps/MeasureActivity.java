@@ -92,10 +92,13 @@ public class MeasureActivity extends SuperActivity implements
 		compassText.setText("N " + (int) lastAzimuth + "°");
 		// compare azimuth to direction
 		btMeasure.setEnabled(false);
-		if (lastMP == null) {
-			// don't activate btMeasure until MeasurePoint is selected
+		if (mapView.getMeasurePoint() == null) {
+			// don't enable measure button with no measure point
+			directionText.setText(R.string.measure_mark_point);
 			return;
 		}
+		updateDirectionText();
+		// update face text
 		switch (direction) {
 		case NORTH:
 			if (lastAzimuth > -Constants.ANGLE_DIFF
@@ -182,7 +185,7 @@ public class MeasureActivity extends SuperActivity implements
 						Toast.LENGTH_LONG).show();
 				return;
 			}
-			float[] p = mapView.getMeasurePoint();
+			PointF p = mapView.getMeasurePoint();
 			if (p == null) {
 				Toast.makeText(this, R.string.error_no_measure_point,
 						Toast.LENGTH_LONG).show();
@@ -195,7 +198,12 @@ public class MeasureActivity extends SuperActivity implements
 			} else {
 				if (lastMP == null) {
 					lastMP = getStorage().createMeasurePoint(floorSelected,
-							p[0], p[1]);
+							p.x, p.y);
+					mapView.addOldPoint(p);
+				} else if (lastMP.getPosx() != p.x || lastMP.getPosy() != p.y) {
+					lastMP = getStorage().createMeasurePoint(floorSelected,
+							p.x, p.y);
+					mapView.addOldPoint(p);
 				}
 				if (waitDialog != null) {
 					waitDialog.dismiss();
@@ -295,27 +303,31 @@ public class MeasureActivity extends SuperActivity implements
 					}
 					direction = CompassManager.Direction.values()[(direction
 							.ordinal() + 1) % 4];
-					switch (direction) {
-					case NORTH:
-						directionText.setText(R.string.measure_face_north);
-						break;
-					case EAST:
-						directionText.setText(R.string.measure_face_east);
-						break;
-					case SOUTH:
-						directionText.setText(R.string.measure_face_south);
-						break;
-					case WEST:
-						directionText.setText(R.string.measure_face_west);
-						break;
-					default:
-						break;
-					}
+					updateDirectionText();
 				}
 			} else {
 				Toast.makeText(MeasureActivity.this, R.string.scan_no_ap,
 						Toast.LENGTH_LONG).show();
 			}
+		}
+	}
+
+	private void updateDirectionText() {
+		switch (direction) {
+		case NORTH:
+			directionText.setText(R.string.measure_face_north);
+			break;
+		case EAST:
+			directionText.setText(R.string.measure_face_east);
+			break;
+		case SOUTH:
+			directionText.setText(R.string.measure_face_south);
+			break;
+		case WEST:
+			directionText.setText(R.string.measure_face_west);
+			break;
+		default:
+			break;
 		}
 	}
 

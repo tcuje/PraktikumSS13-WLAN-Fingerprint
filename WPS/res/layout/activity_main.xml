@@ -31,4 +31,13 @@
         android:onClick="centerPosition"
         android:src="@android:drawable/ic_menu_mylocation" />
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/zoomButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/centerButton"
+        android:contentDescription="@+string/button_zoom"
+        android:onClick="zoomPosition" />
+
+</RelativeLayout>
