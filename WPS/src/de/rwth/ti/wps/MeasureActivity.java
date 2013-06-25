@@ -1,5 +1,6 @@
 package de.rwth.ti.wps;
 
+import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -10,6 +11,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.PointF;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -23,8 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import de.rwth.ti.common.CompassManager;
 import de.rwth.ti.common.Constants;
-import de.rwth.ti.common.MapRenderer;
-import de.rwth.ti.common.ScaleImageView;
+import de.rwth.ti.common.IPMapView;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
@@ -42,7 +43,7 @@ public class MeasureActivity extends SuperActivity implements
 	private Spinner floorSpinner;
 	private Floor floorSelected;
 	private Button btMeasure;
-	private ScaleImageView mapView;
+	private IPMapView mapView;
 	private TextView directionText;
 	private TextView compassText;
 	private CompassManager.Direction direction;
@@ -72,9 +73,8 @@ public class MeasureActivity extends SuperActivity implements
 
 		btMeasure = (Button) findViewById(R.id.measure_button);
 
-		mapView = (ScaleImageView) findViewById(R.id.map_view);
-		// FIXME
-//		mapView.setMeasureMode(true);
+		mapView = (IPMapView) findViewById(R.id.map_view);
+		mapView.setMeasureMode(true);
 
 		directionText = (TextView) findViewById(R.id.direction_text_view);
 
@@ -178,22 +178,25 @@ public class MeasureActivity extends SuperActivity implements
 						Toast.LENGTH_LONG).show();
 				return;
 			}
-			// FIXME
-//			float[] p = mapView.getMeasurePoint();
-//			if (p == null) {
-//				Toast.makeText(this, R.string.error_no_measure_point,
-//						Toast.LENGTH_LONG).show();
-//				return;
-//			}
+			PointF p = mapView.getMeasurePoint();
+			if (p == null) {
+				Toast.makeText(this, R.string.error_no_measure_point,
+						Toast.LENGTH_LONG).show();
+				return;
+			}
 			boolean check = getScanManager().startSingleScan();
 			if (check == false) {
 				Toast.makeText(this, R.string.error_scanning, Toast.LENGTH_LONG)
 						.show();
 			} else {
 				if (lastMP == null) {
-					// FIXME
-//					lastMP = getStorage().createMeasurePoint(floorSelected,
-//							p[0], p[1]);
+					lastMP = getStorage().createMeasurePoint(floorSelected,
+							p.x, p.y);
+					mapView.addOldPoint(p);
+				} else if (lastMP.getPosx() != p.x || lastMP.getPosy() != p.y) {
+					lastMP = getStorage().createMeasurePoint(floorSelected,
+							p.x, p.y);
+					mapView.addOldPoint(p);
 				}
 				if (waitDialog != null) {
 					waitDialog.dismiss();
@@ -225,22 +228,17 @@ public class MeasureActivity extends SuperActivity implements
 			// update map view
 			byte[] file = floorSelected.getFile();
 			if (file != null) {
-				List<MeasurePoint> mps = getStorage().getMeasurePoints(
+				ByteArrayInputStream bin = new ByteArrayInputStream(file);
+				// List<MeasurePoint> mps = getStorage().getMeasurePoints(
+				// floorSelected);
+				// mapView.newMap(bin, mps);
+				mapView.newMap(bin);
+				List<MeasurePoint> mpl = getStorage().getMeasurePoints(
 						floorSelected);
-				for (MeasurePoint mp : mps) {
-					mp.setQuality(getStorage().getQuality(mp));
+				for (MeasurePoint mp : mpl) {
+					mapView.addOldPoint(new PointF((float) mp.getPosx(),
+							(float) mp.getPosy()));
 				}
-				// FIXME
-//				mapView.newMap(bin, mps);
-//				Bitmap b = Bitmap.createBitmap(128, 128, Config.ARGB_8888);
-//				Canvas c = new Canvas(b);
-//				c.drawRGB(0, 0, 0);
-//				Paint mPaint = new Paint();
-//				mPaint.setColor(Color.RED);
-//				mPaint.setStyle(Style.FILL);
-//				c.drawCircle(10, 10, 50, mPaint);
-//				mapView.setImageBitmap(b);
-				runOnUiThread(new MapRenderer(mapView, file, mps));
 			} else {
 				Toast.makeText(this, R.string.error_no_floor_file,
 						Toast.LENGTH_LONG).show();
@@ -259,8 +257,7 @@ public class MeasureActivity extends SuperActivity implements
 		} else if (parent == floorSpinner) {
 			buildingSelected = null;
 			floorSelected = null;
-			// FIXME
-//			mapView.clear();
+			mapView.clearMap();
 		}
 	}
 

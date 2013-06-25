@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity" >
-
+    
     <de.rwth.ti.common.IPMapView
         android:id="@+id/viewMap"
         android:layout_width="fill_parent"
@@ -30,5 +30,4 @@
         android:contentDescription="@+string/button_center"
         android:onClick="centerPosition"
         android:src="@android:drawable/ic_menu_mylocation" />
-
-</RelativeLayout>
+    </RelativeLayout>

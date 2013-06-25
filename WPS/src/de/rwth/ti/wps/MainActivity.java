@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.PointF;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -68,10 +69,10 @@ public class MainActivity extends SuperActivity implements
 		}
 		this.registerReceiver(wifiReceiver, new IntentFilter(
 				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-		// FIXME remove this
-		Intent intent = new Intent(this, MeasureActivity.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-		startActivity(intent);
+//		// for debugging only
+//		Intent intent = new Intent(this, MeasureActivity.class);
+//		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//		startActivity(intent);
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
@@ -123,11 +124,13 @@ public class MainActivity extends SuperActivity implements
 						if (file != null) {
 							ByteArrayInputStream bin = new ByteArrayInputStream(
 									file);
-							List<MeasurePoint> mps = sth.getMeasurePoints(map);
-							for (MeasurePoint mp : mps) {
-								mp.setQuality(sth.getQuality(mp));
+							viewMap.newMap(bin);
+							List<MeasurePoint> mpl = getStorage()
+									.getMeasurePoints(map);
+							for (MeasurePoint mp : mpl) {
+								viewMap.addOldPoint(new PointF((float) mp
+										.getPosx(), (float) mp.getPosy()));
 							}
-							viewMap.newMap(bin, mps);
 						} else {
 							Toast.makeText(MainActivity.this,
 									R.string.error_no_floor_file,
@@ -139,7 +142,7 @@ public class MainActivity extends SuperActivity implements
 					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed focus position once
 						lastMap = map;
-						viewMap.center();
+						viewMap.focusPoint();
 					}
 				}
 			}
@@ -148,7 +151,7 @@ public class MainActivity extends SuperActivity implements
 
 	public void centerPosition(View view) {
 		if (view == btCenter) {
-			viewMap.center();
+			viewMap.focusPoint();
 		}
 	}
 
