@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity" >
-    
+
     <de.rwth.ti.common.IPMapView
         android:id="@+id/viewMap"
         android:layout_width="fill_parent"
@@ -30,4 +30,15 @@
         android:contentDescription="@+string/button_center"
         android:onClick="centerPosition"
         android:src="@android:drawable/ic_menu_mylocation" />
-    </RelativeLayout>
+
+    <Button
+        android:id="@+id/zoomButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/centerButton"
+        android:contentDescription="@+string/button_zoom"
+        android:onClick="zoomPosition"
+        android:text="x1.0" />
+
+</RelativeLayout>

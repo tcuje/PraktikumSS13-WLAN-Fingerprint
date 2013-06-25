@@ -92,6 +92,13 @@ public class MeasureActivity extends SuperActivity implements
 		compassText.setText("N " + (int) lastAzimuth + "°");
 		// compare azimuth to direction
 		btMeasure.setEnabled(false);
+		if (mapView.getMeasurePoint() == null) {
+			// don't enable measure button with no measure point
+			directionText.setText(R.string.measure_mark_point);
+			return;
+		}
+		updateDirectionText();
+		// update face text
 		switch (direction) {
 		case NORTH:
 			if (lastAzimuth > -Constants.ANGLE_DIFF
@@ -296,27 +303,31 @@ public class MeasureActivity extends SuperActivity implements
 					}
 					direction = CompassManager.Direction.values()[(direction
 							.ordinal() + 1) % 4];
-					switch (direction) {
-					case NORTH:
-						directionText.setText(R.string.measure_face_north);
-						break;
-					case EAST:
-						directionText.setText(R.string.measure_face_east);
-						break;
-					case SOUTH:
-						directionText.setText(R.string.measure_face_south);
-						break;
-					case WEST:
-						directionText.setText(R.string.measure_face_west);
-						break;
-					default:
-						break;
-					}
+					updateDirectionText();
 				}
 			} else {
 				Toast.makeText(MeasureActivity.this, R.string.scan_no_ap,
 						Toast.LENGTH_LONG).show();
 			}
+		}
+	}
+
+	private void updateDirectionText() {
+		switch (direction) {
+		case NORTH:
+			directionText.setText(R.string.measure_face_north);
+			break;
+		case EAST:
+			directionText.setText(R.string.measure_face_east);
+			break;
+		case SOUTH:
+			directionText.setText(R.string.measure_face_south);
+			break;
+		case WEST:
+			directionText.setText(R.string.measure_face_west);
+			break;
+		default:
+			break;
 		}
 	}
 

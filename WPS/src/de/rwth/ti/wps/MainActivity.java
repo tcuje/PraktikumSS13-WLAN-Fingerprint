@@ -13,6 +13,7 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -37,6 +38,7 @@ public class MainActivity extends SuperActivity implements
 	private CheckBox checkLoc;
 	private IPMapView viewMap;
 	private ImageButton btCenter;
+	private Button btZoom;
 	private BroadcastReceiver wifiReceiver;
 
 	/** Called when the activity is first created. */
@@ -56,7 +58,9 @@ public class MainActivity extends SuperActivity implements
 		checkLoc.setOnCheckedChangeListener(this);
 		viewMap = (IPMapView) findViewById(R.id.viewMap);
 		viewMap.setMeasureMode(false);
+		viewMap.setOnScaleChangeListener(new ScaleChangeListener());
 		btCenter = (ImageButton) findViewById(R.id.centerButton);
+		btZoom = (Button) findViewById(R.id.zoomButton);
 		wifiReceiver = new MyReceiver();
 	}
 
@@ -142,7 +146,7 @@ public class MainActivity extends SuperActivity implements
 					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed focus position once
 						lastMap = map;
-						viewMap.focusPoint();
+						viewMap.zoomPoint();
 					}
 				}
 			}
@@ -153,6 +157,33 @@ public class MainActivity extends SuperActivity implements
 		if (view == btCenter) {
 			viewMap.focusPoint();
 		}
+	}
+
+	public void zoomPosition(View view) {
+		if (view == btZoom) {
+			viewMap.zoomPoint();
+		}
+	}
+
+	private class ScaleChangeListener implements
+			IPMapView.OnScaleChangeListener {
+
+		@Override
+		public void onScaleChange(float scale) {
+			if (btZoom == null) {
+				// do nothing
+				return;
+			}
+			String zStr = Float.toString(scale);
+			int ind = zStr.indexOf(".");
+			if (ind != -1) {
+				int len = Math.min(ind + 3, zStr.length());
+				zStr = zStr.substring(0, len);
+			}
+			zStr = "x" + zStr;
+			btZoom.setText(zStr);
+		}
+
 	}
 
 }
