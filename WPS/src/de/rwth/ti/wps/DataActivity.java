@@ -1,113 +1,265 @@
 package de.rwth.ti.wps;
 
+import java.util.List;
 
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
-import android.os.Bundle;
-import android.app.Activity;
-import android.app.Dialog;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.RadioGroup;
-import android.widget.RadioButton;
-import android.view.View.OnClickListener;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.support.v4.app.NavUtils;
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
+import de.rwth.ti.layouthelper.BuildingSpinnerHelper;
+import de.rwth.ti.layouthelper.CustomTabHelper;
+import de.rwth.ti.layouthelper.FloorSpinnerHelper;
+import de.rwth.ti.layouthelper.OnBuildingChangedListener;
+import de.rwth.ti.layouthelper.OnFloorChangedListener;
 
-public class DataActivity extends SuperActivity 
-implements OnClickListener 
-{ 
+public class DataActivity extends SuperActivity implements
+	OnBuildingChangedListener, OnFloorChangedListener, OnClickListener {
+
+	Building selectedBuilding;
+	Building newBuilding;
+	Floor selectedFloor;
+	Floor newFloor;
+	List<MeasurePoint> MPList;
+	List<Floor> FloorList;
 	
+		
+	TextView buildingHeader;
+	TextView floorHeader;
+	TextView measurePointHeader;
+	LinearLayout buildingLayout;
+	LinearLayout floorLayout;
+	LinearLayout measurePointLayout;
+	
+	CustomTabHelper tabHelper;
+	BuildingSpinnerHelper buildingHelper;
+	FloorSpinnerHelper floorHelper;
+	Spinner buildingSpinner;
+	
+	Button BuildingRenameButton;
+	Button BuildingDeleteButton;
+	Button FloorSaveButton;
+	Button FloorDeleteButton;
+	Button MeasurePointDeleteOnFloorButton;
+	Button MeasurePointDeleteLastButton;
+	Button MeasurePointDeleteAllButton;
+	
+	EditText buildingEdit;
+	EditText floorEdit;
+	EditText floorLevelEdit;
 
-	RadioGroup radiogroup;
-
+	
+	
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState, false, false);
 		setContentView(R.layout.activity_data);
 		// Show the Up button in the action bar.
 		
-	
+		selectedBuilding = null;
+		selectedFloor = null;
+		
+		
+		
+		buildingHeader = (TextView) findViewById(R.id.dataBuildingHeader);
+		floorHeader = (TextView) findViewById(R.id.dataFloorHeader);
+		measurePointHeader = (TextView) findViewById(R.id.dataMeasurePointHeader);
+		
+		buildingLayout = (LinearLayout) findViewById(R.id.dataBuildingLayout);
+		floorLayout = (LinearLayout) findViewById(R.id.dataFloorLayout);
+		measurePointLayout = (LinearLayout) findViewById(R.id.dataMeasurePointLayout);
+
+		tabHelper = CustomTabHelper.createInstance(buildingHeader, buildingLayout);
+		tabHelper.addTabItem(floorHeader, floorLayout);
+		tabHelper.addTabItem(measurePointHeader, measurePointLayout);
+		
+		buildingHelper = BuildingSpinnerHelper.createInstance(this, this, storage, (Spinner) findViewById(R.id.dataBuildingBuildingSpinner));
+		buildingHelper.addSpinner((Spinner) findViewById(R.id.dataFloorBuildingSpinner));
+		buildingHelper.addSpinner((Spinner) findViewById(R.id.dataMeasurePointBuildingSpinner));
+		floorHelper = FloorSpinnerHelper.createInstance(this, this, storage, (Spinner) findViewById(R.id.dataFloorFloorSpinner));
+		floorHelper.addSpinner((Spinner) findViewById(R.id.dataMeasurePointFloorSpinner));
+		buildingHelper.addListener(floorHelper);
+		
+		BuildingDeleteButton = (Button) findViewById(R.id.dataBuildingDeleteButton);
+		buildingEdit = (EditText) findViewById(R.id.dataBuildingRenameEdit);
+		floorEdit = (EditText) findViewById(R.id.dataFloorRenameEdit);
+		floorLevelEdit = (EditText) findViewById(R.id.dataFloorFloorLevelEdit);
+		
+				
+		BuildingRenameButton= (Button) findViewById(R.id.dataBuildingRenameButton);
+		FloorSaveButton= (Button) findViewById(R.id.dataFloorSaveButton);
+		FloorDeleteButton= (Button) findViewById(R.id.dataFloorDeleteButton);
+		MeasurePointDeleteOnFloorButton= (Button) findViewById(R.id.dataMeasurePointDeleteOnFloorButton);
+		MeasurePointDeleteLastButton= (Button) findViewById(R.id.dataMeasurePointDeleteLastButton);
+		MeasurePointDeleteAllButton= (Button) findViewById(R.id.dataMeasurePointDeleteAllButton);
+		
+		// init ClickListeners
+	/*	findViewById(R.id.dataBuildingRenameButton).setOnClickListener(this);
+		findViewById(R.id.dataBuildingDeleteButton).setOnClickListener(this);
+		
+		findViewById(R.id.dataFloorSaveButton).setOnClickListener(this);
+		findViewById(R.id.dataFloorDeleteButton).setOnClickListener(this);
+		
+		findViewById(R.id.dataMeasurePointDeleteOnFloorButton).setOnClickListener(this);	
+		findViewById(R.id.dataMeasurePointDeleteLastButton).setOnClickListener(this);
+		findViewById(R.id.dataMeasurePointDeleteAllButton).setOnClickListener(this);
+		
+		// TODO andere Buttons hinzufügen- done
+		 * 
+		 */
 	}
 	
-	public void onRadioButtonClicked(View view) {
-
-        // Is the button now checked?
-        boolean checked = ((RadioButton) view).isChecked();
-
-        // Check which radio button was clicked
-        
-        switch(view.getId()) {
-        case R.id.dataAPButton:
-            if (checked){
-                Toast.makeText(this, "You've selected: AP", Toast.LENGTH_LONG).show();
-                onClick(view);
-                }
-            break;
-        case R.id.dataFloorButton:
-            if (checked){
-                Toast.makeText(this, "You've selected: floor", Toast.LENGTH_LONG).show();
-            onClick(view);
-            }
-            break;
-        case R.id.dataMSButton:
-            if (checked){
-            	Intent launchDelete = new Intent(DataActivity.this, DataDeleteActivity.class);
-            	startActivity(launchDelete);
-                }
-            break;
-        case R.id.dataBuildingButton:
-            if (checked){
-            	Intent launchPopup = new Intent(DataActivity.this, DataActivityPopup.class);
-            	startActivity(launchPopup);
-            		
-                }
-            break;
-        }
-           }
-	
-	public void onClick(View view) {
-					
-			// FIXME GUI get real data from gui
-			
-			}
-	
-		
-	
+	/** Called when the activity is first created or restarted */
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		super.onCreateOptionsMenu(menu);
-		return true;
+	public void onStart() {
+		super.onStart();
+		buildingHelper.refresh();
 	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		
-		
-		switch (item.getItemId()) {
 	
-		//case android.R.id.home:
-			// This ID represents the Home or Up button. In the case of this
-			// activity, the Up button is shown. Use NavUtils to allow users
-			// to navigate up one level in the application structure. For
-			// more details, see the Navigation pattern on Android Design:
-			//
-			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
-			//
-			//NavUtils.navigateUpFromSameTask(this);
-			//return true;
+	@Override
+	public void buildingChanged(BuildingSpinnerHelper helper) {
+		selectedBuilding = helper.getSelectedBuilding();
+		
+		if (selectedBuilding.getName().equals("Seminargebäude")) {
+			buildingLayout.setVisibility(View.VISIBLE);
+			floorLayout.setVisibility(View.GONE);
 		}
-		return super.onOptionsItemSelected(item);
+		else {
+			buildingLayout.setVisibility(View.GONE);
+			floorLayout.setVisibility(View.VISIBLE);
+		}
 	}
 
+	@Override
+	public void floorChanged(FloorSpinnerHelper helper) {
+		selectedFloor = helper.getSelectedFloor();
+		if (selectedFloor != null) {
+			
+		}
+	}
+	
+	
+	/////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////
+	
+	public void dataDeleteBuilding (View v){
+	
+		if(selectedBuilding != null){
+			storage.deleteBuilding(selectedBuilding);
+		buildingHelper.refresh();
+		}
+	}
+	
+	public void dataRenameBuilding (View v){
+		String BuildingName = buildingEdit.getText().toString().trim();
+		newBuilding=new Building();
+		newBuilding.setName(BuildingName);
+		newBuilding.setId(selectedBuilding.getId());
+		storage.changeBuilding(newBuilding);
+	}
+	
+	public void dataDeleteAllMP(View v){
+		MPList=storage.getAllMeasurePoints();
+		for (MeasurePoint MP : MPList)
+		storage.deleteMea1surePoint(MP);
+	}
+	
+	public void dataDeleteFloorMP (View v){
+		if (selectedBuilding!=null){
+			FloorList=storage.getFloors(selectedBuilding);
+			if (selectedFloor!=null) {
+				MPList=storage.getMeasurePoints(selectedFloor);
+				for (MeasurePoint MP : MPList)
+					storage.deleteMea1surePoint(MP);
+			}
+		}
+		
+		
+	}
+
+	public void dataDeleteLastMP(View v){
+		MPList=storage.getAllMeasurePoints();
+		MeasurePoint deleteMP=MPList.get(MPList.size() - 1);
+		storage.deleteMea1surePoint(deleteMP);
+	}
+	
+	
+	public void dataDeleteFloor (View v){
+		if (selectedBuilding!=null){
+			FloorList=storage.getFloors(selectedBuilding);
+			if (selectedFloor!=null) {
+					storage.deleteFloor(selectedFloor);
+			}
+		}
+	}
+		
+	public void dataFloorSave (View v){
+		String FloorName = floorEdit.getText().toString().trim();
+		long FloorLevel =Long.valueOf( floorLevelEdit.getText().toString().trim()).longValue();;
+		if (selectedBuilding!=null){
+			if (selectedFloor!=null) {
+				newFloor= new Floor();
+				newFloor.setId(selectedFloor.getId());
+				newFloor.setLevel(FloorLevel);
+				newFloor.setName(FloorName);
+				storage.changeFloor(newFloor);
+				
+				
+			}			
+		}
+	}
+	
+	@Override
+	public void onClick(View v) {
+		Toast.makeText(this, "D", Toast.LENGTH_LONG).show();
+		// TODO Funktionen einfügen
+		/*
+		switch(v.getId()) {
+		case R.id.dataBuildingRenameButton:
+			// TODO Gebäude umbennen
+			break;
+	/*	case R.id.dataBuildingDeleteButton:
+			{ Toast.makeText(this, "B", Toast.LENGTH_LONG).show();
+				if(selectedBuilding != null)
+					Toast.makeText(this, "C", Toast.LENGTH_LONG).show();
+				storage.deleteBuilding(selectedBuilding);
+				buildingHelper.refresh();
+				
+			}
+			break;
+		case R.id.dataFloorSaveButton:
+			// TODO Gebäude umbennen
+			break;
+		case R.id.dataFloorDeleteButton:
+			if(selectedFloor != null)			
+				storage.deleteFloor(selectedFloor);
+			break;
+		case R.id.dataMeasurePointDeleteOnFloorButton:
+			// TODO Gebäude umbennen
+			break;
+		case R.id.dataMeasurePointDeleteLastButton:
+			// TODO Gebäude umbennen
+			break;
+		case R.id.dataMeasurePointDeleteAllButton:
+			{
+				MPList=storage.getAllMeasurePoints();
+			for (MeasurePoint MP : MPList)
+			storage.deleteMea1surePoint(MP);
+			}
+			break;
+
+		} 
+		*/
+	}
 }
