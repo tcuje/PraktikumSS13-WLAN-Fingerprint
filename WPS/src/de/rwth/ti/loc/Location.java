@@ -106,7 +106,7 @@ public class Location {
 			double errorValue = 0;
 			List<AccessPoint> entries = dataHandler.getAccessPoints(scanEntries
 					.get(j));
-			for (int k = 0; k < 3 && k < aps.size(); k++) {
+			for (int k = 0; k < 5 && k < aps.size(); k++) {
 				String mac = aps.get(k).BSSID;
 				int l;
 				boolean success = false;
@@ -121,7 +121,7 @@ public class Location {
 							* (Math.abs((int) ((aps.get(k).level) - entries
 									.get(l).getLevel())));
 				} else {
-					errorValue += (double) ((100 + aps.get(k).level) / 100)
+					errorValue += (double) ((100 + (double) aps.get(k).level) / 100)
 							* (Math.abs((int) ((aps.get(k).level) + 100)));
 				}
 			}
@@ -132,6 +132,10 @@ public class Location {
 			}
 			
 			ScanError scanErrorObject = new ScanError();
+//			errorValue=errorValue*10000;
+//			errorValue=(double)Math.round(errorValue);
+//			errorValue=errorValue/10000;
+//			scanErrorObject.setScanError(scanEntries.get(j), (Math.pow(errorValue, 2)));
 			scanErrorObject.setScanError(scanEntries.get(j), errorValue);
 			errorList.add(scanErrorObject);
 		}
@@ -140,7 +144,7 @@ public class Location {
 		double y = 0;
 		double errorSum = 0;
 		for (int h = 0; h < errorList.size(); h++) {
-			if (h > 3) {
+			if (h > 5) {
 				break;
 			}
 			x += (1 / (errorList.get(h).getError()))
