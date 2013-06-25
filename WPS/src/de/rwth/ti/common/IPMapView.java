@@ -84,7 +84,6 @@ public class IPMapView extends View {
 		mScaleFactor = mMinScaleFactor;
 		mViewHeight = yNew;
 		mViewWidth = xNew;
-
 	}
 
 	@Override
@@ -467,7 +466,7 @@ public class IPMapView extends View {
 	}
 
 	public void zoomPoint() {
-		setScaleFactor(mMaxScaleFactor);
+		setScaleFactor((mMaxScaleFactor - mMinScaleFactor) / 2);
 		focusPoint();
 	}
 
@@ -532,7 +531,8 @@ public class IPMapView extends View {
 			}
 			float scale = mScaleFactor * detector.getScaleFactor();
 			// Don't let the object get too small or too large.
-			scale = Math.max(mMinScaleFactor, Math.min(scale, mMaxScaleFactor));
+			scale = Math.max(mMinScaleFactor / 4,
+					Math.min(scale, mMaxScaleFactor));
 			setScaleFactor(scale);
 			mXFocus = -mXScaleFocus + detector.getFocusX() / mScaleFactor;
 			mYFocus = -mYScaleFocus + detector.getFocusY() / mScaleFactor;
