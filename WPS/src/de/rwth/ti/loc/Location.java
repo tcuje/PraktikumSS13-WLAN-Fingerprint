@@ -41,14 +41,12 @@ public class Location {
 					compass);
 			timeSinceFloor = theTime;
 			timeSinceBuilding = theTime;
-			return result;
 		} else if (theTime > timeSinceFloor + 10000 || kontrollvariable == 2) {
 			tempFloor = findFloor(aps, tempBuilding);
 			LocationResult result = findMP(aps, tempFloor, tempBuilding,
 					compass);
 			timeSinceFloor = theTime;
 			timeSinceBuilding = theTime;
-			return result;
 		}
 		LocationResult result = findMP(aps, tempFloor, tempBuilding, compass);
 		return result;
