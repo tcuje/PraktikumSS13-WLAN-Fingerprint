@@ -13,6 +13,7 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -71,6 +72,8 @@ public class MainActivity extends SuperActivity implements
 		super.onStart();
 		if (checkLoc.isChecked() == true) {
 			getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
+			getWindow()
+					.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		}
 		this.registerReceiver(wifiReceiver, new IntentFilter(
 				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
@@ -85,6 +88,7 @@ public class MainActivity extends SuperActivity implements
 	public void onStop() {
 		super.onStop();
 		getScanManager().stopAutoScan();
+		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		try {
 			this.unregisterReceiver(wifiReceiver);
 		} catch (IllegalArgumentException ex) {
@@ -97,8 +101,12 @@ public class MainActivity extends SuperActivity implements
 		if (view == checkLoc) {
 			if (state == true) {
 				getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
+				getWindow().addFlags(
+						WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 			} else {
 				getScanManager().stopAutoScan();
+				getWindow().clearFlags(
+						WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 			}
 		}
 	}

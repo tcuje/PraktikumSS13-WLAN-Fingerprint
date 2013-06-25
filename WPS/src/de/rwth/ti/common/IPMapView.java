@@ -110,10 +110,10 @@ public class IPMapView extends View {
 			// System.out.println("Mitte: "+mAccXPoint+","+mAccYPoint);
 		}
 
+		mPaint.setAntiAlias(true);
 		mPaint.setStrokeWidth(0.432f);
 		mPaint.setColor(android.graphics.Color.GRAY);
-		mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-		mPaint.setAntiAlias(true);
+		mPaint.setStyle(Paint.Style.STROKE);
 
 		if (myFillPaths != null) {
 			for (Path aPath : myFillPaths) {
@@ -219,10 +219,26 @@ public class IPMapView extends View {
 			} else if (eventType == XmlPullParser.START_TAG) {
 				System.out.println("Start tag " + xpp.getName());
 				if (xpp.getName().equals("svg")) {
-					mHeight = Float.valueOf(xpp.getAttributeValue(null,
-							"height"));
-					mWidth = Float
-							.valueOf(xpp.getAttributeValue(null, "width"));
+					mWidth = 0;
+					mHeight = 0;
+					String attr = xpp.getAttributeValue(null, "height");
+					for (int n = 0; n < attr.length(); n++) {
+						String val = attr.substring(0, attr.length() - n);
+						try {
+							mHeight = Float.valueOf(val);
+							break;
+						} catch (NumberFormatException ex) {
+						}
+					}
+					attr = xpp.getAttributeValue(null, "width");
+					for (int n = 0; n < attr.length(); n++) {
+						String val = attr.substring(0, attr.length() - n);
+						try {
+							mWidth = Float.valueOf(val);
+							break;
+						} catch (NumberFormatException ex) {
+						}
+					}
 					if (mWidth != 0) {
 						mMinScaleFactor = mViewWidth / ((float) mWidth);
 					}
@@ -234,7 +250,7 @@ public class IPMapView extends View {
 					String aPathRout[] = xpp.getAttributeValue(null, "d")
 							.split(" ");
 					for (int i = 0; i < aPathRout.length; i++) {
-						String aCoordinate[];
+						String aCoordinate[] = new String[] { null, null };
 						switch (aPathRout[i].charAt(0)) {
 						case 'M':
 							aPathRout[i] = aPathRout[i].substring(1);
@@ -242,7 +258,13 @@ public class IPMapView extends View {
 								i++; // f�r den fall das ein lerzeichen zwichen
 										// Befehl und koordinate steht
 							}
-							aCoordinate = aPathRout[i].split(",");
+							if (aPathRout[i].contains(",")) {
+								aCoordinate = aPathRout[i].split(",");
+							} else {
+								aCoordinate[0] = aPathRout[i];
+								i++;
+								aCoordinate[1] = aPathRout[i];
+							}
 							aPath.moveTo(Float.parseFloat(aCoordinate[0]),
 									Float.parseFloat(aCoordinate[1]));
 							break;
@@ -252,7 +274,13 @@ public class IPMapView extends View {
 								i++; // f�r den fall das ein lerzeichen zwichen
 										// Befehl und koordinate steht
 							}
-							aCoordinate = aPathRout[i].split(",");
+							if (aPathRout[i].contains(",")) {
+								aCoordinate = aPathRout[i].split(",");
+							} else {
+								aCoordinate[0] = aPathRout[i];
+								i++;
+								aCoordinate[1] = aPathRout[i];
+							}
 							aPath.moveTo(
 									(Float.parseFloat(aCoordinate[0]) * mWidth),
 									(Float.parseFloat(aCoordinate[1]) * mHeight));
@@ -263,7 +291,13 @@ public class IPMapView extends View {
 								i++; // f�r den fall das ein lerzeichen zwichen
 										// Befehl und koordinate steht
 							}
-							aCoordinate = aPathRout[i].split(",");
+							if (aPathRout[i].contains(",")) {
+								aCoordinate = aPathRout[i].split(",");
+							} else {
+								aCoordinate[0] = aPathRout[i];
+								i++;
+								aCoordinate[1] = aPathRout[i];
+							}
 							aPath.lineTo(Float.parseFloat(aCoordinate[0]),
 									Float.parseFloat(aCoordinate[1]));
 							break;
@@ -273,7 +307,13 @@ public class IPMapView extends View {
 								i++; // f�r den fall das ein lerzeichen zwichen
 										// Befehl und koordinate steht
 							}
-							aCoordinate = aPathRout[i].split(",");
+							if (aPathRout[i].contains(",")) {
+								aCoordinate = aPathRout[i].split(",");
+							} else {
+								aCoordinate[0] = aPathRout[i];
+								i++;
+								aCoordinate[1] = aPathRout[i];
+							}
 							aPath.lineTo(
 									(Float.parseFloat(aCoordinate[0]) * mWidth),
 									(Float.parseFloat(aCoordinate[1]) * mHeight));
@@ -285,14 +325,35 @@ public class IPMapView extends View {
 										// Befehl und koordinate steht
 							}
 							aCoordinate = new String[6];
-							aCoordinate[0] = (aPathRout[i].split(","))[0];
-							aCoordinate[1] = (aPathRout[i].split(","))[1];
+							if (aPathRout[i].contains(",")) {
+								String[] sp = aPathRout[i].split(",");
+								aCoordinate[0] = sp[0];
+								aCoordinate[1] = sp[1];
+							} else {
+								aCoordinate[0] = aPathRout[i];
+								i++;
+								aCoordinate[1] = aPathRout[i];
+							}
 							i++;
-							aCoordinate[2] = (aPathRout[i].split(","))[0];
-							aCoordinate[3] = (aPathRout[i].split(","))[1];
+							if (aPathRout[i].contains(",")) {
+								String[] sp = aPathRout[i].split(",");
+								aCoordinate[2] = sp[0];
+								aCoordinate[3] = sp[1];
+							} else {
+								aCoordinate[2] = aPathRout[i];
+								i++;
+								aCoordinate[3] = aPathRout[i];
+							}
 							i++;
-							aCoordinate[4] = (aPathRout[i].split(","))[0];
-							aCoordinate[5] = (aPathRout[i].split(","))[1];
+							if (aPathRout[i].contains(",")) {
+								String[] sp = aPathRout[i].split(",");
+								aCoordinate[4] = sp[0];
+								aCoordinate[5] = sp[1];
+							} else {
+								aCoordinate[4] = aPathRout[i];
+								i++;
+								aCoordinate[5] = aPathRout[i];
+							}
 							aPath.cubicTo(Float.parseFloat(aCoordinate[0]),
 									Float.parseFloat(aCoordinate[1]),
 									Float.parseFloat(aCoordinate[2]),
@@ -307,14 +368,35 @@ public class IPMapView extends View {
 										// Befehl und koordinate steht
 							}
 							aCoordinate = new String[6];
-							aCoordinate[0] = (aPathRout[i].split(","))[0];
-							aCoordinate[1] = (aPathRout[i].split(","))[1];
+							if (aPathRout[i].contains(",")) {
+								String[] sp = aPathRout[i].split(",");
+								aCoordinate[0] = sp[0];
+								aCoordinate[1] = sp[1];
+							} else {
+								aCoordinate[0] = aPathRout[i];
+								i++;
+								aCoordinate[1] = aPathRout[i];
+							}
 							i++;
-							aCoordinate[2] = (aPathRout[i].split(","))[0];
-							aCoordinate[3] = (aPathRout[i].split(","))[1];
+							if (aPathRout[i].contains(",")) {
+								String[] sp = aPathRout[i].split(",");
+								aCoordinate[2] = sp[0];
+								aCoordinate[3] = sp[1];
+							} else {
+								aCoordinate[2] = aPathRout[i];
+								i++;
+								aCoordinate[3] = aPathRout[i];
+							}
 							i++;
-							aCoordinate[4] = (aPathRout[i].split(","))[0];
-							aCoordinate[5] = (aPathRout[i].split(","))[1];
+							if (aPathRout[i].contains(",")) {
+								String[] sp = aPathRout[i].split(",");
+								aCoordinate[4] = sp[0];
+								aCoordinate[5] = sp[1];
+							} else {
+								aCoordinate[4] = aPathRout[i];
+								i++;
+								aCoordinate[5] = aPathRout[i];
+							}
 							aPath.cubicTo(
 									Float.parseFloat(aCoordinate[0]),
 									Float.parseFloat(aCoordinate[1]),

@@ -294,9 +294,10 @@ public class MeasureActivity extends SuperActivity implements
 					}
 					waitDialog.dismiss();
 					waitDialog = null;
-					Toast.makeText(MeasureActivity.this,
-							R.string.success_scanning, Toast.LENGTH_SHORT)
-							.show();
+					String msg = results.size() + " "
+							+ getString(R.string.success_scanning);
+					Toast.makeText(MeasureActivity.this, msg,
+							Toast.LENGTH_SHORT).show();
 					if (direction.ordinal() + 1 > CompassManager.Direction
 							.values().length) {
 						lastMP = null;
