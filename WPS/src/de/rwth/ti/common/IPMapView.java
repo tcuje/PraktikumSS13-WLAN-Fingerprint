@@ -377,9 +377,11 @@ public class IPMapView extends View {
 	}
 
 	public void focusPoint() {
-		mXFocus = -mPoint.x + mViewWidth / (2 * mScaleFactor);
-		mYFocus = -mPoint.y + mViewHeight / (2 * mScaleFactor);
-		invalidate();
+		if (mPoint != null) {
+			mXFocus = -mPoint.x + mViewWidth / (2 * mScaleFactor);
+			mYFocus = -mPoint.y + mViewHeight / (2 * mScaleFactor);
+			invalidate();
+		}
 	}
 
 	public void zoomPoint() {
