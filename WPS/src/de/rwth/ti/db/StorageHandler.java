@@ -401,13 +401,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean deleteBuilding(Building building) {
-
-		Log.i(TAG, String.valueOf(building.getName()));
-		
-		Cursor cursor = db.query(Building.TABLE_NAME, null, null, null, null, null, null);
-		int len = cursor.getCount();
-		Log.i("len", String.valueOf(len));
-		
 		int result = db.delete(Building.TABLE_NAME, Building.COLUMN_ID + "=?",
 				new String[] { String.valueOf(building.getId()) });
 		if (result == 1)

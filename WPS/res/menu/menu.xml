@@ -5,6 +5,9 @@
         android:showAsAction="ifRoom"
         android:title="@string/action_navigation">
         <menu>
+
+		 
+
             <item
                 android:id="@+id/action_localisation"
                 android:title="@string/action_localisation"
