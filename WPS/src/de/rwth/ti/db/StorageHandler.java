@@ -402,7 +402,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean deleteBuilding(Building building) {
-		int result = db.delete(Building.TABLE_NAME, Building.COLUMN_ID+"=?",
+		int result = db.delete(Building.TABLE_NAME, Building.COLUMN_ID + "=?",
 				new String[] { String.valueOf(building.getId()) });
 		if (result == 1)
 			return true;
