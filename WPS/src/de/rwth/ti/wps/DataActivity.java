@@ -104,20 +104,7 @@ public class DataActivity extends SuperActivity implements
 		MeasurePointDeleteLastButton= (Button) findViewById(R.id.dataMeasurePointDeleteLastButton);
 		MeasurePointDeleteAllButton= (Button) findViewById(R.id.dataMeasurePointDeleteAllButton);
 		
-		// init ClickListeners
-	/*	findViewById(R.id.dataBuildingRenameButton).setOnClickListener(this);
-		findViewById(R.id.dataBuildingDeleteButton).setOnClickListener(this);
-		
-		findViewById(R.id.dataFloorSaveButton).setOnClickListener(this);
-		findViewById(R.id.dataFloorDeleteButton).setOnClickListener(this);
-		
-		findViewById(R.id.dataMeasurePointDeleteOnFloorButton).setOnClickListener(this);	
-		findViewById(R.id.dataMeasurePointDeleteLastButton).setOnClickListener(this);
-		findViewById(R.id.dataMeasurePointDeleteAllButton).setOnClickListener(this);
-		
-		// TODO andere Buttons hinzufügen- done
-		 * 
-		 */
+
 	}
 	
 	/** Called when the activity is first created or restarted */
@@ -145,7 +132,7 @@ public class DataActivity extends SuperActivity implements
 	public void floorChanged(FloorSpinnerHelper helper) {
 		selectedFloor = helper.getSelectedFloor();
 		if (selectedFloor != null) {
-			
+			floorLevelEdit.setText(String.valueOf(selectedFloor.getLevel()));
 		}
 	}
 	
@@ -167,12 +154,16 @@ public class DataActivity extends SuperActivity implements
 		newBuilding.setName(BuildingName);
 		newBuilding.setId(selectedBuilding.getId());
 		storage.changeBuilding(newBuilding);
+		buildingHelper.refresh();
+
 	}
 	
 	public void dataDeleteAllMP(View v){
 		MPList=storage.getAllMeasurePoints();
 		for (MeasurePoint MP : MPList)
 		storage.deleteMea1surePoint(MP);
+		buildingHelper.refresh();
+
 	}
 	
 	public void dataDeleteFloorMP (View v){
@@ -182,6 +173,9 @@ public class DataActivity extends SuperActivity implements
 				MPList=storage.getMeasurePoints(selectedFloor);
 				for (MeasurePoint MP : MPList)
 					storage.deleteMea1surePoint(MP);
+				buildingHelper.refresh();
+				floorHelper.refresh();
+
 			}
 		}
 		
@@ -192,6 +186,8 @@ public class DataActivity extends SuperActivity implements
 		MPList=storage.getAllMeasurePoints();
 		MeasurePoint deleteMP=MPList.get(MPList.size() - 1);
 		storage.deleteMea1surePoint(deleteMP);
+		buildingHelper.refresh();
+
 	}
 	
 	
@@ -200,6 +196,10 @@ public class DataActivity extends SuperActivity implements
 			FloorList=storage.getFloors(selectedBuilding);
 			if (selectedFloor!=null) {
 					storage.deleteFloor(selectedFloor);
+					buildingHelper.refresh();
+					floorHelper.refresh();
+
+
 			}
 		}
 	}
@@ -214,7 +214,9 @@ public class DataActivity extends SuperActivity implements
 				newFloor.setLevel(FloorLevel);
 				newFloor.setName(FloorName);
 				storage.changeFloor(newFloor);
-				
+				buildingHelper.refresh();
+				floorHelper.refresh();
+
 				
 			}			
 		}
@@ -222,44 +224,7 @@ public class DataActivity extends SuperActivity implements
 	
 	@Override
 	public void onClick(View v) {
-		Toast.makeText(this, "D", Toast.LENGTH_LONG).show();
-		// TODO Funktionen einfügen
-		/*
-		switch(v.getId()) {
-		case R.id.dataBuildingRenameButton:
-			// TODO Gebäude umbennen
-			break;
-	/*	case R.id.dataBuildingDeleteButton:
-			{ Toast.makeText(this, "B", Toast.LENGTH_LONG).show();
-				if(selectedBuilding != null)
-					Toast.makeText(this, "C", Toast.LENGTH_LONG).show();
-				storage.deleteBuilding(selectedBuilding);
-				buildingHelper.refresh();
-				
-			}
-			break;
-		case R.id.dataFloorSaveButton:
-			// TODO Gebäude umbennen
-			break;
-		case R.id.dataFloorDeleteButton:
-			if(selectedFloor != null)			
-				storage.deleteFloor(selectedFloor);
-			break;
-		case R.id.dataMeasurePointDeleteOnFloorButton:
-			// TODO Gebäude umbennen
-			break;
-		case R.id.dataMeasurePointDeleteLastButton:
-			// TODO Gebäude umbennen
-			break;
-		case R.id.dataMeasurePointDeleteAllButton:
-			{
-				MPList=storage.getAllMeasurePoints();
-			for (MeasurePoint MP : MPList)
-			storage.deleteMea1surePoint(MP);
-			}
-			break;
 
-		} 
-		*/
+
 	}
 }

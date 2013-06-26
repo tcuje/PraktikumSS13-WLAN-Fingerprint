@@ -366,6 +366,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	public boolean changeFloor(Floor floor) {
 		ContentValues values = new ContentValues();
 		values.put(Floor.COLUMN_NAME, floor.getName());
+		values.put(Floor.COLUMN_LEVEL, floor.getLevel());
 		int result = db.update(Floor.TABLE_NAME, values,
 				Floor.COLUMN_ID + "=?",
 				new String[] { String.valueOf(floor.getId()) });

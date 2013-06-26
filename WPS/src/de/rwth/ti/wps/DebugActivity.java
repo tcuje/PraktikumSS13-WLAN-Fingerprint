@@ -89,7 +89,7 @@ public class DebugActivity extends SuperActivity {
 		}
 		textStatus.append("\nMaps: " + storage.countFloors() + "\n");
 		for (Floor m : storage.getAllFloors()) {
-			textStatus.append("Map\t" + m.getId() + "\t" + m.getName() + "\t"
+			textStatus.append("Map\t" + m.getId() + "\t" + m.getName() + "\t" + m.getLevel() + "\t"
 					+ m.getFile() + "\n");
 		}
 		textStatus.append("\nCheckpoints: " + storage.countMeasurePoints()
