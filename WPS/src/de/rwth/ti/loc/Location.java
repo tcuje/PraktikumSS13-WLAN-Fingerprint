@@ -42,14 +42,10 @@ public class Location {
 		if (theTime > timeSinceBuilding + 40000 || kontrollvariable == 1) {
 			tempBuilding = findBuilding(aps);
 			tempFloor = findFloor(aps, tempBuilding);
-			LocationResult result = findMP(aps, tempFloor, tempBuilding,
-					compass);
 			timeSinceFloor = theTime;
 			timeSinceBuilding = theTime;
 		} else if (theTime > timeSinceFloor + 10000 || kontrollvariable == 2) {
 			tempFloor = findFloor(aps, tempBuilding);
-			LocationResult result = findMP(aps, tempFloor, tempBuilding,
-					compass);
 			timeSinceFloor = theTime;
 			timeSinceBuilding = theTime;
 		}
