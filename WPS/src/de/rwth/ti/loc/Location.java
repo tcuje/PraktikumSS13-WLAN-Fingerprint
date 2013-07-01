@@ -39,6 +39,7 @@ public class Location {
 			int kontrollvariable) {
 		theTime = time.getTime().getTime();
 		aps = deleteDoubles(aps);
+
 		if (theTime > timeSinceBuilding + 40000 || kontrollvariable == 1) {
 			tempBuilding = findBuilding(aps);
 			tempFloor = findFloor(aps, tempBuilding);
@@ -72,11 +73,11 @@ public class Location {
 		if (mp == null) {
 			return null;
 		}
-		Floor floor = dataHandler.getFloor(mp);
-		if (floor == null) {
+		Floor map = dataHandler.getFloor(mp);
+		if (map == null) {
 			return null;
 		}
-		Building result = dataHandler.getBuilding(floor);
+		Building result = dataHandler.getBuilding(map);
 		return result;
 	}
 
@@ -93,20 +94,20 @@ public class Location {
 		return floor;
 	}
 
-	private LocationResult findMP(List<ScanResult> aps, Floor floor,
+	private LocationResult findMP(List<ScanResult> aps, Floor map,
 			Building building, int compass) {
-		if (aps.isEmpty() || floor == null) {
+		if (aps.isEmpty() || map == null) {
 			return null;
 		}
+		List<Scan> scanEntries = dataHandler.getScans(map, compass);
 		List<ScanError> errorList = new LinkedList<ScanError>();
-		List<Scan> scanEntries = dataHandler.getScans(floor, compass);
-		for (Scan scan : scanEntries) {
+		for (int j = 0; j < scanEntries.size(); j++) {
 			double errorValue = 0;
-			// get 3 best access points ordered by level
-			List<AccessPoint> entries = dataHandler.getAccessPoints(scan, 3);
-			for (int k = 0; k < 3 && k < aps.size(); k++) {
+			List<AccessPoint> entries = dataHandler.getAccessPoints(scanEntries
+					.get(j));
+			for (int k = 0; k < 5 && k < aps.size(); k++) {
 				String mac = aps.get(k).BSSID;
-				int l = 0;
+				int l;
 				boolean success = false;
 				for (l = 0; l < entries.size(); l++) {
 					if (mac.compareTo(entries.get(l).getBssid()) == 0) {
@@ -124,13 +125,19 @@ public class Location {
 				}
 			}
 			if (errorValue == 0) {
-				LocationResult result = new LocationResult(building, floor,
-						dataHandler.getMeasurePoint(scan).getPosx(),
-						dataHandler.getMeasurePoint(scan).getPosy());
+				LocationResult result = new LocationResult(building, map,
+						dataHandler.getMeasurePoint(scanEntries.get(j))
+								.getPosx(), dataHandler.getMeasurePoint(
+								scanEntries.get(j)).getPosy());
 				return result;
 			}
+
 			ScanError scanErrorObject = new ScanError();
-			scanErrorObject.setScanError(scan, errorValue);
+//			errorValue=errorValue*10000;
+//			errorValue=(double)Math.round(errorValue);
+//			errorValue=errorValue/10000;
+//			scanErrorObject.setScanError(scanEntries.get(j), (Math.pow(errorValue, 2)));
+			scanErrorObject.setScanError(scanEntries.get(j), errorValue);
 			errorList.add(scanErrorObject);
 		}
 		errorList = sortScanError(errorList);
@@ -138,7 +145,7 @@ public class Location {
 		double y = 0;
 		double errorSum = 0;
 		for (int h = 0; h < errorList.size(); h++) {
-			if (h > 3) {
+			if (h > 5) {
 				break;
 			}
 			x += (1 / (errorList.get(h).getError()))
@@ -153,7 +160,7 @@ public class Location {
 			x = x / errorSum;
 			y = y / errorSum;
 		}
-		LocationResult result = new LocationResult(building, floor, x, y);
+		LocationResult result = new LocationResult(building, map, x, y);
 		return result;
 
 	}
