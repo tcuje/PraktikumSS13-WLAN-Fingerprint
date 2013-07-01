@@ -10,7 +10,9 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -19,6 +21,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import de.rwth.ti.db.MeasurePoint;
 
 public class IPMapView extends View {
 
@@ -42,7 +45,7 @@ public class IPMapView extends View {
 	private boolean mMeasureMode = true;
 	private ArrayList<Path> myPaths;
 	private ArrayList<Path> myFillPaths;
-	private ArrayList<PointF> myOldPoints;
+	private ArrayList<MeasurePoint> myOldPoints;
 	private Paint mPaint = new Paint();
 	private Rect mRect = new Rect();
 	private OnScaleChangeListener onScaleChangeListener;
@@ -51,7 +54,7 @@ public class IPMapView extends View {
 		super(context, attrs);
 		myPaths = new ArrayList<Path>();
 		myFillPaths = new ArrayList<Path>();
-		myOldPoints = new ArrayList<PointF>();
+		myOldPoints = new ArrayList<MeasurePoint>();
 		mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
 		mGestureDetector = new GestureDetector(context, new MyGestureListener());
 		mPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -128,21 +131,33 @@ public class IPMapView extends View {
 				canvas.drawPath(aPath, mPaint);
 			}
 		}
-		// Punkt f�r Standort einzeichen
+		// draw old measure points
+		mPaint.setStyle(Style.FILL);
+		for (MeasurePoint aPoint : myOldPoints) {
+			mPaint.setColor(Color.BLACK);
+			canvas.drawCircle((float) aPoint.getPosx(),
+					(float) aPoint.getPosy(), 2, mPaint);
+			if (aPoint.getQuality() < 0.25) {
+				mPaint.setColor(Color.RED);
+			} else if (aPoint.getQuality() < 0.75) {
+				mPaint.setColor(Color.YELLOW);
+			} else {
+				mPaint.setColor(Color.GREEN);
+			}
+			canvas.drawCircle((float) aPoint.getPosx(),
+					(float) aPoint.getPosy(), 1.5f, mPaint);
+		}
+		// draw position
 		if (!mMeasureMode && mPoint != null) {
 			mPaint.setColor(android.graphics.Color.BLUE);
 			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 			canvas.drawCircle(mPoint.x, mPoint.y, 3, mPaint);
 		}
-		// Messpunkt einzeichen
+		// draw active measure point
 		if (mMeasureMode && mMPoint != null) {
 			mPaint.setColor(android.graphics.Color.GREEN);
 			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-			canvas.drawCircle(mMPoint.x, mMPoint.y, 2, mPaint);
-		}
-		mPaint.setColor(android.graphics.Color.BLACK);
-		for (PointF aPoint : myOldPoints) {
-			canvas.drawCircle(aPoint.x, aPoint.y, 2, mPaint);
+			canvas.drawCircle(mMPoint.x, mMPoint.y, 3, mPaint);
 		}
 //		// draw grid
 //		mPaint.setColor(Color.BLACK);
@@ -444,7 +459,7 @@ public class IPMapView extends View {
 		invalidate();
 	}
 
-	public void addOldPoint(PointF punkt) {
+	public void addOldPoint(MeasurePoint punkt) {
 		myOldPoints.add(punkt);
 	}
 
@@ -483,9 +498,7 @@ public class IPMapView extends View {
 	}
 
 	protected void setMeasurePoint(float x, float y) {
-		if (mMPoint == null) {
-			mMPoint = new PointF();
-		}
+		mMPoint = new PointF();
 		mMPoint.x = (x / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
 				+ mAccXPoint;
 		mMPoint.y = (y / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))

@@ -95,8 +95,8 @@ public class ChooseFileDialog {
 					updateDirectory();
 				} else {
 					// Call registered listener supplied with the chosen file
-					chosenFileListener.onChosenFile(dir);
 					dirsDialog.dismiss();
+					chosenFileListener.onChosenFile(dir);
 				}
 			}
 		}
@@ -244,4 +244,5 @@ public class ChooseFileDialog {
 		}
 
 	}
+
 }

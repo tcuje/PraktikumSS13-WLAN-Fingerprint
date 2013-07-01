@@ -203,17 +203,17 @@ public class MeasureActivity extends SuperActivity implements
 				if (lastMP == null) {
 					lastMP = getStorage().createMeasurePoint(floorSelected,
 							p.x, p.y);
-					mapView.addOldPoint(p);
+					mapView.addOldPoint(lastMP);
 				} else if (lastMP.getPosx() != p.x || lastMP.getPosy() != p.y) {
 					lastMP = getStorage().createMeasurePoint(floorSelected,
 							p.x, p.y);
-					mapView.addOldPoint(p);
+					mapView.addOldPoint(lastMP);
 				}
 				if (waitDialog != null) {
 					waitDialog.dismiss();
 				}
 				waitDialog = new AlertDialog.Builder(this).setTitle(
-						R.string.scan_wait).show();
+						R.string.please_wait).show();
 			}
 		}
 	}
@@ -247,8 +247,8 @@ public class MeasureActivity extends SuperActivity implements
 				List<MeasurePoint> mpl = getStorage().getMeasurePoints(
 						floorSelected);
 				for (MeasurePoint mp : mpl) {
-					mapView.addOldPoint(new PointF((float) mp.getPosx(),
-							(float) mp.getPosy()));
+					mp.setQuality(getStorage().getQuality(mp));
+					mapView.addOldPoint(mp);
 				}
 			} else {
 				Toast.makeText(this, R.string.error_no_floor_file,

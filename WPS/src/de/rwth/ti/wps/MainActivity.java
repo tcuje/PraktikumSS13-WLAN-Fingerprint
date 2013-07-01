@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.PointF;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -141,8 +140,8 @@ public class MainActivity extends SuperActivity implements
 							List<MeasurePoint> mpl = getStorage()
 									.getMeasurePoints(map);
 							for (MeasurePoint mp : mpl) {
-								viewMap.addOldPoint(new PointF((float) mp
-										.getPosx(), (float) mp.getPosy()));
+								mp.setQuality(getStorage().getQuality(mp));
+								viewMap.addOldPoint(mp);
 							}
 						} else {
 							Toast.makeText(MainActivity.this,

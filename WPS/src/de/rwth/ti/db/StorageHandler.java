@@ -132,8 +132,28 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		Cursor cursor = db.query(AccessPoint.TABLE_NAME,
 				AccessPoint.ALL_COLUMNS, AccessPoint.COLUMN_SCANID + "=?",
 				new String[] { String.valueOf(scan.getId()) }, null, null,
-				AccessPoint.COLUMN_LEVEL + " DESC", String.valueOf(limit));
-		List<AccessPoint> result = cursorToAccessPoints(cursor);
+				AccessPoint.COLUMN_LEVEL + " DESC");
+		List<AccessPoint> result = new ArrayList<AccessPoint>(limit);
+		List<String> macs = new LinkedList<String>();
+		if (cursor.moveToFirst()) {
+			do {
+				AccessPoint ap = cursorToAccessPoint(cursor);
+				String bssid = ap.getBssid();
+				bssid = bssid.substring(0, bssid.length() - 1);
+				boolean found = false;
+				for (String mac : macs) {
+					if (mac.equals(bssid)) {
+						found = true;
+						break;
+					}
+				}
+				if (found == false) {
+					result.add(ap);
+					macs.add(bssid);
+				}
+			} while (cursor.moveToNext() == true && result.size() < limit);
+		}
+		cursor.close();
 		return result;
 	}
 
@@ -805,7 +825,8 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		// contains all access points for this scan
 		Map<String, List<AccessPoint>> allAps = new HashMap<String, List<AccessPoint>>();
 		for (Scan scan : scans) {
-			List<AccessPoint> aps = getAccessPoints(scan, 3);
+			List<AccessPoint> aps = getAccessPoints(scan,
+					Constants.IMPORTANT_APS);
 			for (AccessPoint ap : aps) {
 				String mac = ap.getBssid();
 				// get the list for this ap
@@ -820,10 +841,10 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		}
 		// check the overall number of aps
 		if (allAps.size() < Math.floor(Constants.IMPORTANT_APS / 2 + 1)) {
-			// less than 50%
+			// less than 50% of important aps
 			result *= 0.25;
 		} else if (allAps.size() < Constants.IMPORTANT_APS) {
-			// less than 100%
+			// less than 100% of important aps
 			result *= 0.5;
 		}
 		// check all aps
@@ -845,10 +866,10 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				avgLevel += ap.getLevel();
 			}
 			avgLevel /= apList.size();
-			if (avgLevel < -75) {
-				// ap average level is less than -50 db
+			if (avgLevel < -80) {
+				// ap average level is very low
 				apScore *= 0.25;
-			} else if (avgLevel < -40) {
+			} else if (avgLevel < -60) {
 				apScore *= 0.5;
 			}
 			apsQuality += apScore;

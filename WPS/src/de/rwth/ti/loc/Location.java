@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.net.wifi.ScanResult;
+import de.rwth.ti.common.Constants;
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
@@ -103,8 +104,8 @@ public class Location {
 		List<ScanError> errorList = new LinkedList<ScanError>();
 		for (int j = 0; j < scanEntries.size(); j++) {
 			double errorValue = 0;
-			List<AccessPoint> entries = dataHandler.getAccessPoints(scanEntries
-					.get(j));
+			List<AccessPoint> entries = dataHandler.getAccessPoints(
+					scanEntries.get(j), Constants.IMPORTANT_APS);
 			for (int k = 0; k < 5 && k < aps.size(); k++) {
 				String mac = aps.get(k).BSSID;
 				int l;
@@ -131,7 +132,6 @@ public class Location {
 								scanEntries.get(j)).getPosy());
 				return result;
 			}
-
 			ScanError scanErrorObject = new ScanError();
 //			errorValue=errorValue*10000;
 //			errorValue=(double)Math.round(errorValue);

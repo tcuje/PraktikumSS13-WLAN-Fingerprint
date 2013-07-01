@@ -50,8 +50,8 @@ public interface IMeasureDataHandler extends IDataHandler {
 	 * 
 	 * @param scan
 	 * @param limit
-	 * @return Returns a limited list of <code>AccessPoint</code>s for the
-	 *         <code>Scan</code> ordered by ap level
+	 * @return Returns a limited list of unique <code>AccessPoint</code>s for
+	 *         the <code>Scan</code> ordered by level
 	 */
 	public List<AccessPoint> getAccessPoints(Scan scan, int limit);
 
