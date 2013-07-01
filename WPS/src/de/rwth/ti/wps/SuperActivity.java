@@ -41,7 +41,7 @@ public abstract class SuperActivity extends Activity {
 		if (cmgr == null && hasCompass) {
 			cmgr = new CompassManager(this);
 		}
-		
+
 		// Setup Wifi
 		if (scm == null && hasScan) {
 			scm = new ScanManager(this);
@@ -74,6 +74,10 @@ public abstract class SuperActivity extends Activity {
 		if (storage != null) {
 			storage.onStart();
 		}
+
+		Intent intent = new Intent(this, DataActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		startActivity(intent);
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
@@ -117,26 +121,17 @@ public abstract class SuperActivity extends Activity {
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			break;
 		/*
-		 * In DebugActivity verlegt, da nur dort nötig
-		 * und garantiert nicht in Navigation einzuordnen
-		case R.id.menu_export:
-			try {
-				storage.exportDatabase(Constants.LOCAL_DB_NAME);
-				Toast.makeText(getBaseContext(),
-						R.string.database_export_success, Toast.LENGTH_SHORT)
-						.show();
-			} catch (IOException e) {
-				Toast.makeText(getBaseContext(), e.toString(),
-						Toast.LENGTH_LONG).show();
-			}
-			break;
-		case R.id.menu_import:
-			storage.importDatabase(Constants.SD_APP_DIR + File.separator
-					+ Constants.LOCAL_DB_NAME);
-			Toast.makeText(getBaseContext(), R.string.database_import_success,
-					Toast.LENGTH_SHORT).show();
-			break;
-		*/
+		 * In DebugActivity verlegt, da nur dort nötig und garantiert nicht in
+		 * Navigation einzuordnen case R.id.menu_export: try {
+		 * storage.exportDatabase(Constants.LOCAL_DB_NAME);
+		 * Toast.makeText(getBaseContext(), R.string.database_export_success,
+		 * Toast.LENGTH_SHORT) .show(); } catch (IOException e) {
+		 * Toast.makeText(getBaseContext(), e.toString(),
+		 * Toast.LENGTH_LONG).show(); } break; case R.id.menu_import:
+		 * storage.importDatabase(Constants.SD_APP_DIR + File.separator +
+		 * Constants.LOCAL_DB_NAME); Toast.makeText(getBaseContext(),
+		 * R.string.database_import_success, Toast.LENGTH_SHORT).show(); break;
+		 */
 		case R.id.action_data:
 			intent = new Intent(this, DataActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -144,9 +139,6 @@ public abstract class SuperActivity extends Activity {
 		case R.id.action_debug:
 			intent = new Intent(this, DebugActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			break;
-		case R.id.action_data:
-			intent = new Intent(this, DataActivity.class);
 			break;
 		default:
 			return super.onOptionsItemSelected(item);

@@ -165,7 +165,7 @@ public interface IGUIDataHandler extends IDataHandler {
 	 *            Object to be deleted
 	 * @return true on success, false otherwise
 	 */
-	boolean deleteMea1surePoint(MeasurePoint mp);
+	boolean deleteMeasurePoint(MeasurePoint mp);
 
 	/**
 	 * Persist a changed <code>Scan</code> object

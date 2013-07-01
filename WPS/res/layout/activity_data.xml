@@ -135,7 +135,7 @@
 	                android:layout_width="match_parent"
 	                android:layout_height="wrap_content"
 	                android:layout_weight="1"
-	                android:onClick="dataFloorSave"
+	                android:onClick="dataSaveFloor"
 	                android:text="@string/save" />
 
 	            <Button
@@ -152,6 +152,7 @@
 	        android:id="@+id/dataMeasurePointHeader"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="@dimen/activity_data_header_margin_bottom"
 	        android:gravity="center_horizontal"
 	        android:paddingBottom="@dimen/activity_data_header_padding"
 	        android:paddingLeft="@dimen/activity_data_header_padding"

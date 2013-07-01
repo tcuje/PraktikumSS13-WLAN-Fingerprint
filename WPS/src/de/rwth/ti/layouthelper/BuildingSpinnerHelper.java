@@ -11,60 +11,67 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.StorageHandler;
+import de.rwth.ti.wps.R;
 
-public class BuildingSpinnerHelper implements
-	OnItemSelectedListener {
-	
+public class BuildingSpinnerHelper implements OnItemSelectedListener {
+
 	private List<OnBuildingChangedListener> listenerList;
-	
+
 	private StorageHandler storage;
 	private List<Spinner> spinnerList;
 	private List<Building> buildingList;
-	private ArrayAdapter<CharSequence> adapter;
+	private ArrayAdapter<String> adapter;
 	private Building selectedBuilding;
-	
 
-	private BuildingSpinnerHelper(Context context, StorageHandler storage, List<Spinner> spinner) {
+	private BuildingSpinnerHelper(Context context, StorageHandler storage,
+			List<Spinner> spinner) {
 		this.storage = storage;
 		spinnerList = spinner;
 		listenerList = new ArrayList<OnBuildingChangedListener>();
-		
-		adapter = new ArrayAdapter<CharSequence>(context, android.R.layout.simple_spinner_item);
+
+		adapter = new ArrayAdapter<String>(context, R.layout.spinner_item,
+				R.id.spinner_item_text);
 		for (Spinner tSpinner : spinnerList) {
 			tSpinner.setAdapter(adapter);
 			tSpinner.setOnItemSelectedListener(this);
 		}
 	}
-	
-	public static BuildingSpinnerHelper createInstance(Context context, OnBuildingChangedListener listener, StorageHandler storage, Spinner spinner) {
+
+	public static BuildingSpinnerHelper createInstance(Context context,
+			OnBuildingChangedListener listener, StorageHandler storage,
+			Spinner spinner) {
 		ArrayList<Spinner> spinnerList = new ArrayList<Spinner>();
 		spinnerList.add(spinner);
-		
-		BuildingSpinnerHelper helper = new BuildingSpinnerHelper(context, storage, spinnerList);
+
+		BuildingSpinnerHelper helper = new BuildingSpinnerHelper(context,
+				storage, spinnerList);
 		helper.addListener(listener);
 		return helper;
 	}
-	
-	public static BuildingSpinnerHelper createInstance(Context context, OnBuildingChangedListener listener, StorageHandler storage, List<Spinner> spinnerList) {
-		BuildingSpinnerHelper helper = new BuildingSpinnerHelper(context, storage, spinnerList);
+
+	public static BuildingSpinnerHelper createInstance(Context context,
+			OnBuildingChangedListener listener, StorageHandler storage,
+			List<Spinner> spinnerList) {
+		BuildingSpinnerHelper helper = new BuildingSpinnerHelper(context,
+				storage, spinnerList);
 		helper.addListener(listener);
 		return helper;
 	}
-	
+
 	public boolean addListener(OnBuildingChangedListener listener) {
 		if (!listenerList.contains(listener)) {
 			return listenerList.add(listener);
 		}
 		return false;
 	}
-	
+
 	public boolean removeListener(OnBuildingChangedListener listener) {
 		if (listenerList.contains(listener)) {
 			return listenerList.remove(listener);
 		}
 		return false;
 	}
-	
+
 	public boolean addSpinner(Spinner spinner) {
 		if (!spinnerList.contains(spinner)) {
 			if (spinnerList.add(spinner)) {
@@ -75,7 +82,7 @@ public class BuildingSpinnerHelper implements
 		}
 		return false;
 	}
-	
+
 	public boolean removeSpinner(Spinner spinner) {
 		if (spinnerList.contains(spinner)) {
 			if (spinnerList.remove(spinner)) {
@@ -86,30 +93,30 @@ public class BuildingSpinnerHelper implements
 		}
 		return false;
 	}
-	
+
 	public Building getSelectedBuilding() {
 		return selectedBuilding;
 	}
-	
+
 	public List<Spinner> getSpinnerList() {
 		return spinnerList;
 	}
-	
+
 	public void refresh() {
 		adapter.clear();
-		
+
 		buildingList = storage.getAllBuildings();
 		for (Building b : buildingList) {
 			adapter.add(b.getName());
 		}
-		
+
 		if (buildingList.size() == 0) {
 			setBuildingSelected(null);
 		} else {
-			setBuildingSelected (buildingList.get(0));
+			setBuildingSelected(buildingList.get(0));
 		}
 	}
-	
+
 	private void notifyListener() {
 		for (OnBuildingChangedListener tListener : listenerList) {
 			tListener.buildingChanged(this);
@@ -120,11 +127,11 @@ public class BuildingSpinnerHelper implements
 	public void onItemSelected(AdapterView<?> parent, View view, int pos,
 			long id) {
 		setBuildingSelected(buildingList.get(pos));
-		
+
 		for (Spinner tSpinner : spinnerList) {
 			tSpinner.setSelection(pos);
 		}
-		
+
 		notifyListener();
 	}
 
@@ -133,7 +140,7 @@ public class BuildingSpinnerHelper implements
 		selectedBuilding = null;
 		notifyListener();
 	}
-	
+
 	public void setBuildingSelected(Building buildingSelected) {
 		this.selectedBuilding = buildingSelected;
 	}

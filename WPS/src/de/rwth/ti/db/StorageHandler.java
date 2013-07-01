@@ -15,7 +15,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
-import android.util.Log;
 import android.widget.Toast;
 import de.rwth.ti.common.Constants;
 import de.rwth.ti.share.IGUIDataHandler;
@@ -397,7 +396,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		else
 			return false;
 	}
-	
+
 	private static final String TAG = "deletedBuilding";
 
 	@Override
@@ -430,8 +429,8 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean deleteAccessPoint(AccessPoint ap) {
-		int result = db.delete(AccessPoint.TABLE_NAME, AccessPoint.COLUMN_ID + "=?",
-				new String[] { String.valueOf(ap.getId()) });
+		int result = db.delete(AccessPoint.TABLE_NAME, AccessPoint.COLUMN_ID
+				+ "=?", new String[] { String.valueOf(ap.getId()) });
 		if (result == 1)
 			return true;
 		else
@@ -452,9 +451,9 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	@Override
-	public boolean deleteMea1surePoint(MeasurePoint mp) {
-		int result = db.delete(MeasurePoint.TABLE_NAME, MeasurePoint.COLUMN_ID + "=?",
-				new String[] { String.valueOf(mp.getId()) });
+	public boolean deleteMeasurePoint(MeasurePoint mp) {
+		int result = db.delete(MeasurePoint.TABLE_NAME, MeasurePoint.COLUMN_ID
+				+ "=?", new String[] { String.valueOf(mp.getId()) });
 		if (result == 1)
 			return true;
 		else
@@ -631,18 +630,18 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	 */
 	public void importDatabase(String filename) {
 		// copy the database from sd card to internal storage
-//		File sd = Environment.getExternalStorageDirectory();
-//		File data = Environment.getDataDirectory();
-//		String dstDBPath = "//data//" + MainActivity.PACKAGE_NAME
-//				+ "//databases//" + IMPORT_DB_NAME;
-//		String srcDBPath = "/" + filename;
-//		File dstDB = new File(data, dstDBPath);
-//		File srcDB = new File(sd, srcDBPath);
-//		FileChannel src = new FileInputStream(srcDB).getChannel();
-//		FileChannel dst = new FileOutputStream(dstDB).getChannel();
-//		dst.transferFrom(src, 0, src.size());
-//		src.close();
-//		dst.close();
+		// File sd = Environment.getExternalStorageDirectory();
+		// File data = Environment.getDataDirectory();
+		// String dstDBPath = "//data//" + MainActivity.PACKAGE_NAME
+		// + "//databases//" + IMPORT_DB_NAME;
+		// String srcDBPath = "/" + filename;
+		// File dstDB = new File(data, dstDBPath);
+		// File srcDB = new File(sd, srcDBPath);
+		// FileChannel src = new FileInputStream(srcDB).getChannel();
+		// FileChannel dst = new FileOutputStream(dstDB).getChannel();
+		// dst.transferFrom(src, 0, src.size());
+		// src.close();
+		// dst.close();
 		// open import database
 		StorageHandler temp = new StorageHandler(context, filename);
 		try {
