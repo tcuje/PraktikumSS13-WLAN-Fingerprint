@@ -16,7 +16,7 @@
     <string name="menu_import">Datenbank importieren</string>
     <string name="menu_clear">Datenbank leeren</string>
     <string name="menu_building">Gebäude</string>
-    <string name="activity_new_floor_floorlevel">Etagennummer</string>
+    <string name="floorlevel">Etagennummer</string>
     <string name="activity_new_floor_floorname">Etagenname</string>
     <string name="activity_new_floor_floorpath">Kartenpfad</string>
     <string name="floor_ground">Erdgeschoss</string>
@@ -28,7 +28,16 @@
     <string name="error_empty_input">Ein Feld ist leer, bitte ausfüllen</string>
     <string name="error_create_floor">Etage konnte nicht erstellt werden</string>
     <string name="success_create_floor">Etage erfolgreich erstellt</string>
-    <string name="error_no_building">Keine Gebäude vorhanden/ausgewählt!</string>
+    <string name="error_no_building">Keine Gebäude vorhanden/ausgewählt</string>
+    <string name="title_activity_data">DataActivity</string>
+    <string name="action_data">Daten bearbeiten</string>
+    <string name="data_activity_floor">Flur</string>
+    <string name="data_activity_building">Gebäude</string>
+    <string name="data_activity_access_point">Access Point</string>
+    <string name="data_activity_measure_point">Measure Point</string>
+    <string name="data_activity_update">Bearbeiten</string>
+    <string name="data_activity_delete">Löschen</string>
+    <string name="title_activity_notification">NotificationActivity</string>
     <string name="error_sd_dir">Kann SD Karte nicht beschreiben!</string>
     <string name="error_no_measure_point">Bitte einen Messpunkt wählen!</string>
     <string name="error_no_floor_file">Keine Kartendatei vorhanden!</string>
@@ -54,5 +63,14 @@
     <string name="database_export_question">Datenbank Export</string>
     <string name="choose_filename">Geben Sie den Dateinamen ein</string>
     <string name="file_not_exist">Die Datei existiert nicht</string>
+    <string name="floors">Etagen</string>
+    <string name="new_name">Neuer Name</string>
+    <string name="rename">Umbennen</string>
+    <string name="delete">Löschen</string>
+    <string name="save">Speichern</string>
+    <string name="measurepoints">Messpunkte</string>
+    <string name="delete_all">Alle löschen</string>
+    <string name="delete_last_measurepoint">Letzten Messpunkt löschen</string>
+    <string name="delete_measurepoints_on_floor">Messpunkte der Etage löschen </string>
 
 </resources>

@@ -46,7 +46,7 @@ public class NewFloorActivity extends SuperActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_new_floor);
 
-		createBuildingEdit = (EditText) findViewById(R.id.createBuildingEdit);
+		createBuildingEdit = (EditText) findViewById(R.id.dataBuildingRenameEdit);
 		buildingAdapter = new ArrayAdapter<CharSequence>(this,
 				R.layout.spinner_item);
 		buildingSpinner = (Spinner) findViewById(R.id.buildingSelectSpinner);

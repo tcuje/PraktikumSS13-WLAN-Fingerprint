@@ -58,18 +58,30 @@ public abstract class SuperActivity extends Activity {
 	@Override
 	public void onStart() {
 		super.onStart();
-		storage.onStart();
-		scm.onStart();
-		cmgr.onStart();
+		if (cmgr != null) {
+			cmgr.onStart();
+		}
+		if (scm != null) {
+			scm.onStart();
+		}
+		if (storage != null) {
+			storage.onStart();
+		}
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
 	@Override
 	public void onStop() {
 		super.onStop();
-		storage.onStop();
-		scm.onStop();
-		cmgr.onStop();
+		if (cmgr != null) {
+			cmgr.onStop();
+		}
+		if (scm != null) {
+			scm.onStop();
+		}
+		if (storage != null) {
+			storage.onStop();
+		}
 	}
 
 	public ScanManager getScanManager() {
@@ -109,6 +121,9 @@ public abstract class SuperActivity extends Activity {
 			intent = new Intent(this, DebugActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			break;
+		case R.id.action_data:
+			intent = new Intent(this, DataActivity.class);
+			break;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -117,5 +132,4 @@ public abstract class SuperActivity extends Activity {
 		}
 		return true;
 	}
-
 }
