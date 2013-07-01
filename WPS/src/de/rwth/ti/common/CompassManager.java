@@ -35,8 +35,8 @@ public class CompassManager implements SensorEventListener {
 		public void onEvent();
 	}
 
-	public CompassManager(Activity app, long medianTimeSpan) {
-		timeout = medianTimeSpan;
+	public CompassManager(Activity app, long averageTimeSpan) {
+		timeout = averageTimeSpan;
 		sensor = (SensorManager) app.getSystemService(Context.SENSOR_SERVICE);
 		accel = sensor.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		magnet = sensor.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
