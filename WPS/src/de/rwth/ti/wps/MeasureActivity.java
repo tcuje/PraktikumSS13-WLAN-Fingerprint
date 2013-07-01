@@ -279,11 +279,13 @@ public class MeasureActivity extends SuperActivity implements
 
 		@Override
 		public void onReceive(Context c, Intent intent) {
-			List<ScanResult> results = wifi.getScanResults();
-			// measure mode, save the access points to database
-			if (results != null && !results.isEmpty()) {
-				if (lastMP != null && waitDialog != null
-						&& waitDialog.isShowing()) {
+			if (lastMP != null && waitDialog != null && waitDialog.isShowing()) {
+				waitDialog.dismiss();
+				waitDialog = null;
+				// measure mode, save the access points to database
+				List<ScanResult> results = wifi.getScanResults();
+				if (results != null && !results.isEmpty()) {
+					// create scan entry
 					Date d = new Date();
 					Scan scan = MeasureActivity.this.getStorage().createScan(
 							lastMP,
@@ -296,13 +298,13 @@ public class MeasureActivity extends SuperActivity implements
 								result.frequency, result.SSID,
 								result.capabilities);
 					}
-					waitDialog.dismiss();
-					waitDialog = null;
+					// display success message
 					List<ScanResult> real = Location.deleteDoubles(results);
 					String msg = real.size() + " "
 							+ getString(R.string.success_scanning);
 					Toast.makeText(MeasureActivity.this, msg,
 							Toast.LENGTH_SHORT).show();
+					// update direction instruction
 					if (direction.ordinal() + 1 > CompassManager.Direction
 							.values().length) {
 						lastMP = null;
@@ -310,10 +312,10 @@ public class MeasureActivity extends SuperActivity implements
 					direction = CompassManager.Direction.values()[(direction
 							.ordinal() + 1) % 4];
 					updateDirectionText();
+				} else {
+					Toast.makeText(MeasureActivity.this, R.string.scan_no_ap,
+							Toast.LENGTH_LONG).show();
 				}
-			} else {
-				Toast.makeText(MeasureActivity.this, R.string.scan_no_ap,
-						Toast.LENGTH_LONG).show();
 			}
 		}
 	}

@@ -93,15 +93,6 @@ public class DebugActivity extends SuperActivity {
 					+ ap.getFreq() + "\t'" + ap.getSsid() + "'\t"
 					+ ap.getProps() + "\n");
 		}
-		if (all.size() > 0) {
-			String bssid = all.get(0).getBssid();
-			List<AccessPoint> first = getStorage().getAccessPoint(bssid);
-			textStatus.append("\n" + bssid + "\n");
-			for (AccessPoint ap : first) {
-				textStatus.append("AP\t" + ap.getId() + "\t" + ap.getScanId()
-						+ "\t" + ap.getBssid() + "\t" + ap.getLevel() + "\n");
-			}
-		}
 	}
 
 	@Override
