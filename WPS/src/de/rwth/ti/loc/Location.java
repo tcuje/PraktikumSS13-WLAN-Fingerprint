@@ -40,12 +40,29 @@ public class Location {
 		aps = deleteDoubles(aps);
 		
 		if (theTime > timeSinceBuilding + 40000 || kontrollvariable == 1) {
+			Building lastBuilding=tempBuilding;
+			Floor lastFloor=tempFloor;
 			tempBuilding = findBuilding(aps);
 			tempFloor = findMap(aps, tempBuilding);
+			if (lastBuilding!=null){
+				if ((lastBuilding.getId()!=tempBuilding.getId()) || (lastFloor.getId()!=tempFloor.getId())){
+					last_ten_results.clear();
+					secondToLastScan=null;
+					lastScan=null;
+				}
+			}
 			timeSinceFloor = theTime;
 			timeSinceBuilding = theTime;
 		} else if (theTime > timeSinceFloor + 10000 || kontrollvariable == 2) {
+			Floor lastFloor=tempFloor;
 			tempFloor = findMap(aps, tempBuilding);
+			if (lastFloor!=null){
+				if (lastFloor.getId()!=tempFloor.getId()){
+					last_ten_results.clear();
+					secondToLastScan=null;
+					lastScan=null;
+				}
+			}
 			timeSinceFloor = theTime;
 			timeSinceBuilding = theTime;
 		}
@@ -124,8 +141,8 @@ public class Location {
 //		}
 		
 		{
-			x=(0.4*scan.getX()+0.4*lastScan.getX()+0.2*secondToLastScan.getX());
-			y=(0.4*scan.getY()+0.4*lastScan.getY()+0.2*secondToLastScan.getY());
+			x=(0.3*scan.getX()+0.5*lastScan.getX()+0.2*secondToLastScan.getX());
+			y=(0.3*scan.getY()+0.5*lastScan.getY()+0.2*secondToLastScan.getY());
 		}
 		result = new LocationResult(scan.getBuilding(), scan.getMap(), x, y);
 		
