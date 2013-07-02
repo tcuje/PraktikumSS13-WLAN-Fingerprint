@@ -48,6 +48,15 @@ public interface IMeasureDataHandler extends IDataHandler {
 
 	/**
 	 * 
+	 * @param scan
+	 * @param limit
+	 * @return Returns a limited list of unique <code>AccessPoint</code>s for
+	 *         the <code>Scan</code> ordered by level
+	 */
+	public List<AccessPoint> getAccessPoints(Scan scan, int limit);
+
+	/**
+	 * 
 	 * @param bssid
 	 * @return Returns a sorted list with all entries for the mac
 	 */
@@ -79,9 +88,7 @@ public interface IMeasureDataHandler extends IDataHandler {
 	 * @return Returns the <code>Building</code> for the <code>Floor</code>
 	 */
 	public Building getBuilding(Floor floor);
-	
-	//FIXME Building getBuilding(int id)und Floor getFloor(int id)
-	
+
 	/**
 	 * 
 	 * @param floor

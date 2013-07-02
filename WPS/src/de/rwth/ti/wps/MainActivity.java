@@ -8,13 +8,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.PointF;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -39,6 +38,7 @@ public class MainActivity extends SuperActivity implements
 	private CheckBox checkLoc;
 	private IPMapView viewMap;
 	private ImageButton btCenter;
+	private Button btZoom;
 	private BroadcastReceiver wifiReceiver;
 
 	/** Called when the activity is first created. */
@@ -58,7 +58,10 @@ public class MainActivity extends SuperActivity implements
 		checkLoc.setOnCheckedChangeListener(this);
 		viewMap = (IPMapView) findViewById(R.id.viewMap);
 		viewMap.setMeasureMode(false);
+		viewMap.setOnScaleChangeListener(new ScaleChangeListener());
 		btCenter = (ImageButton) findViewById(R.id.centerButton);
+		btZoom = (Button) findViewById(R.id.zoomButton);
+		btZoom.setText("x1.0");
 		wifiReceiver = new MyReceiver();
 	}
 
@@ -68,6 +71,8 @@ public class MainActivity extends SuperActivity implements
 		super.onStart();
 		if (checkLoc.isChecked() == true) {
 			getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
+			getWindow()
+					.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		}
 		this.registerReceiver(wifiReceiver, new IntentFilter(
 				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
@@ -78,6 +83,7 @@ public class MainActivity extends SuperActivity implements
 	public void onStop() {
 		super.onStop();
 		getScanManager().stopAutoScan();
+		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		try {
 			this.unregisterReceiver(wifiReceiver);
 		} catch (IllegalArgumentException ex) {
@@ -90,30 +96,18 @@ public class MainActivity extends SuperActivity implements
 		if (view == checkLoc) {
 			if (state == true) {
 				getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
+				getWindow().addFlags(
+						WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 			} else {
 				getScanManager().stopAutoScan();
+				getWindow().clearFlags(
+						WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 			}
 		}
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.menu_localisation:
-			item.setChecked(!item.isChecked());
-			if (item.isChecked() == true) {
-				getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
-			} else {
-				getScanManager().stopAutoScan();
-			}
-			break;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-		return true;
 	}
 
 	private class MyReceiver extends BroadcastReceiver {
+
 		private WifiManager wifi = MainActivity.this.getScanManager().getWifi();
 		private CompassManager comp = MainActivity.this.getCompassManager();
 		private StorageHandler sth = MainActivity.this.getStorage();
@@ -123,25 +117,27 @@ public class MainActivity extends SuperActivity implements
 		public void onReceive(Context context, Intent intent) {
 			if (checkLoc.isChecked() == true) {
 				List<ScanResult> results = wifi.getScanResults();
-				Location myLoc = new Location(storage);
+				Location myLoc = new Location(sth);
 				LocationResult myLocRes = myLoc.getLocation(results,
-						(int) comp.getAzimut(), 0);
+						(int) comp.getMeanAzimut(), 0);
 				if (myLocRes == null) {
 					Toast.makeText(MainActivity.this,
 							"Position nicht gefunden", Toast.LENGTH_LONG)
 							.show();
 				} else {
-					Floor map = myLocRes.getMap();
+					Floor map = myLocRes.getFloor();
 					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed reload it
-						byte[] file = myLocRes.getMap().getFile();
+						byte[] file = myLocRes.getFloor().getFile();
 						if (file != null) {
 							ByteArrayInputStream bin = new ByteArrayInputStream(
 									file);
 							viewMap.newMap(bin);
-							List<MeasurePoint> mpl = storage.getMeasurePoints(map);
-							for(MeasurePoint mp : mpl){
-								viewMap.addOldPoint(new PointF((float)mp.getPosx(),(float)mp.getPosy()));
+							List<MeasurePoint> mpl = getStorage()
+									.getMeasurePoints(map);
+							for (MeasurePoint mp : mpl) {
+								mp.setQuality(getStorage().getQuality(mp));
+								viewMap.addOldPoint(mp);
 							}
 						} else {
 							Toast.makeText(MainActivity.this,
@@ -154,7 +150,7 @@ public class MainActivity extends SuperActivity implements
 					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed focus position once
 						lastMap = map;
-						viewMap.focusPoint();
+						viewMap.zoomPoint();
 					}
 				}
 			}
@@ -165,6 +161,33 @@ public class MainActivity extends SuperActivity implements
 		if (view == btCenter) {
 			viewMap.focusPoint();
 		}
+	}
+
+	public void zoomPosition(View view) {
+		if (view == btZoom) {
+			viewMap.zoomPoint();
+		}
+	}
+
+	private class ScaleChangeListener implements
+			IPMapView.OnScaleChangeListener {
+
+		@Override
+		public void onScaleChange(float scale) {
+			if (btZoom == null) {
+				// do nothing
+				return;
+			}
+			String zStr = Float.toString(scale);
+			int ind = zStr.indexOf(".");
+			if (ind != -1) {
+				int len = Math.min(ind + 3, zStr.length());
+				zStr = zStr.substring(0, len);
+			}
+			zStr = "x" + zStr;
+			btZoom.setText(zStr);
+		}
+
 	}
 
 }

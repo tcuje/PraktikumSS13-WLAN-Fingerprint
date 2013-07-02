@@ -16,9 +16,8 @@ public class MeasurePoint {
 			COLUMN_POS_X, COLUMN_POS_Y };
 	public static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
-			+ COLUMN_FLOORID + " integer REFERENCES " + Floor.TABLE_NAME + "("
-			+ Floor.COLUMN_ID + ") ON UPDATE CASCADE ON DELETE CASCADE, "
-			+ COLUMN_POS_X + " real, " + COLUMN_POS_Y + " real);";
+			+ COLUMN_FLOORID + " integer, " + COLUMN_POS_X + " real, "
+			+ COLUMN_POS_Y + " real);";
 	public static final String TABLE_DROP = "DROP TABLE IF EXISTS "
 			+ TABLE_NAME;
 
@@ -26,6 +25,7 @@ public class MeasurePoint {
 	private long floorId;
 	private double posx;
 	private double posy;
+	private double quality;
 
 	public long getId() {
 		return id;
@@ -57,6 +57,14 @@ public class MeasurePoint {
 
 	public void setPosy(double posy) {
 		this.posy = posy;
+	}
+
+	public double getQuality() {
+		return quality;
+	}
+
+	public void setQuality(double quality) {
+		this.quality = quality;
 	}
 
 	/**

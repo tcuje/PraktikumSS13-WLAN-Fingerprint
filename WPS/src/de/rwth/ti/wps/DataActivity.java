@@ -69,13 +69,14 @@ public class DataActivity extends SuperActivity implements
 		tabHelper.addTabItem(measurePointHeader, measurePointLayout);
 
 		buildingHelper = BuildingSpinnerHelper.createInstance(this, this,
-				storage,
+				getStorage(),
 				(Spinner) findViewById(R.id.dataBuildingBuildingSpinner));
 		buildingHelper
 				.addSpinner((Spinner) findViewById(R.id.dataFloorBuildingSpinner));
 		buildingHelper
 				.addSpinner((Spinner) findViewById(R.id.dataMeasurePointBuildingSpinner));
-		floorHelper = FloorSpinnerHelper.createInstance(this, this, storage,
+		floorHelper = FloorSpinnerHelper.createInstance(this, this,
+				getStorage(),
 				(Spinner) findViewById(R.id.dataFloorFloorSpinner));
 		floorHelper
 				.addSpinner((Spinner) findViewById(R.id.dataMeasurePointFloorSpinner));
@@ -146,7 +147,7 @@ public class DataActivity extends SuperActivity implements
 
 	public void dataDeleteBuilding(View v) {
 		if (selectedBuilding != null) {
-			if (storage.deleteBuilding(selectedBuilding)) {
+			if (getStorage().deleteBuilding(selectedBuilding)) {
 				buildingHelper.refresh();
 				buildingEdit.setText("");
 				makeToast(String.format(getString(R.string.success_delete),
@@ -164,7 +165,7 @@ public class DataActivity extends SuperActivity implements
 			newBuilding = new Building();
 			newBuilding.setName(buildingName);
 			newBuilding.setId(selectedBuilding.getId());
-			if (storage.changeBuilding(newBuilding)) {
+			if (getStorage().changeBuilding(newBuilding)) {
 				buildingHelper.refresh();
 				buildingEdit.setText("");
 				makeToast(String.format(getString(R.string.success_save),
@@ -179,10 +180,10 @@ public class DataActivity extends SuperActivity implements
 	}
 
 	public void dataDeleteAllMP(View v) {
-		mpList = storage.getAllMeasurePoints();
+		mpList = getStorage().getAllMeasurePoints();
 		boolean success = true;
 		for (MeasurePoint MP : mpList) {
-			if (!storage.deleteMeasurePoint(MP)) {
+			if (!getStorage().deleteMeasurePoint(MP)) {
 				success = false;
 			}
 
@@ -199,10 +200,10 @@ public class DataActivity extends SuperActivity implements
 	public void dataDeleteFloorMP(View v) {
 		if (selectedBuilding != null) {
 			if (selectedFloor != null) {
-				mpList = storage.getMeasurePoints(selectedFloor);
+				mpList = getStorage().getMeasurePoints(selectedFloor);
 				boolean success = true;
 				for (MeasurePoint MP : mpList) {
-					if (!storage.deleteMeasurePoint(MP)) {
+					if (!getStorage().deleteMeasurePoint(MP)) {
 						success = false;
 					}
 				}
@@ -218,9 +219,9 @@ public class DataActivity extends SuperActivity implements
 	}
 
 	public void dataDeleteLastMP(View v) {
-		mpList = storage.getAllMeasurePoints();
+		mpList = getStorage().getAllMeasurePoints();
 		MeasurePoint deleteMP = mpList.get(mpList.size() - 1);
-		if (storage.deleteMeasurePoint(deleteMP)) {
+		if (getStorage().deleteMeasurePoint(deleteMP)) {
 			makeToast(String.format(getString(R.string.success_delete),
 					getString(R.string.measurepoint)));
 		} else {
@@ -233,7 +234,7 @@ public class DataActivity extends SuperActivity implements
 		if (selectedBuilding != null) {
 			// FloorList = storage.getFloors(selectedBuilding);
 			if (selectedFloor != null) {
-				if (storage.deleteFloor(selectedFloor)) {
+				if (getStorage().deleteFloor(selectedFloor)) {
 					buildingHelper.refresh();
 					floorHelper.refresh();
 					floorEdit.setText("");
@@ -258,7 +259,7 @@ public class DataActivity extends SuperActivity implements
 					newFloor.setId(selectedFloor.getId());
 					newFloor.setLevel(floorLevel);
 					newFloor.setName(floorName);
-					if (storage.changeFloor(newFloor)) {
+					if (getStorage().changeFloor(newFloor)) {
 						buildingHelper.refresh();
 						floorHelper.refresh();
 						floorEdit.setText("");
