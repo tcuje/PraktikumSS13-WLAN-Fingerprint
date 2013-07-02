@@ -159,20 +159,6 @@ public class NewFloorActivity extends SuperActivity implements
 		}
 	}
 
-	private String createFloorNameFromLevel(int level) {
-		String tString = "";
-		if (level < 0) {
-			tString = String.valueOf((-1) * level) + ". "
-					+ getString(R.string.floor_basement);
-		} else if (level > 0) {
-			tString = String.valueOf(level) + ". "
-					+ getString(R.string.floor_upper);
-		} else {
-			tString = getString(R.string.floor_ground);
-		}
-		return tString;
-	}
-
 	public void createFloor(View view) {
 		String message = null;
 		floorName = floorNameEdit.getText().toString().trim();

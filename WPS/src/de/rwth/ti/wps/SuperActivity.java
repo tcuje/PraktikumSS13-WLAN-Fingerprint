@@ -107,6 +107,20 @@ public abstract class SuperActivity extends Activity {
 		return cmgr;
 	}
 
+	protected String createFloorNameFromLevel(int level) {
+		String tString = "";
+		if (level < 0) {
+			tString = String.valueOf((-1) * level) + ". "
+					+ getString(R.string.floor_basement);
+		} else if (level > 0) {
+			tString = String.valueOf(level) + ". "
+					+ getString(R.string.floor_upper);
+		} else {
+			tString = getString(R.string.floor_ground);
+		}
+		return tString;
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Start other Activities, when the related MenuItem is selected
