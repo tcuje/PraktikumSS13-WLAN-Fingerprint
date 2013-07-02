@@ -141,8 +141,8 @@ public class Location {
 //		}
 		
 		{
-			x=(0.4*scan.getX()+0.4*lastScan.getX()+0.2*secondToLastScan.getX());
-			y=(0.4*scan.getY()+0.4*lastScan.getY()+0.2*secondToLastScan.getY());
+			x=(0.3*scan.getX()+0.5*lastScan.getX()+0.2*secondToLastScan.getX());
+			y=(0.3*scan.getY()+0.5*lastScan.getY()+0.2*secondToLastScan.getY());
 		}
 		result = new LocationResult(scan.getBuilding(), scan.getMap(), x, y);
 		
