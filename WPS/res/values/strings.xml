@@ -71,6 +71,11 @@
     <string name="measurepoints">Messpunkte</string>
     <string name="delete_all">Alle löschen</string>
     <string name="delete_last_measurepoint">Letzten Messpunkt löschen</string>
-    <string name="delete_measurepoints_on_floor">Messpunkte der Etage löschen </string>
-
+    <string name="delete_measurepoints_on_floor">Messpunkte der Etage löschen</string>
+    <string name="success_delete">%1$s erfolgreich gelöscht</string>
+    <string name="success_save">%1$s erfolgreich gespeichert</string>
+    <string name="error_delete">%1$s: Fehler beim Löschen</string>
+    <string name="error_save">%1$s: Fehler beim Speichern</string>
+    <string name="floor">Etage</string>
+    <string name="measurepoint">Messpunkt</string>
 </resources>

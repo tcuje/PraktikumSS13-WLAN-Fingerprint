@@ -6,5 +6,6 @@
     <dimen name="activity_data_header_padding">5dp</dimen>
     <dimen name="activity_data_header_margin_bottom">3dp</dimen>
     <dimen name="activity_data_content_margin_bottom">10dp</dimen>
+    <dimen name="spinner_item_padding_left">7dp</dimen>
 
 </resources>

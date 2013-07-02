@@ -67,6 +67,10 @@ public abstract class SuperActivity extends Activity {
 		if (storage != null) {
 			storage.onStart();
 		}
+//		// launch default activity for debugging only
+//		Intent intent = new Intent(this, MeasureActivity.class);
+//		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//		startActivity(intent);
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
@@ -120,9 +124,6 @@ public abstract class SuperActivity extends Activity {
 		case R.id.action_debug:
 			intent = new Intent(this, DebugActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			break;
-		case R.id.action_data:
-			intent = new Intent(this, DataActivity.class);
 			break;
 		default:
 			return super.onOptionsItemSelected(item);

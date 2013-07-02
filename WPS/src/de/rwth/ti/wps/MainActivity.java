@@ -76,10 +76,6 @@ public class MainActivity extends SuperActivity implements
 		}
 		this.registerReceiver(wifiReceiver, new IntentFilter(
 				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-//		// launch default activity for debugging only
-//		Intent intent = new Intent(this, MeasureActivity.class);
-//		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//		startActivity(intent);
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
