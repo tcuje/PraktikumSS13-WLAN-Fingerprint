@@ -6,6 +6,7 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -102,6 +103,7 @@ public class DebugActivity extends SuperActivity {
 		case R.id.menu_export:
 			final EditText input = new EditText(DebugActivity.this);
 			input.setText(Constants.LOCAL_DB_NAME);
+			input.requestFocus();
 			new AlertDialog.Builder(DebugActivity.this)
 					.setTitle(R.string.database_export_question)
 					.setMessage(R.string.choose_filename)
@@ -145,12 +147,32 @@ public class DebugActivity extends SuperActivity {
 					new ChooseFileDialog.ChosenFileListener() {
 						@Override
 						public void onChosenFile(String chosenFile) {
-							if (getStorage().importDatabase(chosenFile) == true) {
-								Toast.makeText(getBaseContext(),
-										R.string.database_import_success,
-										Toast.LENGTH_SHORT).show();
-							}
-							showDebug();
+							AsyncTask<String, Integer, Boolean> at = new AsyncTask<String, Integer, Boolean>() {
+								@Override
+								protected Boolean doInBackground(
+										String... params) {
+									return getStorage().importDatabase(
+											params[0]);
+								}
+
+								@Override
+								protected void onProgressUpdate(
+										Integer... progress) {
+//									setProgressPercent(progress[0]);
+								}
+
+								@Override
+								protected void onPostExecute(Boolean result) {
+									if (result == true) {
+										Toast.makeText(
+												getBaseContext(),
+												R.string.database_import_success,
+												Toast.LENGTH_SHORT).show();
+									}
+									showDebug();
+								}
+							};
+							at.execute(chosenFile);
 						}
 					}, Constants.DB_SUFFIX);
 			directoryChooserDialog.chooseDirectory(Constants.SD_APP_DIR);

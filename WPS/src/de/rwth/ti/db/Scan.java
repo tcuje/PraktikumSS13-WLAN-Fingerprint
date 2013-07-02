@@ -17,10 +17,8 @@ public class Scan {
 
 	public static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
-			+ COLUMN_MPID + " integer REFERENCES " + MeasurePoint.TABLE_NAME
-			+ "(" + MeasurePoint.COLUMN_ID
-			+ ") ON UPDATE CASCADE ON DELETE CASCADE, " + COLUMN_TIME
-			+ " integer, " + COLUMN_COMPASS + " integer);";
+			+ COLUMN_MPID + " integer, " + COLUMN_TIME + " integer, "
+			+ COLUMN_COMPASS + " integer);";
 	public static final String TABLE_DROP = "DROP TABLE IF EXISTS "
 			+ TABLE_NAME;
 

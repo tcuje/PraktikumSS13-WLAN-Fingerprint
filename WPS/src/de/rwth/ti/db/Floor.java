@@ -21,10 +21,9 @@ public class Floor {
 
 	public static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
-			+ COLUMN_BID + " integer REFERENCES " + Building.TABLE_NAME + "("
-			+ Building.COLUMN_ID + ") ON UPDATE CASCADE ON DELETE CASCADE, "
-			+ COLUMN_NAME + " text null, " + COLUMN_FILE + " blob, "
-			+ COLUMN_LEVEL + " integer, " + COLUMN_NORTH + " integer);";
+			+ COLUMN_BID + " integer, " + COLUMN_NAME + " text null, "
+			+ COLUMN_FILE + " blob, " + COLUMN_LEVEL + " integer, "
+			+ COLUMN_NORTH + " integer);";
 	public static final String TABLE_DROP = "DROP TABLE IF EXISTS "
 			+ TABLE_NAME;
 

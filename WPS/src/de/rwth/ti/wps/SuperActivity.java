@@ -113,12 +113,16 @@ public abstract class SuperActivity extends Activity {
 		// Start other Activities, when the related MenuItem is selected
 		Intent intent = null;
 		switch (item.getItemId()) {
+		case R.id.action_new_floor:
+			intent = new Intent(this, NewFloorActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			break;
 		case R.id.action_measure:
 			intent = new Intent(this, MeasureActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			break;
-		case R.id.action_new_floor:
-			intent = new Intent(this, NewFloorActivity.class);
+		case R.id.action_data:
+			intent = new Intent(this, DataActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			break;
 		case R.id.action_debug:

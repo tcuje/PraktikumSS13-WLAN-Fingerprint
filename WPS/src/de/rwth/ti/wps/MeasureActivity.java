@@ -62,13 +62,13 @@ public class MeasureActivity extends SuperActivity implements
 		setContentView(R.layout.activity_measure);
 
 		buildingAdapter = new ArrayAdapter<CharSequence>(this,
-				R.layout.spinner_item);
+				R.layout.spinner_item, R.id.spinner_item_text);
 		buildingSpinner = (Spinner) findViewById(R.id.buildingSelectSpinner);
 		buildingSpinner.setAdapter(buildingAdapter);
 		buildingSpinner.setOnItemSelectedListener(this);
 
 		floorAdapter = new ArrayAdapter<CharSequence>(this,
-				R.layout.spinner_item);
+				R.layout.spinner_item, R.id.spinner_item_text);
 		floorSpinner = (Spinner) findViewById(R.id.floorSelectSpinner);
 		floorSpinner.setAdapter(floorAdapter);
 		floorSpinner.setOnItemSelectedListener(this);

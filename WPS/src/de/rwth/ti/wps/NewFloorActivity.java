@@ -48,7 +48,7 @@ public class NewFloorActivity extends SuperActivity implements
 
 		createBuildingEdit = (EditText) findViewById(R.id.dataBuildingRenameEdit);
 		buildingAdapter = new ArrayAdapter<CharSequence>(this,
-				R.layout.spinner_item);
+				R.layout.spinner_item, R.id.spinner_item_text);
 		buildingSpinner = (Spinner) findViewById(R.id.buildingSelectSpinner);
 		buildingSpinner.setAdapter(buildingAdapter);
 		buildingSpinner.setOnItemSelectedListener(this);

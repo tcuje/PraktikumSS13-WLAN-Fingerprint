@@ -12,6 +12,7 @@ import android.widget.Spinner;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.StorageHandler;
+import de.rwth.ti.wps.R;
 
 public class FloorSpinnerHelper implements OnItemSelectedListener,
 		OnBuildingChangedListener {
@@ -34,7 +35,7 @@ public class FloorSpinnerHelper implements OnItemSelectedListener,
 		listenerList = new ArrayList<OnFloorChangedListener>();
 
 		adapter = new ArrayAdapter<CharSequence>(context,
-				android.R.layout.simple_spinner_item);
+				R.layout.spinner_item, R.id.spinner_item_text);
 		for (Spinner tSpinner : spinnerList) {
 			tSpinner.setAdapter(adapter);
 			tSpinner.setOnItemSelectedListener(this);

@@ -22,11 +22,9 @@ public class AccessPoint {
 
 	public static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
-			+ COLUMN_SCANID + " integer REFERENCES " + Scan.TABLE_NAME + "("
-			+ Scan.COLUMN_ID + ") ON UPDATE CASCADE ON DELETE CASCADE, "
-			+ COLUMN_BSSID + " text not null, " + COLUMN_LEVEL + " integer, "
-			+ COLUMN_FREQ + " integer, " + COLUMN_SSID + " text null, "
-			+ COLUMN_PROPS + " text null);";
+			+ COLUMN_SCANID + " integer, " + COLUMN_BSSID + " text not null, "
+			+ COLUMN_LEVEL + " integer, " + COLUMN_FREQ + " integer, "
+			+ COLUMN_SSID + " text null, " + COLUMN_PROPS + " text null);";
 	public static final String TABLE_DROP = "DROP TABLE IF EXISTS "
 			+ TABLE_NAME;
 
