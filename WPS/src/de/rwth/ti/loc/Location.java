@@ -78,7 +78,7 @@ public class Location {
 		LocationResult result = findMP(aps, tempFloor, tempBuilding, compass);
 		secondToLastScan = lastScan;
 		lastScan = result;
-		while (secondToLastScan == null) {
+		while (secondToLastScan == null && last_ten_results.size() < 5) {
 			last_ten_results.add(result);
 			result = findMP(aps, tempFloor, tempBuilding, compass);
 			secondToLastScan = lastScan;
