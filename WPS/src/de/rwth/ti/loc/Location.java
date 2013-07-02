@@ -16,12 +16,17 @@ import de.rwth.ti.share.IMeasureDataHandler;
 public class Location {
 
 	private IMeasureDataHandler dataHandler;
-	private long timeSinceFloor = 0;
-	private long timeSinceBuilding = 0;
-	private long theTime;
-	private Building tempBuilding;
-	private Floor tempFloor;
+	private static long timeSinceFloor = 0;
+	private static long timeSinceBuilding = 0;
+	private static LocationResult lastScan = null;
+	private static LocationResult secondToLastScan = null;
+	private static long theTime;
+	private static Building tempBuilding;
+	private static Floor tempFloor;
 	Calendar time = Calendar.getInstance();
+	private static List<LocationResult> last_ten_results = new LinkedList();
+
+	// LocationResult result = null;
 
 	public Location(IMeasureDataHandler dataHandler) {
 		this.dataHandler = dataHandler;
@@ -42,18 +47,123 @@ public class Location {
 		aps = deleteDoubles(aps);
 
 		if (theTime > timeSinceBuilding + 40000 || kontrollvariable == 1) {
+			Building lastBuilding = tempBuilding;
+			Floor lastFloor = tempFloor;
 			tempBuilding = findBuilding(aps);
 			tempFloor = findFloor(aps, tempBuilding);
+			if (lastBuilding != null) {
+				if ((lastBuilding.getId() != tempBuilding.getId())
+						|| (lastFloor.getId() != tempFloor.getId())) {
+					last_ten_results.clear();
+					secondToLastScan = null;
+					lastScan = null;
+				}
+			}
 			timeSinceFloor = theTime;
 			timeSinceBuilding = theTime;
 		} else if (theTime > timeSinceFloor + 10000 || kontrollvariable == 2) {
+			Floor lastFloor = tempFloor;
 			tempFloor = findFloor(aps, tempBuilding);
+			if (lastFloor != null) {
+				if (lastFloor.getId() != tempFloor.getId()) {
+					last_ten_results.clear();
+					secondToLastScan = null;
+					lastScan = null;
+				}
+			}
 			timeSinceFloor = theTime;
 			timeSinceBuilding = theTime;
 		}
-		LocationResult result = findMP(aps, tempFloor, tempBuilding, compass);
-		return result;
 
+		LocationResult result = findMP(aps, tempFloor, tempBuilding, compass);
+		secondToLastScan = lastScan;
+		lastScan = result;
+		while (secondToLastScan == null) {
+			last_ten_results.add(result);
+			result = findMP(aps, tempFloor, tempBuilding, compass);
+			secondToLastScan = lastScan;
+			lastScan = result;
+		}
+		if (last_ten_results.size() >= 10) {
+			last_ten_results.remove(0);
+		}
+
+		if (!(lastScan == null || result == null)) {
+			if (filter_chooser(last_ten_results, result)) {
+				result = filterLP2(secondToLastScan, lastScan, result);
+			} else {
+				result = filterLP(secondToLastScan, lastScan, result);
+			}
+
+		}
+		last_ten_results.add(result);
+		return result;
+	}
+
+	private LocationResult filterLP(LocationResult secondToLastScan,
+			LocationResult lastScan, LocationResult scan) {
+		LocationResult result;
+		double x = 0;
+		double y = 0;
+//		if (scan.getMap()!=lastScan.getMap() || scan.getMap()!=secondToLastScan.getMap()){
+//			return scan;
+//		}
+
+		{
+			x = (0.7 * scan.getX() + 0.2 * lastScan.getX() + 0.1 * secondToLastScan
+					.getX());
+			y = (0.7 * scan.getY() + 0.2 * lastScan.getY() + 0.1 * secondToLastScan
+					.getY());
+		}
+		result = new LocationResult(scan.getBuilding(), scan.getFloor(), x, y);
+
+		return result;
+	}
+
+	private boolean filter_chooser(List<LocationResult> last_ten_results,
+			LocationResult aktuell) {
+		double x10 = 0;
+		double y10 = 0;
+		double x1 = 0;
+		double y1 = 0;
+		for (int j = 1; j < last_ten_results.size(); j++) {
+			x10 += Math.abs(last_ten_results.get(j).getX()
+					- last_ten_results.get(j - 1).getX());
+			y10 += Math.abs(last_ten_results.get(j).getY()
+					- last_ten_results.get(j - 1).getY());
+		}
+		x10 = x10 / (last_ten_results.size() - 1);
+		y10 = y10 / (last_ten_results.size() - 1);
+		x1 = Math.abs(aktuell.getX()
+				- last_ten_results.get(last_ten_results.size() - 1).getX());
+		y1 = Math.abs(aktuell.getY()
+				- last_ten_results.get(last_ten_results.size() - 1).getY());
+		if ((x1 > 1.5 * x10) || (y1 > 1.5 * y10)) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+	private LocationResult filterLP2(LocationResult secondToLastScan,
+			LocationResult lastScan, LocationResult scan) {
+		LocationResult result;
+		double x = 0;
+		double y = 0;
+//		if (scan.getMap()!=lastScan.getMap() || scan.getMap()!=secondToLastScan.getMap()){
+//			return scan;
+//		}
+
+		{
+			x = (0.3 * scan.getX() + 0.5 * lastScan.getX() + 0.2 * secondToLastScan
+					.getX());
+			y = (0.3 * scan.getY() + 0.5 * lastScan.getY() + 0.2 * secondToLastScan
+					.getY());
+		}
+		result = new LocationResult(scan.getBuilding(), scan.getFloor(), x, y);
+
+		return result;
 	}
 
 	private Building findBuilding(List<ScanResult> aps) {
