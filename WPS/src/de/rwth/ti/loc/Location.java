@@ -40,12 +40,29 @@ public class Location {
 		aps = deleteDoubles(aps);
 		
 		if (theTime > timeSinceBuilding + 40000 || kontrollvariable == 1) {
+			Building lastBuilding=tempBuilding;
+			Floor lastFloor=tempFloor;
 			tempBuilding = findBuilding(aps);
 			tempFloor = findMap(aps, tempBuilding);
+			if (lastBuilding!=null){
+				if ((lastBuilding.getId()!=tempBuilding.getId()) || (lastFloor.getId()!=tempFloor.getId())){
+					last_ten_results.clear();
+					secondToLastScan=null;
+					lastScan=null;
+				}
+			}
 			timeSinceFloor = theTime;
 			timeSinceBuilding = theTime;
 		} else if (theTime > timeSinceFloor + 10000 || kontrollvariable == 2) {
+			Floor lastFloor=tempFloor;
 			tempFloor = findMap(aps, tempBuilding);
+			if (lastFloor!=null){
+				if (lastFloor.getId()!=tempFloor.getId()){
+					last_ten_results.clear();
+					secondToLastScan=null;
+					lastScan=null;
+				}
+			}
 			timeSinceFloor = theTime;
 			timeSinceBuilding = theTime;
 		}
