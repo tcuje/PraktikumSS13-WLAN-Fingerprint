@@ -24,8 +24,9 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import de.rwth.ti.common.CompassManager;
+import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.Constants;
+import de.rwth.ti.common.DataHelper;
 import de.rwth.ti.common.IPMapView;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
@@ -48,7 +49,7 @@ public class MeasureActivity extends SuperActivity implements
 	private IPMapView mapView;
 	private TextView directionText;
 	private TextView compassText;
-	private CompassManager.Direction direction;
+	private Cardinal direction;
 	private BroadcastReceiver wifiReceiver;
 	private MeasurePoint lastMP;
 	private AlertDialog waitDialog;
@@ -84,7 +85,7 @@ public class MeasureActivity extends SuperActivity implements
 
 		timer = new Timer();
 
-		direction = CompassManager.Direction.NORTH;
+		direction = Cardinal.NORTH;
 		wifiReceiver = new MyReceiver();
 		updateCompass();
 	}
@@ -104,26 +105,22 @@ public class MeasureActivity extends SuperActivity implements
 		// update face text
 		switch (direction) {
 		case NORTH:
-			if (lastAzimuth > -Constants.ANGLE_DIFF
-					&& lastAzimuth < Constants.ANGLE_DIFF) {
+			if (DataHelper.isInRange(lastAzimuth, 0, Constants.ANGLE_DIFF)) {
 				color = Color.GREEN;
 			}
 			break;
 		case EAST:
-			if (lastAzimuth > 90 - Constants.ANGLE_DIFF
-					&& lastAzimuth < 90 + Constants.ANGLE_DIFF) {
+			if (DataHelper.isInRange(lastAzimuth, 90, Constants.ANGLE_DIFF)) {
 				color = Color.GREEN;
 			}
 			break;
 		case SOUTH:
-			if (lastAzimuth > 180 - Constants.ANGLE_DIFF
-					|| lastAzimuth < -180 + Constants.ANGLE_DIFF) {
+			if (DataHelper.isInRange(lastAzimuth, 180, Constants.ANGLE_DIFF)) {
 				color = Color.GREEN;
 			}
 			break;
 		case WEST:
-			if (lastAzimuth > -90 - Constants.ANGLE_DIFF
-					&& lastAzimuth < -90 + Constants.ANGLE_DIFF) {
+			if (DataHelper.isInRange(lastAzimuth, 270, Constants.ANGLE_DIFF)) {
 				color = Color.GREEN;
 			}
 			break;
@@ -287,11 +284,13 @@ public class MeasureActivity extends SuperActivity implements
 				if (results != null && !results.isEmpty()) {
 					// create scan entry
 					Date d = new Date();
+//					Scan scan = MeasureActivity.this.getStorage().createScan(
+//							lastMP, d.getTime() / 1000,
+//							getCompassManager().getMeanAzimut());
+					// use fake azimut values
 					Scan scan = MeasureActivity.this.getStorage().createScan(
-							lastMP,
-							d.getTime() / 1000,
-							MeasureActivity.this.getCompassManager()
-									.getMeanAzimut());
+							lastMP, d.getTime() / 1000,
+							direction.getAsAzimuth());
 					for (ScanResult result : results) {
 						MeasureActivity.this.getStorage().createAccessPoint(
 								scan, result.BSSID, result.level,
@@ -305,12 +304,10 @@ public class MeasureActivity extends SuperActivity implements
 					Toast.makeText(MeasureActivity.this, msg,
 							Toast.LENGTH_SHORT).show();
 					// update direction instruction
-					if (direction.ordinal() + 1 > CompassManager.Direction
-							.values().length) {
+					if (direction.ordinal() + 1 > Cardinal.values().length) {
 						lastMP = null;
 					}
-					direction = CompassManager.Direction.values()[(direction
-							.ordinal() + 1) % 4];
+					direction = Cardinal.values()[(direction.ordinal() + 1) % 4];
 					updateDirectionText();
 				} else {
 					Toast.makeText(MeasureActivity.this, R.string.scan_no_ap,

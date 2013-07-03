@@ -19,6 +19,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.widget.Toast;
 import de.rwth.ti.common.Constants;
+import de.rwth.ti.common.DataHelper;
 import de.rwth.ti.share.IGUIDataHandler;
 import de.rwth.ti.share.IMeasureDataHandler;
 import de.rwth.ti.wps.R;
@@ -623,14 +624,13 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	@Override
-	public List<Scan> getScans(Floor floor, int compass) {
+	public List<Scan> getScans(Floor floor, long compass) {
 		List<Scan> result = new LinkedList<Scan>();
 		List<MeasurePoint> mps = getMeasurePoints(floor);
 		for (MeasurePoint mp : mps) {
 			List<Scan> scans = getScans(mp);
 			for (Scan scan : scans) {
-				if (scan.getCompass() > compass - 45
-						|| scan.getCompass() < compass + 45) {
+				if (DataHelper.isInRange(scan.getCompass(), compass, 90)) {
 					result.add(scan);
 				}
 			}

@@ -18,10 +18,6 @@ import android.hardware.SensorManager;
  */
 public class CompassManager implements SensorEventListener {
 
-	public enum Direction {
-		NORTH, EAST, SOUTH, WEST
-	}
-
 	private final long timeout;
 	private SensorManager sensor;
 	private Sensor accel;
@@ -113,8 +109,8 @@ public class CompassManager implements SensorEventListener {
 
 	private class SensorValue {
 
-		private double value;
-		private long time;
+		private final double value;
+		private final long time;
 
 		public SensorValue(double value) {
 			this.value = value;
@@ -131,10 +127,13 @@ public class CompassManager implements SensorEventListener {
 
 	}
 
+	/**
+	 * Delete old sensor values but keep at least one
+	 */
 	private void cleanValues() {
 		long time = new Date().getTime();
 		Iterator<SensorValue> itVal = values.iterator();
-		while (itVal.hasNext()) {
+		while (itVal.hasNext() && values.size() > 1) {
 			SensorValue v = itVal.next();
 			if ((time - v.getTime()) > timeout) {
 				itVal.remove();

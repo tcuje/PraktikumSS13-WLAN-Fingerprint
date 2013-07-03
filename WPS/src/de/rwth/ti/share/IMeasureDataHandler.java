@@ -96,6 +96,6 @@ public interface IMeasureDataHandler extends IDataHandler {
 	 * @return Returns a list of all <code>Scan</code>s on specified floor
 	 *         within 45deg of the compass reading
 	 */
-	public List<Scan> getScans(Floor floor, int azimuth);
+	public List<Scan> getScans(Floor floor, long azimuth);
 
 }

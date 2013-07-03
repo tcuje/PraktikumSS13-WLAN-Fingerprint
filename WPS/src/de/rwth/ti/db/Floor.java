@@ -94,4 +94,15 @@ public class Floor {
 		return result;
 	}
 
+	@Override
+	public boolean equals(Object other) {
+		if (other != null && other instanceof Floor) {
+			Floor f = (Floor) other;
+			if (this.getId() == f.getId()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

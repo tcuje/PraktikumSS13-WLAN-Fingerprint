@@ -19,6 +19,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
 import android.widget.Toast;
+import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.CompassManager;
 import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.IPMapView;
@@ -118,8 +119,10 @@ public class MainActivity extends SuperActivity implements
 			if (checkLoc.isChecked() == true) {
 				List<ScanResult> results = wifi.getScanResults();
 				Location myLoc = new Location(sth);
-				LocationResult myLocRes = myLoc.getLocation(results,
-						(int) comp.getMeanAzimut(), 0);
+				Cardinal direction = Cardinal.getFromAzimuth(comp
+						.getMeanAzimut());
+				LocationResult myLocRes = myLoc.getLocation(results, direction,
+						0);
 				if (myLocRes == null) {
 					Toast.makeText(MainActivity.this,
 							"Position nicht gefunden", Toast.LENGTH_LONG)

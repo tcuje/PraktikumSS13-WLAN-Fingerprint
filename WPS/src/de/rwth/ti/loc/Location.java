@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.net.wifi.ScanResult;
+import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.Constants;
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
@@ -20,13 +21,10 @@ public class Location {
 	private static long timeSinceBuilding = 0;
 	private static LocationResult lastScan = null;
 	private static LocationResult secondToLastScan = null;
-	private static long theTime;
 	private static Building tempBuilding;
 	private static Floor tempFloor;
-	Calendar time = Calendar.getInstance();
-	private static List<LocationResult> last_ten_results = new LinkedList();
-
-	// LocationResult result = null;
+	private static Calendar time = Calendar.getInstance();
+	private static List<LocationResult> last_ten_results = new LinkedList<LocationResult>();
 
 	public Location(IMeasureDataHandler dataHandler) {
 		this.dataHandler = dataHandler;
@@ -41,46 +39,50 @@ public class Location {
 	 *            Ablauf den Zeitvariablen
 	 * @return
 	 */
-	public LocationResult getLocation(List<ScanResult> aps, int compass,
+	public LocationResult getLocation(List<ScanResult> aps, Cardinal direction,
 			int kontrollvariable) {
-		theTime = time.getTime().getTime();
+		long theTime = time.getTime().getTime();
 		aps = deleteDoubles(aps);
 
 		if (theTime > timeSinceBuilding + 40000 || kontrollvariable == 1) {
 			Building lastBuilding = tempBuilding;
 			Floor lastFloor = tempFloor;
 			tempBuilding = findBuilding(aps);
-			tempFloor = findFloor(aps, tempBuilding);
-			if (lastBuilding != null) {
-				if ((lastBuilding.getId() != tempBuilding.getId())
-						|| (lastFloor.getId() != tempFloor.getId())) {
-					last_ten_results.clear();
-					secondToLastScan = null;
-					lastScan = null;
+			if (tempBuilding != null) {
+				timeSinceBuilding = theTime;
+				tempFloor = findFloor(aps, tempBuilding);
+				if (tempFloor != null) {
+					timeSinceFloor = theTime;
+					if (lastBuilding != null) {
+						if ((lastBuilding.getId() != tempBuilding.getId())
+								|| (lastFloor.getId() != tempFloor.getId())) {
+							last_ten_results.clear();
+							secondToLastScan = null;
+							lastScan = null;
+						}
+					}
 				}
 			}
-			timeSinceFloor = theTime;
-			timeSinceBuilding = theTime;
 		} else if (theTime > timeSinceFloor + 10000 || kontrollvariable == 2) {
 			Floor lastFloor = tempFloor;
 			tempFloor = findFloor(aps, tempBuilding);
-			if (lastFloor != null) {
-				if (lastFloor.getId() != tempFloor.getId()) {
+			if (tempFloor != null) {
+				if (tempFloor.equals(lastFloor) == false) {
 					last_ten_results.clear();
 					secondToLastScan = null;
 					lastScan = null;
 				}
+				timeSinceFloor = theTime;
+				timeSinceBuilding = theTime;
 			}
-			timeSinceFloor = theTime;
-			timeSinceBuilding = theTime;
 		}
 
-		LocationResult result = findMP(aps, tempFloor, tempBuilding, compass);
+		LocationResult result = findMP(aps, tempFloor, tempBuilding, direction);
 		secondToLastScan = lastScan;
 		lastScan = result;
 		while (secondToLastScan == null && last_ten_results.size() < 5) {
 			last_ten_results.add(result);
-			result = findMP(aps, tempFloor, tempBuilding, compass);
+			result = findMP(aps, tempFloor, tempBuilding, direction);
 			secondToLastScan = lastScan;
 			lastScan = result;
 		}
@@ -206,16 +208,17 @@ public class Location {
 	}
 
 	private LocationResult findMP(List<ScanResult> aps, Floor map,
-			Building building, int compass) {
+			Building building, Cardinal compass) {
 		if (aps.isEmpty() || map == null) {
 			return null;
 		}
-		List<Scan> scanEntries = dataHandler.getScans(map, compass);
+		List<Scan> scanEntries = dataHandler.getScans(map,
+				compass.getAsAzimuth());
 		List<ScanError> errorList = new LinkedList<ScanError>();
-		for (int j = 0; j < scanEntries.size(); j++) {
+		for (Scan scan : scanEntries) {
 			double errorValue = 0;
-			List<AccessPoint> entries = dataHandler.getAccessPoints(
-					scanEntries.get(j), Constants.IMPORTANT_APS);
+			List<AccessPoint> entries = dataHandler.getAccessPoints(scan,
+					Constants.IMPORTANT_APS);
 			for (int k = 0; k < 5 && k < aps.size(); k++) {
 				String mac = aps.get(k).BSSID;
 				int l;
@@ -236,34 +239,28 @@ public class Location {
 				}
 			}
 			if (errorValue == 0) {
+				MeasurePoint mp = dataHandler.getMeasurePoint(scan);
 				LocationResult result = new LocationResult(building, map,
-						dataHandler.getMeasurePoint(scanEntries.get(j))
-								.getPosx(), dataHandler.getMeasurePoint(
-								scanEntries.get(j)).getPosy());
+						mp.getPosx(), mp.getPosy());
 				return result;
 			}
 			ScanError scanErrorObject = new ScanError();
 //			errorValue=errorValue*10000;
 //			errorValue=(double)Math.round(errorValue);
 //			errorValue=errorValue/10000;
-//			scanErrorObject.setScanError(scanEntries.get(j), (Math.pow(errorValue, 2)));
-			scanErrorObject.setScanError(scanEntries.get(j), errorValue);
+//			scanErrorObject.setScanError(scan, (Math.pow(errorValue, 2)));
+			scanErrorObject.setScanError(scan, errorValue);
 			errorList.add(scanErrorObject);
 		}
 		errorList = sortScanError(errorList);
 		double x = 0;
 		double y = 0;
 		double errorSum = 0;
-		for (int h = 0; h < errorList.size(); h++) {
-			if (h > 5) {
-				break;
-			}
-			x += (1 / (errorList.get(h).getError()))
-					* dataHandler.getMeasurePoint(errorList.get(h).getScan())
-							.getPosx();
-			y += (1 / (errorList.get(h).getError()))
-					* dataHandler.getMeasurePoint(errorList.get(h).getScan())
-							.getPosy();
+		for (int h = 0; h <= 5 && h < errorList.size(); h++) {
+			MeasurePoint mp = dataHandler.getMeasurePoint(errorList.get(h)
+					.getScan());
+			x += (1 / (errorList.get(h).getError())) * mp.getPosx();
+			y += (1 / (errorList.get(h).getError())) * mp.getPosy();
 			errorSum += (1 / (errorList.get(h).getError()));
 		}
 		if (errorSum != 0) {
@@ -308,4 +305,5 @@ public class Location {
 
 		return scanErrorList;
 	}
+
 }
