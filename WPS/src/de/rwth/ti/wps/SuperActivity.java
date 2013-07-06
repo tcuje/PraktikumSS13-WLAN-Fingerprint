@@ -45,7 +45,7 @@ public abstract class SuperActivity extends Activity {
 
 		// Setup database storage
 		if (storage == null && hasStorage) {
-			storage = new StorageHandler(this);
+			storage = new StorageHandler(this, Constants.DB_NAME);
 		}
 
 		// Setup compass manager

@@ -28,6 +28,7 @@ import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.DataHelper;
 import de.rwth.ti.common.IPMapView;
+import de.rwth.ti.common.QualityCheck;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
@@ -244,7 +245,7 @@ public class MeasureActivity extends SuperActivity implements
 				List<MeasurePoint> mpl = getStorage().getMeasurePoints(
 						floorSelected);
 				for (MeasurePoint mp : mpl) {
-					mp.setQuality(getStorage().getQuality(mp));
+					mp.setQuality(QualityCheck.getQuality(getStorage(), mp));
 					mapView.addOldPoint(mp);
 				}
 			} else {

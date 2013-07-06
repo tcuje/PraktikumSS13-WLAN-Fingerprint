@@ -1,28 +1,17 @@
 package de.rwth.ti.db;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Environment;
-import android.widget.Toast;
-import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.DataHelper;
 import de.rwth.ti.share.IGUIDataHandler;
 import de.rwth.ti.share.IMeasureDataHandler;
-import de.rwth.ti.wps.R;
 
 /**
  * This class handles the database or persistent storage access
@@ -30,26 +19,11 @@ import de.rwth.ti.wps.R;
  */
 public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
-	private static final String DB_NAME = "local";
-
-	private Context context;
 	private SQLiteDatabase db;
 	private Storage storage;
-	private final String dbName;
 
 	public StorageHandler(Context context, String dbName) {
-		this.context = context;
 		this.storage = new Storage(context, dbName);
-		this.dbName = dbName;
-	}
-
-	/**
-	 * Uses the default local database
-	 * 
-	 * @param context
-	 */
-	public StorageHandler(Context context) {
-		this(context, DB_NAME);
 	}
 
 	public void onStart() throws SQLException {
@@ -398,8 +372,11 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	@Override
 	public boolean changeFloor(Floor floor) {
 		ContentValues values = new ContentValues();
+		values.put(Floor.COLUMN_BID, floor.getBId());
 		values.put(Floor.COLUMN_NAME, floor.getName());
 		values.put(Floor.COLUMN_LEVEL, floor.getLevel());
+		values.put(Floor.COLUMN_NORTH, floor.getNorth());
+		values.put(Floor.COLUMN_FILE, floor.getFile());
 		int result = db.update(Floor.TABLE_NAME, values,
 				Floor.COLUMN_ID + "=?",
 				new String[] { String.valueOf(floor.getId()) });
@@ -450,7 +427,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	@Override
 	public boolean changeAccessPoint(AccessPoint ap) {
 		ContentValues values = new ContentValues();
-		values.put(AccessPoint.COLUMN_SCANID, ap.getId());
+		values.put(AccessPoint.COLUMN_SCANID, ap.getScanId());
 		values.put(AccessPoint.COLUMN_BSSID, ap.getBssid());
 		values.put(AccessPoint.COLUMN_LEVEL, ap.getLevel());
 		values.put(AccessPoint.COLUMN_FREQ, ap.getFreq());
@@ -479,6 +456,8 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	public boolean changeMeasurePoint(MeasurePoint mp) {
 		ContentValues values = new ContentValues();
 		values.put(MeasurePoint.COLUMN_FLOORID, mp.getFloorId());
+		values.put(MeasurePoint.COLUMN_POS_X, mp.getPosx());
+		values.put(MeasurePoint.COLUMN_POS_Y, mp.getPosy());
 		int result = db.update(MeasurePoint.TABLE_NAME, values,
 				MeasurePoint.COLUMN_ID + "=?",
 				new String[] { String.valueOf(mp.getId()) });
@@ -504,7 +483,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	@Override
 	public boolean changeScan(Scan sc) {
 		ContentValues values = new ContentValues();
-		values.put(Scan.COLUMN_MPID, sc.getId());
+		values.put(Scan.COLUMN_MPID, sc.getMpid());
 		values.put(Scan.COLUMN_TIME, sc.getTime());
 		values.put(Scan.COLUMN_COMPASS, sc.getCompass());
 		int result = db.update(Scan.TABLE_NAME, values, Scan.COLUMN_ID + "=?",
@@ -638,260 +617,8 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		return result;
 	}
 
-	/**
-	 * 
-	 * @param filename
-	 *            start directory is the root directory on the sd drive
-	 * @throws IOException
-	 */
-	public void exportDatabase(String filename) throws IOException {
-		db.close();
-		File sd = new File(Constants.SD_APP_DIR);
-		File data = Environment.getDataDirectory();
-		String srcDBPath = "//data//" + Constants.PACKAGE_NAME
-				+ "//databases//" + dbName;
-		String dstDBPath = "/" + filename;
-		File srcDB = new File(data, srcDBPath);
-		File dstDB = new File(sd, dstDBPath);
-		FileInputStream fis = new FileInputStream(srcDB);
-		FileChannel src = fis.getChannel();
-		FileOutputStream fos = new FileOutputStream(dstDB);
-		FileChannel dst = fos.getChannel();
-		dst.transferFrom(src, 0, src.size());
-		fis.close();
-		fos.close();
-		db = storage.getWritableDatabase();
-	}
-
-	/**
-	 * Updates the local information with the given database, including import
-	 * 
-	 * @param filename
-	 *            full filepath for the import database
-	 */
-	public boolean importDatabase(String filename) {
-		File f = new File(filename);
-		if (f.exists() == false || f.isFile() == false) {
-			String msg = context.getString(R.string.file_not_exist) + "\n"
-					+ f.getAbsolutePath();
-			Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-			return false;
-		}
-		// copy the database from sd card to internal storage
-		// File sd = Environment.getExternalStorageDirectory();
-		// File data = Environment.getDataDirectory();
-		// String dstDBPath = "//data//" + MainActivity.PACKAGE_NAME
-		// + "//databases//" + IMPORT_DB_NAME;
-		// String srcDBPath = "/" + filename;
-		// File dstDB = new File(data, dstDBPath);
-		// File srcDB = new File(sd, srcDBPath);
-		// FileChannel src = new FileInputStream(srcDB).getChannel();
-		// FileChannel dst = new FileOutputStream(dstDB).getChannel();
-		// dst.transferFrom(src, 0, src.size());
-		// src.close();
-		// dst.close();
-		// open import database
-		StorageHandler temp = new StorageHandler(context, filename);
-		try {
-			temp.onStart();
-		} catch (SQLException ex) {
-			Toast.makeText(context, ex.getMessage(), Toast.LENGTH_LONG).show();
-			return false;
-		}
-		// import buildings
-		List<Building> impBuildings = temp.getAllBuildings();
-		List<Building> locBuildings = this.getAllBuildings();
-		for (Building bImp : impBuildings) {
-			Building bParent = null;
-			for (Building loc : locBuildings) {
-				if (loc.compare(bImp)) {
-					// building already exist local
-					bParent = loc;
-					// update local object
-					long oldID = bImp.getId();
-					bImp.setId(loc.getId());
-					this.changeBuilding(bImp);
-					bImp.setId(oldID);
-					break;
-				}
-			}
-			if (bParent == null) {
-				// new building
-				bParent = this.createBuilding(bImp.getName());
-				if (bParent == null) {
-					// skip all child objects for invalid building
-					continue;
-				}
-			}
-			// import floors
-			List<Floor> impFloors = temp.getFloors(bImp);
-			List<Floor> locFloors = this.getFloors(bParent);
-			for (Floor fImp : impFloors) {
-				Floor fParent = null;
-				for (Floor loc : locFloors) {
-					if (loc.compare(fImp)) {
-						// floor already exist local
-						fParent = loc;
-						// update local object
-						long oldID = fImp.getId();
-						fImp.setId(loc.getId());
-						this.changeFloor(fImp);
-						fImp.setId(oldID);
-						break;
-					}
-				}
-				if (fParent == null) {
-					fParent = this.createFloor(bParent, fImp.getName(),
-							fImp.getFile(), fImp.getLevel(), fImp.getNorth());
-					if (fParent == null) {
-						// skip all child objects for invalid floor
-						continue;
-					}
-				}
-				// import measure points
-				List<MeasurePoint> impMeasurePoints = temp
-						.getMeasurePoints(fImp);
-				List<MeasurePoint> locMeasurePoints = this
-						.getMeasurePoints(fParent);
-				for (MeasurePoint mpImp : impMeasurePoints) {
-					MeasurePoint mpParent = null;
-					for (MeasurePoint loc : locMeasurePoints) {
-						if (loc.compare(mpImp)) {
-							// measure point already exist local
-							mpParent = loc;
-							// update local object
-							long oldID = mpImp.getId();
-							mpImp.setId(loc.getId());
-							this.changeMeasurePoint(mpImp);
-							mpImp.setId(oldID);
-							break;
-						}
-					}
-					if (mpParent == null) {
-						mpParent = this.createMeasurePoint(fParent,
-								mpImp.getPosx(), mpImp.getPosy());
-						if (mpParent == null) {
-							// skip all child objects for invalid floor
-							continue;
-						}
-					}
-					// import scans
-					List<Scan> impScans = temp.getScans(mpImp);
-					List<Scan> locScans = this.getScans(mpParent);
-					for (Scan scImp : impScans) {
-						Scan scParent = null;
-						for (Scan loc : locScans) {
-							if (loc.compare(scImp)) {
-								// scan already exist local
-								scParent = loc;
-								// update local object
-								this.changeScan(scImp);
-								break;
-							}
-						}
-						if (scParent == null) {
-							scParent = this.createScan(mpParent,
-									scImp.getTime(), scImp.getCompass());
-							if (scParent == null) {
-								// skip all child objects for invalid scan
-								continue;
-							}
-						}
-						// import access points
-						List<AccessPoint> impAPs = temp.getAccessPoints(scImp);
-						List<AccessPoint> locAPs = this
-								.getAccessPoints(scParent);
-						for (AccessPoint apImp : impAPs) {
-							AccessPoint apParent = null;
-							for (AccessPoint loc : locAPs) {
-								if (loc.compare(apImp)) {
-									// access point already exist local
-									apParent = loc;
-									// update local object
-									this.changeAccessPoint(apImp);
-									break;
-								}
-							}
-							if (apParent == null) {
-								apParent = this.createAccessPoint(scParent,
-										apImp.getBssid(), apImp.getLevel(),
-										apImp.getFreq(), apImp.getSsid(),
-										apImp.getProps());
-								if (apParent == null) {
-									continue;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		temp.onStop();
-		return true;
-	}
-
 	public void clearDatabase() {
 		storage.clearDatabase(db);
 	}
 
-	@Override
-	public double getQuality(MeasurePoint mp) {
-		double result = 1.0;
-		List<Scan> scans = getScans(mp);
-		// contains all access points for this scan
-		Map<String, List<AccessPoint>> allAps = new HashMap<String, List<AccessPoint>>();
-		for (Scan scan : scans) {
-			List<AccessPoint> aps = getAccessPoints(scan,
-					Constants.IMPORTANT_APS);
-			for (AccessPoint ap : aps) {
-				String mac = ap.getBssid();
-				// get the list for this ap
-				List<AccessPoint> apList = allAps.get(mac);
-				if (apList == null) {
-					apList = new LinkedList<AccessPoint>();
-					allAps.put(mac, apList);
-				}
-				// add it
-				apList.add(ap);
-			}
-		}
-		// check the overall number of aps
-		if (allAps.size() < Math.floor(Constants.IMPORTANT_APS / 2 + 1)) {
-			// less than 50% of important aps
-			result *= 0.25;
-		} else if (allAps.size() < Constants.IMPORTANT_APS) {
-			// less than 100% of important aps
-			result *= 0.5;
-		}
-		// check all aps
-		double apsQuality = 0;
-		for (List<AccessPoint> apList : allAps.values()) {
-			double apScore = 1.0;
-			// check popularity for this ap
-			double pop = (double) apList.size() / scans.size();
-			if (pop < 0.25) {
-				// ap is in less than 25% scans
-				apScore *= 0.25;
-			} else if (pop < 0.5) {
-				// ap is in less than 50% scans
-				apScore *= 0.5;
-			}
-			// check signal strength for this ap
-			double avgLevel = 0;
-			for (AccessPoint ap : apList) {
-				avgLevel += ap.getLevel();
-			}
-			avgLevel /= apList.size();
-			if (avgLevel < -80) {
-				// ap average level is very low
-				apScore *= 0.25;
-			} else if (avgLevel < -60) {
-				apScore *= 0.5;
-			}
-			apsQuality += apScore;
-		}
-		apsQuality /= allAps.size();
-		result *= apsQuality;
-		return result;
-	}
 }

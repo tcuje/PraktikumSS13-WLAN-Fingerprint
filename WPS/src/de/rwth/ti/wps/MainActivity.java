@@ -23,6 +23,7 @@ import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.CompassManager;
 import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.IPMapView;
+import de.rwth.ti.common.QualityCheck;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.StorageHandler;
@@ -139,7 +140,8 @@ public class MainActivity extends SuperActivity implements
 							List<MeasurePoint> mpl = getStorage()
 									.getMeasurePoints(map);
 							for (MeasurePoint mp : mpl) {
-								mp.setQuality(getStorage().getQuality(mp));
+								mp.setQuality(QualityCheck.getQuality(
+										getStorage(), mp));
 								viewMap.addOldPoint(mp);
 							}
 						} else {

@@ -185,11 +185,4 @@ public interface IGUIDataHandler extends IDataHandler {
 	 */
 	public boolean deleteScan(Scan scan);
 
-	/**
-	 * 
-	 * @param mp
-	 * @return Returns a quality value for this measure point. Best value is 1.0
-	 */
-	public double getQuality(MeasurePoint mp);
-
 }
