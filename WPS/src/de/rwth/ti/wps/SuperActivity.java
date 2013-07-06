@@ -68,7 +68,7 @@ public abstract class SuperActivity extends Activity {
 			storage.onStart();
 		}
 //		// launch default activity for debugging only
-//		Intent intent = new Intent(this, MeasureActivity.class);
+//		Intent intent = new Intent(this, DebugActivity.class);
 //		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 //		startActivity(intent);
 	}

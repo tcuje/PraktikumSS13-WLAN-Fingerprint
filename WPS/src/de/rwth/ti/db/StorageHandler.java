@@ -478,7 +478,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	@Override
 	public boolean changeMeasurePoint(MeasurePoint mp) {
 		ContentValues values = new ContentValues();
-		values.put(MeasurePoint.COLUMN_FLOORID, mp.getId());
+		values.put(MeasurePoint.COLUMN_FLOORID, mp.getFloorId());
 		int result = db.update(MeasurePoint.TABLE_NAME, values,
 				MeasurePoint.COLUMN_ID + "=?",
 				new String[] { String.valueOf(mp.getId()) });
@@ -708,8 +708,10 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 					// building already exist local
 					bParent = loc;
 					// update local object
+					long oldID = bImp.getId();
 					bImp.setId(loc.getId());
 					this.changeBuilding(bImp);
+					bImp.setId(oldID);
 					break;
 				}
 			}
@@ -731,8 +733,10 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 						// floor already exist local
 						fParent = loc;
 						// update local object
+						long oldID = fImp.getId();
 						fImp.setId(loc.getId());
 						this.changeFloor(fImp);
+						fImp.setId(oldID);
 						break;
 					}
 				}
@@ -756,8 +760,10 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 							// measure point already exist local
 							mpParent = loc;
 							// update local object
+							long oldID = mpImp.getId();
 							mpImp.setId(loc.getId());
 							this.changeMeasurePoint(mpImp);
+							mpImp.setId(oldID);
 							break;
 						}
 					}
@@ -779,7 +785,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 								// scan already exist local
 								scParent = loc;
 								// update local object
-								scImp.setId(loc.getId());
 								this.changeScan(scImp);
 								break;
 							}
@@ -803,7 +808,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 									// access point already exist local
 									apParent = loc;
 									// update local object
-									apImp.setId(loc.getId());
 									this.changeAccessPoint(apImp);
 									break;
 								}
