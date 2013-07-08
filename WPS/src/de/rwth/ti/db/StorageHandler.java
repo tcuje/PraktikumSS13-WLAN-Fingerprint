@@ -6,8 +6,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -17,8 +19,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.widget.Toast;
 import de.rwth.ti.common.Constants;
+import de.rwth.ti.common.DataHelper;
 import de.rwth.ti.share.IGUIDataHandler;
 import de.rwth.ti.share.IMeasureDataHandler;
+import de.rwth.ti.wps.R;
 
 /**
  * This class handles the database or persistent storage access
@@ -121,6 +125,36 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 						new String[] { String.valueOf(scan.getId()) }, null,
 						null, null);
 		List<AccessPoint> result = cursorToAccessPoints(cursor);
+		return result;
+	}
+
+	@Override
+	public List<AccessPoint> getAccessPoints(Scan scan, int limit) {
+		Cursor cursor = db.query(AccessPoint.TABLE_NAME,
+				AccessPoint.ALL_COLUMNS, AccessPoint.COLUMN_SCANID + "=?",
+				new String[] { String.valueOf(scan.getId()) }, null, null,
+				AccessPoint.COLUMN_LEVEL + " DESC");
+		List<AccessPoint> result = new ArrayList<AccessPoint>(limit);
+		List<String> macs = new LinkedList<String>();
+		if (cursor.moveToFirst()) {
+			do {
+				AccessPoint ap = cursorToAccessPoint(cursor);
+				String bssid = ap.getBssid();
+				bssid = bssid.substring(0, bssid.length() - 1);
+				boolean found = false;
+				for (String mac : macs) {
+					if (mac.equals(bssid)) {
+						found = true;
+						break;
+					}
+				}
+				if (found == false) {
+					result.add(ap);
+					macs.add(bssid);
+				}
+			} while (cursor.moveToNext() == true && result.size() < limit);
+		}
+		cursor.close();
 		return result;
 	}
 
@@ -365,6 +399,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	public boolean changeFloor(Floor floor) {
 		ContentValues values = new ContentValues();
 		values.put(Floor.COLUMN_NAME, floor.getName());
+		values.put(Floor.COLUMN_LEVEL, floor.getLevel());
 		int result = db.update(Floor.TABLE_NAME, values,
 				Floor.COLUMN_ID + "=?",
 				new String[] { String.valueOf(floor.getId()) });
@@ -376,7 +411,10 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean deleteFloor(Floor floor) {
-		int result = db.delete(Floor.TABLE_NAME, Floor.COLUMN_ID,
+		for (MeasurePoint mp : getMeasurePoints(floor)) {
+			deleteMeasurePoint(mp);
+		}
+		int result = db.delete(Floor.TABLE_NAME, Floor.COLUMN_ID + "=?",
 				new String[] { String.valueOf(floor.getId()) });
 		if (result == 1)
 			return true;
@@ -398,7 +436,10 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean deleteBuilding(Building building) {
-		int result = db.delete(Building.TABLE_NAME, Building.COLUMN_ID,
+		for (Floor f : getFloors(building)) {
+			deleteFloor(f);
+		}
+		int result = db.delete(Building.TABLE_NAME, Building.COLUMN_ID + "=?",
 				new String[] { String.valueOf(building.getId()) });
 		if (result == 1)
 			return true;
@@ -426,8 +467,8 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean deleteAccessPoint(AccessPoint ap) {
-		int result = db.delete(AccessPoint.TABLE_NAME, AccessPoint.COLUMN_ID,
-				new String[] { String.valueOf(ap.getId()) });
+		int result = db.delete(AccessPoint.TABLE_NAME, AccessPoint.COLUMN_ID
+				+ "=?", new String[] { String.valueOf(ap.getId()) });
 		if (result == 1)
 			return true;
 		else
@@ -448,9 +489,12 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	@Override
-	public boolean deleteMea1surePoint(MeasurePoint mp) {
-		int result = db.delete(MeasurePoint.TABLE_NAME, MeasurePoint.COLUMN_ID,
-				new String[] { String.valueOf(mp.getId()) });
+	public boolean deleteMeasurePoint(MeasurePoint mp) {
+		for (Scan sc : getScans(mp)) {
+			deleteScan(sc);
+		}
+		int result = db.delete(MeasurePoint.TABLE_NAME, MeasurePoint.COLUMN_ID
+				+ "=?", new String[] { String.valueOf(mp.getId()) });
 		if (result == 1)
 			return true;
 		else
@@ -472,9 +516,12 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	@Override
-	public boolean deleteScan(Scan sc) {
-		int result = db.delete(Scan.TABLE_NAME, Scan.COLUMN_ID,
-				new String[] { String.valueOf(sc.getId()) });
+	public boolean deleteScan(Scan scan) {
+		for (AccessPoint ap : getAccessPoints(scan)) {
+			deleteAccessPoint(ap);
+		}
+		int result = db.delete(Scan.TABLE_NAME, Scan.COLUMN_ID + "=?",
+				new String[] { String.valueOf(scan.getId()) });
 		if (result == 1)
 			return true;
 		else
@@ -547,44 +594,43 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	@Override
-	public long countScans() {
+	public long countAllScans() {
 		long result = countTable(Scan.TABLE_NAME);
 		return result;
 	}
 
 	@Override
-	public long countAccessPoints() {
+	public long countAllAccessPoints() {
 		long result = countTable(AccessPoint.TABLE_NAME);
 		return result;
 	}
 
 	@Override
-	public long countMeasurePoints() {
+	public long countAllMeasurePoints() {
 		long result = countTable(MeasurePoint.TABLE_NAME);
 		return result;
 	}
 
 	@Override
-	public long countFloors() {
+	public long countAllFloors() {
 		long result = countTable(Floor.TABLE_NAME);
 		return result;
 	}
 
 	@Override
-	public long countBuildings() {
+	public long countAllBuildings() {
 		long result = countTable(Building.TABLE_NAME);
 		return result;
 	}
 
 	@Override
-	public List<Scan> getScans(Floor floor, int compass) {
+	public List<Scan> getScans(Floor floor, long compass) {
 		List<Scan> result = new LinkedList<Scan>();
 		List<MeasurePoint> mps = getMeasurePoints(floor);
 		for (MeasurePoint mp : mps) {
 			List<Scan> scans = getScans(mp);
 			for (Scan scan : scans) {
-				if (scan.getCompass() > compass - 45
-						|| scan.getCompass() < compass + 45) {
+				if (DataHelper.isInRange(scan.getCompass(), compass, 90)) {
 					result.add(scan);
 				}
 			}
@@ -604,7 +650,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		File data = Environment.getDataDirectory();
 		String srcDBPath = "//data//" + Constants.PACKAGE_NAME
 				+ "//databases//" + dbName;
-		// String dstDBPath = "/backup/" + filename;
 		String dstDBPath = "/" + filename;
 		File srcDB = new File(data, srcDBPath);
 		File dstDB = new File(sd, dstDBPath);
@@ -619,33 +664,39 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	/**
-	 * Updates your local map information with the given database, including
-	 * import
+	 * Updates the local information with the given database, including import
 	 * 
 	 * @param filename
 	 *            full filepath for the import database
 	 */
-	public void importDatabase(String filename) {
+	public boolean importDatabase(String filename) {
+		File f = new File(filename);
+		if (f.exists() == false || f.isFile() == false) {
+			String msg = context.getString(R.string.file_not_exist) + "\n"
+					+ f.getAbsolutePath();
+			Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+			return false;
+		}
 		// copy the database from sd card to internal storage
-//		File sd = Environment.getExternalStorageDirectory();
-//		File data = Environment.getDataDirectory();
-//		String dstDBPath = "//data//" + MainActivity.PACKAGE_NAME
-//				+ "//databases//" + IMPORT_DB_NAME;
-//		String srcDBPath = "/" + filename;
-//		File dstDB = new File(data, dstDBPath);
-//		File srcDB = new File(sd, srcDBPath);
-//		FileChannel src = new FileInputStream(srcDB).getChannel();
-//		FileChannel dst = new FileOutputStream(dstDB).getChannel();
-//		dst.transferFrom(src, 0, src.size());
-//		src.close();
-//		dst.close();
+		// File sd = Environment.getExternalStorageDirectory();
+		// File data = Environment.getDataDirectory();
+		// String dstDBPath = "//data//" + MainActivity.PACKAGE_NAME
+		// + "//databases//" + IMPORT_DB_NAME;
+		// String srcDBPath = "/" + filename;
+		// File dstDB = new File(data, dstDBPath);
+		// File srcDB = new File(sd, srcDBPath);
+		// FileChannel src = new FileInputStream(srcDB).getChannel();
+		// FileChannel dst = new FileOutputStream(dstDB).getChannel();
+		// dst.transferFrom(src, 0, src.size());
+		// src.close();
+		// dst.close();
 		// open import database
 		StorageHandler temp = new StorageHandler(context, filename);
 		try {
 			temp.onStart();
 		} catch (SQLException ex) {
 			Toast.makeText(context, ex.getMessage(), Toast.LENGTH_LONG).show();
-			return;
+			return false;
 		}
 		// import buildings
 		List<Building> impBuildings = temp.getAllBuildings();
@@ -772,5 +823,71 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 			}
 		}
 		temp.onStop();
+		return true;
+	}
+
+	public void clearDatabase() {
+		storage.clearDatabase(db);
+	}
+
+	@Override
+	public double getQuality(MeasurePoint mp) {
+		double result = 1.0;
+		List<Scan> scans = getScans(mp);
+		// contains all access points for this scan
+		Map<String, List<AccessPoint>> allAps = new HashMap<String, List<AccessPoint>>();
+		for (Scan scan : scans) {
+			List<AccessPoint> aps = getAccessPoints(scan,
+					Constants.IMPORTANT_APS);
+			for (AccessPoint ap : aps) {
+				String mac = ap.getBssid();
+				// get the list for this ap
+				List<AccessPoint> apList = allAps.get(mac);
+				if (apList == null) {
+					apList = new LinkedList<AccessPoint>();
+					allAps.put(mac, apList);
+				}
+				// add it
+				apList.add(ap);
+			}
+		}
+		// check the overall number of aps
+		if (allAps.size() < Math.floor(Constants.IMPORTANT_APS / 2 + 1)) {
+			// less than 50% of important aps
+			result *= 0.25;
+		} else if (allAps.size() < Constants.IMPORTANT_APS) {
+			// less than 100% of important aps
+			result *= 0.5;
+		}
+		// check all aps
+		double apsQuality = 0;
+		for (List<AccessPoint> apList : allAps.values()) {
+			double apScore = 1.0;
+			// check popularity for this ap
+			double pop = (double) apList.size() / scans.size();
+			if (pop < 0.25) {
+				// ap is in less than 25% scans
+				apScore *= 0.25;
+			} else if (pop < 0.5) {
+				// ap is in less than 50% scans
+				apScore *= 0.5;
+			}
+			// check signal strength for this ap
+			double avgLevel = 0;
+			for (AccessPoint ap : apList) {
+				avgLevel += ap.getLevel();
+			}
+			avgLevel /= apList.size();
+			if (avgLevel < -80) {
+				// ap average level is very low
+				apScore *= 0.25;
+			} else if (avgLevel < -60) {
+				apScore *= 0.5;
+			}
+			apsQuality += apScore;
+		}
+		apsQuality /= allAps.size();
+		result *= apsQuality;
+		return result;
 	}
 }

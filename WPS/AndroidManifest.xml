@@ -7,6 +7,7 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
+
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -16,26 +17,27 @@
 
     <application
         android:allowBackup="true"
+        android:description="@string/app_description"
+        android:hardwareAccelerated="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:description="@string/app_description"
-        android:hardwareAccelerated="false">
+        android:theme="@style/AppTheme" >
         <activity
             android:name="de.rwth.ti.wps.MainActivity"
             android:label="@string/app_name"
             android:launchMode="standard" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name="de.rwth.ti.wps.NewFloorActivity"
-            android:label="@string/action_new_floor"
             android:icon="@drawable/new_map"
-            android:parentActivityName="de.rwth.ti.wps.MainActivity"
-            android:launchMode="standard" >
+            android:label="@string/action_new_floor"
+            android:launchMode="standard"
+            android:parentActivityName="de.rwth.ti.wps.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.rwth.ti.wps.MainActivity" />
@@ -43,8 +45,8 @@
         <activity
             android:name="de.rwth.ti.wps.MeasureActivity"
             android:label="@string/action_measure"
-            android:parentActivityName="de.rwth.ti.wps.MainActivity"
-            android:launchMode="standard" >
+            android:launchMode="standard"
+            android:parentActivityName="de.rwth.ti.wps.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.rwth.ti.wps.MainActivity" />
@@ -52,22 +54,20 @@
         <activity
             android:name="de.rwth.ti.wps.DebugActivity"
             android:label="@string/action_debug"
-            android:parentActivityName="de.rwth.ti.wps.MainActivity"
-            android:launchMode="standard" >
+            android:launchMode="standard"
+            android:parentActivityName="de.rwth.ti.wps.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.rwth.ti.wps.MainActivity" />
         </activity>
         <activity
-            android:name="de.rwth.ti.wps.LocationActivity"
-            android:label="@string/action_localisation"
-            android:parentActivityName="de.rwth.ti.wps.MainActivity"
-            android:launchMode="standard" >
+            android:name="de.rwth.ti.wps.DataActivity"
+            android:label="@string/action_data"
+            android:parentActivityName="de.rwth.ti.wps.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.rwth.ti.wps.MainActivity" />
         </activity>
-        
     </application>
 
 </manifest>

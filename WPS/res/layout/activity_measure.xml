@@ -15,54 +15,22 @@
         android:id="@+id/floorSelectSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-    
-   <!-- <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    
-   		<TextView
-            android:id="@+id/direction_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="@string/measure_face_north"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <Button
-            android:id="@+id/measure_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:onClick="measure"
-            android:text="@string/text_measure_button" />
-
-        <TextView
-            android:id="@+id/compass_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-        
-         </RelativeLayout> -->
-        
-       <RelativeLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-       <de.rwth.ti.common.IPMapView
+        <de.rwth.ti.common.IPMapView
             android:id="@+id/map_view"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_alignParentLeft="true" />
+            android:layout_height="fill_parent" />
 
         <TextView
             android:id="@+id/direction_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="@string/measure_face_north"
+            android:text="@string/measure_mark_point"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Button
@@ -75,19 +43,13 @@
             android:onClick="measure"
             android:text="@string/text_measure_button" />
 
-      <TextView
+        <TextView
             android:id="@+id/compass_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    </RelativeLayout> 
-  
-    <!-- <de.rwth.ti.common.IPMapView
-            android:id="@+id/map_view"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"/> -->
+    </RelativeLayout>
 
 </LinearLayout>

@@ -1,0 +1,208 @@
+
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".DataActivity" >
+
+	<LinearLayout
+	    android:id="@+id/dataMainLayout"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical"
+	    android:paddingBottom="@dimen/activity_vertical_margin"
+	    android:paddingLeft="@dimen/activity_horizontal_margin"
+	    android:paddingRight="@dimen/activity_horizontal_margin"
+	    android:paddingTop="@dimen/activity_vertical_margin" >
+
+	    <TextView
+	        android:id="@+id/dataBuildingHeader"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="@dimen/activity_data_header_margin_bottom"
+	        android:gravity="center_horizontal"
+	        android:paddingBottom="@dimen/activity_data_header_padding"
+	        android:paddingLeft="@dimen/activity_data_header_padding"
+	        android:paddingRight="@dimen/activity_data_header_padding"
+	        android:paddingTop="@dimen/activity_data_header_padding"
+	        android:text="@string/building"
+	        android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:textStyle="bold" />
+
+	    <LinearLayout
+	        android:id="@+id/dataBuildingLayout"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="@dimen/activity_data_content_margin_bottom"
+	        android:orientation="vertical" >
+
+	        <Spinner
+	            android:id="@+id/dataBuildingBuildingSpinner"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content" />
+
+	        <EditText
+	            android:id="@+id/dataBuildingRenameEdit"
+	            android:layout_width="match_parent"
+	            android:layout_height="0dp"
+	            android:layout_weight="1"
+	            android:ems="10"
+	            android:hint="@string/new_name"
+	            android:inputType="textCapWords"
+	            android:maxLines="1" />
+
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content" >
+
+	            <Button
+	                android:id="@+id/dataBuildingRenameButton"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_weight="1"
+	                android:onClick="dataRenameBuilding"
+	                android:text="@string/rename" />
+
+	            <Button
+	                android:id="@+id/dataBuildingDeleteButton"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_weight="1"
+	                android:onClick="dataDeleteBuilding"
+	                android:text="@string/delete" />
+	        </LinearLayout>
+	    </LinearLayout>
+
+	    <TextView
+	        android:id="@+id/dataFloorHeader"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="@dimen/activity_data_header_margin_bottom"
+	        android:gravity="center_horizontal"
+	        android:paddingBottom="@dimen/activity_data_header_padding"
+	        android:paddingLeft="@dimen/activity_data_header_padding"
+	        android:paddingRight="@dimen/activity_data_header_padding"
+	        android:paddingTop="@dimen/activity_data_header_padding"
+	        android:text="@string/floors"
+	        android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:textStyle="bold" />
+
+	    <LinearLayout
+	        android:id="@+id/dataFloorLayout"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="@dimen/activity_data_content_margin_bottom"
+	        android:orientation="vertical" >
+
+	        <Spinner
+	            android:id="@+id/dataFloorBuildingSpinner"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content" />
+
+	        <Spinner
+	            android:id="@+id/dataFloorFloorSpinner"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content" />
+
+	        <EditText
+	            android:id="@+id/dataFloorFloorLevelEdit"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:ems="10"
+	            android:hint="@string/floorlevel"
+	            android:inputType="numberSigned" />
+
+	        <EditText
+	            android:id="@+id/dataFloorRenameEdit"
+	            android:layout_width="match_parent"
+	            android:layout_height="0dp"
+	            android:layout_weight="1"
+	            android:ems="10"
+	            android:hint="@string/new_name"
+	            android:inputType="textCapWords"
+	            android:maxLines="1" >
+
+	            <requestFocus />
+	        </EditText>
+
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content" >
+
+	            <Button
+	                android:id="@+id/dataFloorSaveButton"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_weight="1"
+	                android:onClick="dataSaveFloor"
+	                android:text="@string/save" />
+
+	            <Button
+	                android:id="@+id/dataFloorDeleteButton"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_weight="1"
+	                android:onClick="dataDeleteFloor"
+	                android:text="@string/delete" />
+	        </LinearLayout>
+	    </LinearLayout>
+
+	    <TextView
+	        android:id="@+id/dataMeasurePointHeader"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="@dimen/activity_data_header_margin_bottom"
+	        android:gravity="center_horizontal"
+	        android:paddingBottom="@dimen/activity_data_header_padding"
+	        android:paddingLeft="@dimen/activity_data_header_padding"
+	        android:paddingRight="@dimen/activity_data_header_padding"
+	        android:paddingTop="@dimen/activity_data_header_padding"
+	        android:text="@string/measurepoints"
+	        android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:textStyle="bold" />
+
+	    <LinearLayout
+	        android:id="@+id/dataMeasurePointLayout"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical" >
+
+	        <Spinner
+	            android:id="@+id/dataMeasurePointBuildingSpinner"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content" />
+
+	        <Spinner
+	            android:id="@+id/dataMeasurePointFloorSpinner"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content" />
+
+	        <Button
+	            android:id="@+id/dataMeasurePointDeleteOnFloorButton"
+	            android:layout_width="match_parent"
+	            android:layout_height="0dp"
+	            android:layout_marginBottom="5dp"
+	            android:layout_weight="1"
+	            android:onClick="dataDeleteFloorMP"
+	            android:text="@string/delete_measurepoints_on_floor" />
+
+	        <Button
+	            android:id="@+id/dataMeasurePointDeleteLastButton"
+	            android:layout_width="match_parent"
+	            android:layout_height="0dp"
+	            android:layout_weight="1"
+	            android:onClick="dataDeleteLastMP"
+	            android:text="@string/delete_last_measurepoint" />
+
+	        <Button
+	            android:id="@+id/dataMeasurePointDeleteAllButton"
+	            android:layout_width="match_parent"
+	            android:layout_height="0dp"
+	            android:layout_weight="1"
+	            android:onClick="dataDeleteAllMP"
+	            android:text="@string/delete_all" />
+	    </LinearLayout>
+	</LinearLayout>
+
+</ScrollView>
