@@ -143,8 +143,13 @@ public class DataActivity extends SuperActivity implements
 	public void dataDeleteBuilding (View v){
 	
 		if(selectedBuilding != null){
+			FloorList=storage.getFloors(selectedBuilding);
+			for (Floor f : FloorList)
+				storage.deleteFloor(f);	
 			storage.deleteBuilding(selectedBuilding);
 		buildingHelper.refresh();
+		floorHelper.refresh();
+
 		}
 	}
 	

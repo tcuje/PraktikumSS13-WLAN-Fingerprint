@@ -28,6 +28,7 @@ public class NewFloorActivity extends SuperActivity implements
 
 	private EditText createBuildingEdit;
 	private List<Building> buildingList;
+	private List<Floor> floorList;
 	private ArrayAdapter<CharSequence> buildingAdapter;
 	private Spinner buildingSpinner;
 	private Building buildingSelected;
@@ -90,9 +91,28 @@ public class NewFloorActivity extends SuperActivity implements
 	public void createBuilding(View view) {
 		String tBuildingName = createBuildingEdit.getText().toString().trim();
 		String message = null;
+		int e=0;
+		Building b=null;
 		// check name
-		if (tBuildingName.length() != 0) {
-			Building b = storage.createBuilding(tBuildingName);
+		if (tBuildingName.length() != 0) 
+		{
+			buildingList=storage.getAllBuildings();
+			for(Building bi: buildingList)
+			{				
+				if (tBuildingName.equals(bi.getName()))
+				{					
+					message = getString(R.string.same_name_building);
+					Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+					e=1;
+					break;
+				}
+			}		
+			if (e==0)
+			{
+					 b = storage.createBuilding(tBuildingName);					
+			}
+			
+			
 			// Gebäude konnte erfolgreich erstellt werden?
 			if (b != null) {
 				message = getString(R.string.success_create_building);
@@ -105,7 +125,8 @@ public class NewFloorActivity extends SuperActivity implements
 			} else {
 				message = getString(R.string.error_create_building);
 			}
-		} else {
+			}
+		 else {
 			message = getString(R.string.error_empty_input);
 		}
 		if (message != null) {
@@ -178,6 +199,8 @@ public class NewFloorActivity extends SuperActivity implements
 		floorName = floorNameEdit.getText().toString().trim();
 		String tFloorLevelText = floorLevelEdit.getText().toString().trim();
 		String tNorthText = northEdit.getText().toString().trim();
+		int e=0;
+		Floor f=null;
 
 		// Kontrolliert, ob alle Inputs vernünftig gefüllt sind
 		if (floorName.length() != 0 && tFloorLevelText.length() != 0
@@ -188,8 +211,24 @@ public class NewFloorActivity extends SuperActivity implements
 			if (!buildingList.isEmpty()) {
 				// Kartendatei ausgewählt
 				if (floorFile != null) {
-					Floor f = storage.createFloor(buildingSelected, floorName,
-							floorFile, floorLevel, north);
+					floorList=storage.getAllFloors();
+					for(Floor fi: floorList)
+					{				
+						if (floorName.equals(fi.getName()))
+						{					
+							message = getString(R.string.same_name_floor);
+							Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+							e=1;
+							break;
+						}
+					}		
+					if (e==0)
+					{
+						f = storage.createFloor(buildingSelected, floorName,
+								floorFile, floorLevel, north);				
+					}
+					
+					
 					// Floor erfolgreich erstellt
 					if (f != null) {
 						message = getString(R.string.success_create_floor);
@@ -206,7 +245,12 @@ public class NewFloorActivity extends SuperActivity implements
 					} else {
 						message = getString(R.string.error_create_floor);
 					}
-				} else {
+				} 
+				
+				
+				
+				
+				else {
 					message = getString(R.string.error_no_floor_file);
 				}
 			} else {

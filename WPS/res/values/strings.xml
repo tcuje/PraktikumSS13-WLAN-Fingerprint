@@ -61,5 +61,8 @@
     <string name="delete_all">Alle löschen</string>
     <string name="delete_last_measurepoint">Letzten Messpunkt löschen</string>
     <string name="delete_measurepoints_on_floor">Messpunkte der Etage löschen </string>
+    <string name="same_name_building">das Gebäude mit solcher Name existiert schon</string>
+    <string name="same_name_floor">der Flur mit solcher Name existiert schon</string>
+    
 
 </resources>
