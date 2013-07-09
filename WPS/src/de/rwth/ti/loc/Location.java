@@ -26,9 +26,10 @@ public class Location {
 	private static Floor tempFloor;
 	private static Calendar time = Calendar.getInstance();
 	private static List<LocationResult> last_ten_results = new LinkedList<LocationResult>();
-	private int accuracy;
+	private static int accuracy;
+	private static List<Tuple<Scan, List<AccessPoint>> cache;
 
-	public Location(IMeasureDataHandler dataHandler) {
+	private public Location(IMeasureDataHandler dataHandler) {
 		this.dataHandler = dataHandler;
 	}
 
