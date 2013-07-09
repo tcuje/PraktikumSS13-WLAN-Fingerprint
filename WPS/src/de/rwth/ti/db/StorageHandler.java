@@ -9,6 +9,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.DataHelper;
 import de.rwth.ti.share.IGUIDataHandler;
 import de.rwth.ti.share.IMeasureDataHandler;
@@ -609,7 +610,8 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		for (MeasurePoint mp : mps) {
 			List<Scan> scans = getScans(mp);
 			for (Scan scan : scans) {
-				if (DataHelper.isInRange(scan.getCompass(), compass, 90)) {
+				if (DataHelper.isInRange(scan.getCompass(), compass,
+						Constants.ANGLE_DIFF)) {
 					result.add(scan);
 				}
 			}

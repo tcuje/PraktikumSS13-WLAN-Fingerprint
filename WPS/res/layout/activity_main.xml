@@ -20,7 +20,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:text="@string/toggle_localisation"
-        android:checked="false" />
+        android:checked="true" />
 
     <ImageButton
         android:id="@+id/centerButton"
