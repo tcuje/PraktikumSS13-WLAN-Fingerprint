@@ -238,7 +238,6 @@ public class NewFloorActivity extends SuperActivity implements
 					public void onChosenFile(String chosenFile) {
 						File f = new File(chosenFile);
 						if (f.exists() && f.isFile()) {
-							// TODO show file loading state in progress bar
 							ByteArrayOutputStream baos = new ByteArrayOutputStream();
 							FileInputStream fis = null;
 							try {
