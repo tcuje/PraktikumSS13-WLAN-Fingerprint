@@ -8,6 +8,7 @@ import android.net.wifi.ScanResult;
 import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.DataHelper;
+import de.rwth.ti.common.Tuple;
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
@@ -27,9 +28,9 @@ public class Location {
 	private static Calendar time = Calendar.getInstance();
 	private static List<LocationResult> last_ten_results = new LinkedList<LocationResult>();
 	private static int accuracy;
-	private static List<Tuple<Scan, List<AccessPoint>> cache;
+	private static List<Tuple<Scan, List<AccessPoint>>> cache;
 
-	private public Location(IMeasureDataHandler dataHandler) {
+	public Location(IMeasureDataHandler dataHandler) {
 		this.dataHandler = dataHandler;
 	}
 
