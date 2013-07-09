@@ -13,12 +13,19 @@ public class LocationResult {
 	private Floor floor;
 	private double x;
 	private double y;
+	private int accuracy;
 
-	public LocationResult(Building building, Floor floor, double x, double y) {
+	public LocationResult(Building building, Floor floor, double x, double y, int accuracy) {
 		this.floor = floor;
 		this.building = building;
 		this.x = x;
 		this.y = y;
+		if (accuracy <=2 && accuracy >=0){
+			this.accuracy=accuracy;
+		}
+		else{
+			accuracy=0;
+		}
 	}
 
 	public Floor getFloor() {
@@ -36,5 +43,7 @@ public class LocationResult {
 	public double getY() {
 		return y;
 	}
-
+	public int getAccuracy(){
+		return accuracy;
+	}
 }

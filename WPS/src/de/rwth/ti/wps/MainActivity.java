@@ -154,8 +154,7 @@ public class MainActivity extends SuperActivity implements
 						}
 					}
 					long mStop = System.currentTimeMillis();
-					viewMap.setPoint((float) myLocRes.getX(),
-							(float) myLocRes.getY());
+					viewMap.setPoint(myLocRes);
 					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed focus position once
 						lastMap = map;

@@ -26,9 +26,10 @@ public class DataHelper {
 
 	public static List<ScanResult> sortScanResults(List<ScanResult> results) {
 		Collections.sort(results, new Comparator<ScanResult>() {
+
 			@Override
 			public int compare(ScanResult lhs, ScanResult rhs) {
-				return (lhs.level < rhs.level ? -1
+				return (lhs.level > rhs.level ? -1
 						: (lhs.level == rhs.level ? 0 : 1));
 			}
 		});
