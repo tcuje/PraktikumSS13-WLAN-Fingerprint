@@ -18,7 +18,7 @@ import de.rwth.ti.share.IMeasureDataHandler;
 
 public class Location {
 
-	private IMeasureDataHandler dataHandler;
+	private static IMeasureDataHandler dataHandler;
 	private static long timeSinceFloor = 0;
 	private static long timeSinceBuilding = 0;
 	private static LocationResult lastScan = null;
@@ -28,10 +28,10 @@ public class Location {
 	private static Calendar time = Calendar.getInstance();
 	private static List<LocationResult> last_ten_results = new LinkedList<LocationResult>();
 	private static int accuracy;
-	private static List<Tuple<Scan, List<AccessPoint>>> cache;
+	private static List<Tuple<Scan, List<AccessPoint>>> cache = new LinkedList<Tuple<Scan, List<AccessPoint>>>();
 
 	public Location(IMeasureDataHandler dataHandler) {
-		this.dataHandler = dataHandler;
+		Location.dataHandler = dataHandler;
 	}
 
 	/**
@@ -57,13 +57,13 @@ public class Location {
 				tempFloor = findFloor(aps, tempBuilding);
 				if (tempFloor != null) {
 					timeSinceFloor = theTime;
-					if (lastBuilding != null) {
-						if ((lastBuilding.getId() != tempBuilding.getId())
-								|| (lastFloor.getId() != tempFloor.getId())) {
-							last_ten_results.clear();
-							secondToLastScan = null;
-							lastScan = null;
-						}
+					if (lastBuilding == null
+							|| lastBuilding.getId() != tempBuilding.getId()
+							|| lastFloor.getId() != tempFloor.getId()) {
+						last_ten_results.clear();
+						secondToLastScan = null;
+						lastScan = null;
+						reloadCache();
 					}
 				}
 			}
@@ -75,12 +75,12 @@ public class Location {
 					last_ten_results.clear();
 					secondToLastScan = null;
 					lastScan = null;
+					reloadCache();
 				}
 				timeSinceFloor = theTime;
 				timeSinceBuilding = theTime;
 			}
 		}
-
 		LocationResult result = findMP(aps, tempFloor, tempBuilding, direction);
 		secondToLastScan = lastScan;
 		lastScan = result;
@@ -107,6 +107,20 @@ public class Location {
 		}
 		last_ten_results.add(result);
 		return result;
+	}
+
+	private static void reloadCache() {
+		// FIXME
+		cache.clear();
+		List<Scan> scanEntries = dataHandler.getScans(tempFloor, 0, 360);
+		for (Scan sc : scanEntries) {
+			Tuple<Scan, List<AccessPoint>> tp = new Tuple<Scan, List<AccessPoint>>(
+					sc, new LinkedList<AccessPoint>());
+			List<AccessPoint> entries = dataHandler.getAccessPoints(sc,
+					Constants.IMPORTANT_APS);
+			tp.right.addAll(entries);
+			cache.add(tp);
+		}
 	}
 
 	private LocationResult filterLP(LocationResult secondToLastScan,
@@ -199,12 +213,7 @@ public class Location {
 	private LocationResult findMP(List<ScanResult> aps, Floor map,
 			Building building, Cardinal compass) {
 		accuracy = 2;
-		if (aps.isEmpty() || map == null) {
-			return null;
-		}
-		List<Scan> scanEntries = dataHandler.getScans(map,
-				compass.getAsAzimuth(), 360);
-		if (scanEntries.size() == 0) {
+		if (aps.isEmpty() || map == null || cache.isEmpty() == true) {
 			return null;
 		}
 		List<ScanError> errorList = new LinkedList<ScanError>();
@@ -224,29 +233,23 @@ public class Location {
 				}
 			}
 		}
-		for (Scan scan : scanEntries) {
+		for (Tuple<Scan, List<AccessPoint>> tple : cache) {
 			double errorValue = 0;
-			List<AccessPoint> entries = dataHandler.getAccessPoints(scan,
-					Constants.IMPORTANT_APS);
 			for (int k = 0; k < 5 && k < aps.size(); k++) {
 				String mac = aps.get(k).BSSID;
 				int l, levelDifference;
-				boolean success = false;
-				for (l = 0; l < entries.size(); l++) {
+				AccessPoint found = null;
+				for (AccessPoint ap : tple.right) {
 					mac = mac.substring(0, mac.length() - 1);
-					if (mac.compareTo(entries
-							.get(l)
-							.getBssid()
-							.substring(0,
-									(entries.get(l).getBssid()).length() - 1)) == 0) {
-						success = true;
+					if (mac.compareTo(ap.getBssid().substring(0,
+							(ap.getBssid()).length() - 1)) == 0) {
+						found = ap;
 						break;
 					}
 				}
-				if (success) {
+				if (found != null) {
 					levelDifference = (Math
-							.abs((int) ((aps.get(k).level) - entries.get(l)
-									.getLevel())));
+							.abs((int) ((aps.get(k).level) - found.getLevel())));
 					errorValue += (double) ((100 + (double) aps.get(k).level) / 100)
 							* levelDifference;
 				} else {
@@ -260,7 +263,7 @@ public class Location {
 				}
 			}
 			if (errorValue == 0) {
-				MeasurePoint mp = dataHandler.getMeasurePoint(scan);
+				MeasurePoint mp = dataHandler.getMeasurePoint(tple.left);
 				LocationResult result = new LocationResult(building, map,
 						mp.getPosx(), mp.getPosy(), 2);
 				return result;
@@ -270,7 +273,7 @@ public class Location {
 //			errorValue=(double)Math.round(errorValue);
 //			errorValue=errorValue/10000;
 //			scanErrorObject.setScanError(scan, (Math.pow(errorValue, 2)));
-			scanErrorObject.setScanError(scan, errorValue);
+			scanErrorObject.setScanError(tple.left, errorValue);
 			errorList.add(scanErrorObject);
 		}
 		errorList = sortScanError(errorList);

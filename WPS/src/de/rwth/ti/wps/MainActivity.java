@@ -46,6 +46,7 @@ public class MainActivity extends SuperActivity implements
 	private Button btZoom;
 	private BroadcastReceiver wifiReceiver;
 	private ProgressDialog waitDialog;
+	private int control;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -69,6 +70,7 @@ public class MainActivity extends SuperActivity implements
 		btZoom = (Button) findViewById(R.id.zoomButton);
 		btZoom.setText("x1.0");
 		wifiReceiver = new MyReceiver();
+		control = 0;
 	}
 
 	/** Called when the activity is first created or restarted */
@@ -146,6 +148,8 @@ public class MainActivity extends SuperActivity implements
 				getWindow().clearFlags(
 						WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 			}
+			// research for building and floor
+			control = 1;
 		}
 	}
 
@@ -165,7 +169,8 @@ public class MainActivity extends SuperActivity implements
 						.getMeanAzimut());
 				long start = System.currentTimeMillis();
 				LocationResult myLocRes = myLoc.getLocation(results, direction,
-						0);
+						control);
+				control = 0;
 				if (myLocRes == null) {
 					Toast.makeText(MainActivity.this,
 							"Position nicht gefunden", Toast.LENGTH_LONG)
