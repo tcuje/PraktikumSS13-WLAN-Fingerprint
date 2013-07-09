@@ -13,7 +13,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.database.SQLException;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.widget.EditText;
@@ -185,12 +184,7 @@ public class DatabaseTransformer {
 								// open import database
 								StorageHandler temp = new StorageHandler(
 										parentActivity, params[0]);
-								try {
-									temp.onStart();
-								} catch (SQLException ex) {
-									Toast.makeText(parentActivity,
-											ex.getMessage(), Toast.LENGTH_LONG)
-											.show();
+								if (temp.validate() == false) {
 									return false;
 								}
 								// import buildings
@@ -363,7 +357,6 @@ public class DatabaseTransformer {
 										}
 									}
 								}
-								temp.onStop();
 								return true;
 							}
 
