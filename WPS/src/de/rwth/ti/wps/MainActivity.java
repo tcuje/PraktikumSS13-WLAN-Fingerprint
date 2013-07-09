@@ -122,6 +122,7 @@ public class MainActivity extends SuperActivity implements
 				Location myLoc = new Location(sth);
 				Cardinal direction = Cardinal.getFromAzimuth(comp
 						.getMeanAzimut());
+				long start = System.currentTimeMillis();
 				LocationResult myLocRes = myLoc.getLocation(results, direction,
 						0);
 				if (myLocRes == null) {
@@ -129,7 +130,9 @@ public class MainActivity extends SuperActivity implements
 							"Position nicht gefunden", Toast.LENGTH_LONG)
 							.show();
 				} else {
+					long stop = System.currentTimeMillis();
 					Floor map = myLocRes.getFloor();
+					long mStart = System.currentTimeMillis();
 					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed reload it
 						byte[] file = myLocRes.getFloor().getFile();
@@ -150,6 +153,7 @@ public class MainActivity extends SuperActivity implements
 									Toast.LENGTH_LONG).show();
 						}
 					}
+					long mStop = System.currentTimeMillis();
 					viewMap.setPoint((float) myLocRes.getX(),
 							(float) myLocRes.getY());
 					if (lastMap == null || map.getId() != lastMap.getId()) {
@@ -157,6 +161,11 @@ public class MainActivity extends SuperActivity implements
 						lastMap = map;
 						viewMap.zoomPoint();
 					}
+					Toast.makeText(
+							MainActivity.this,
+							"Loc: " + (stop - start) + "ms\nMap: "
+									+ (mStop - mStart) + "ms",
+							Toast.LENGTH_LONG).show();
 				}
 			}
 		}

@@ -285,13 +285,9 @@ public class MeasureActivity extends SuperActivity implements
 				if (results != null && !results.isEmpty()) {
 					// create scan entry
 					Date d = new Date();
-//					Scan scan = MeasureActivity.this.getStorage().createScan(
-//							lastMP, d.getTime() / 1000,
-//							getCompassManager().getMeanAzimut());
-					// use fake azimut values
 					Scan scan = MeasureActivity.this.getStorage().createScan(
 							lastMP, d.getTime() / 1000,
-							direction.getAsAzimuth());
+							getCompassManager().getMeanAzimut());
 					for (ScanResult result : results) {
 						MeasureActivity.this.getStorage().createAccessPoint(
 								scan, result.BSSID, result.level,

@@ -15,7 +15,7 @@ public class Constants {
 	public static final Locale LOCALE = Locale.GERMAN;
 	public static final String DB_SUFFIX = ".sqlite";
 	public static final int FILE_BUFFER_SIZE = 10240;
-	public static final int AUTO_SCAN_SEC = 2;
+	public static final int AUTO_SCAN_SEC = 200;
 	public static final int ANGLE_DIFF = 30;
 	public static final String MAP_SUFFIX = ".svg";
 	public static final int IMPORTANT_APS = 3;

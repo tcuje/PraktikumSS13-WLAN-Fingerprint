@@ -7,6 +7,7 @@ import java.util.List;
 import android.net.wifi.ScanResult;
 import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.Constants;
+import de.rwth.ti.common.DataHelper;
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
@@ -43,7 +44,7 @@ public class Location {
 			int kontrollvariable) {
 		long theTime = time.getTime().getTime();
 		aps = deleteDoubles(aps);
-
+		aps = DataHelper.sortScanResults(aps);
 		if (theTime > timeSinceBuilding + 40000 || kontrollvariable == 1) {
 			Building lastBuilding = tempBuilding;
 			Floor lastFloor = tempFloor;
@@ -213,7 +214,7 @@ public class Location {
 			return null;
 		}
 		List<Scan> scanEntries = dataHandler.getScans(map,
-				compass.getAsAzimuth());
+				compass.getAsAzimuth(), Constants.ANGLE_DIFF);
 		List<ScanError> errorList = new LinkedList<ScanError>();
 		for (Scan scan : scanEntries) {
 			double errorValue = 0;

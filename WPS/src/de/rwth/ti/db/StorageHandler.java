@@ -604,15 +604,19 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	@Override
-	public List<Scan> getScans(Floor floor, long compass) {
+	public List<Scan> getScans(Floor floor, long compass, long range) {
 		List<Scan> result = new LinkedList<Scan>();
 		List<MeasurePoint> mps = getMeasurePoints(floor);
 		for (MeasurePoint mp : mps) {
 			List<Scan> scans = getScans(mp);
-			for (Scan scan : scans) {
-				if (DataHelper.isInRange(scan.getCompass(), compass,
-						Constants.ANGLE_DIFF)) {
-					result.add(scan);
+			if (range >= 360) {
+				result.addAll(scans);
+			} else {
+				for (Scan scan : scans) {
+					if (DataHelper.isInRange(scan.getCompass(), compass,
+							Constants.ANGLE_DIFF)) {
+						result.add(scan);
+					}
 				}
 			}
 		}
