@@ -23,6 +23,11 @@ import de.rwth.ti.common.Constants;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 
+/**
+ * 
+ * This activity is used to create new buildings or floors
+ * 
+ */
 public class NewFloorActivity extends SuperActivity implements
 		OnItemSelectedListener {
 
@@ -56,6 +61,9 @@ public class NewFloorActivity extends SuperActivity implements
 		floorLevelEdit = (EditText) findViewById(R.id.floorLevelEdit);
 		floorNameEdit = (EditText) findViewById(R.id.floorNameEdit);
 		northEdit = (EditText) findViewById(R.id.northEdit);
+		// XXX remove default value and make visible
+		northEdit.setText("0");
+		northEdit.setVisibility(View.GONE);
 		floorFilenameView = (TextView) findViewById(R.id.filePathEdit);
 
 		TextWatcher textWatch = new TextWatcher() {

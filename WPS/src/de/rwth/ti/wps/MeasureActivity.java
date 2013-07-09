@@ -28,12 +28,17 @@ import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.DataHelper;
 import de.rwth.ti.common.IPMapView;
+import de.rwth.ti.common.QualityCheck;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.Scan;
 import de.rwth.ti.loc.Location;
 
+/**
+ * This activity is used to gather measure information
+ * 
+ */
 public class MeasureActivity extends SuperActivity implements
 		OnItemSelectedListener {
 
@@ -244,7 +249,7 @@ public class MeasureActivity extends SuperActivity implements
 				List<MeasurePoint> mpl = getStorage().getMeasurePoints(
 						floorSelected);
 				for (MeasurePoint mp : mpl) {
-					mp.setQuality(getStorage().getQuality(mp));
+					mp.setQuality(QualityCheck.getQuality(getStorage(), mp));
 					mapView.addOldPoint(mp);
 				}
 			} else {
@@ -284,13 +289,9 @@ public class MeasureActivity extends SuperActivity implements
 				if (results != null && !results.isEmpty()) {
 					// create scan entry
 					Date d = new Date();
-//					Scan scan = MeasureActivity.this.getStorage().createScan(
-//							lastMP, d.getTime() / 1000,
-//							getCompassManager().getMeanAzimut());
-					// use fake azimut values
 					Scan scan = MeasureActivity.this.getStorage().createScan(
 							lastMP, d.getTime() / 1000,
-							direction.getAsAzimuth());
+							getCompassManager().getMeanAzimut());
 					for (ScanResult result : results) {
 						MeasureActivity.this.getStorage().createAccessPoint(
 								scan, result.BSSID, result.level,

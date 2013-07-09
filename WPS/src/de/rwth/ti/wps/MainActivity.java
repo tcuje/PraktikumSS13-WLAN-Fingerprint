@@ -4,8 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
@@ -23,6 +26,7 @@ import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.CompassManager;
 import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.IPMapView;
+import de.rwth.ti.common.QualityCheck;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.StorageHandler;
@@ -41,6 +45,7 @@ public class MainActivity extends SuperActivity implements
 	private ImageButton btCenter;
 	private Button btZoom;
 	private BroadcastReceiver wifiReceiver;
+	private ProgressDialog waitDialog;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -75,8 +80,45 @@ public class MainActivity extends SuperActivity implements
 			getWindow()
 					.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		}
-		this.registerReceiver(wifiReceiver, new IntentFilter(
-				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+		// start async task to validate the database
+		waitDialog = ProgressDialog.show(this, "",
+				getString(R.string.please_wait));
+		waitDialog.setCancelable(false);
+		AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+		builder.setMessage(R.string.error_db_failure);
+		builder.setCancelable(false);
+		builder.setPositiveButton(R.string.ok,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						finish();
+					}
+				});
+		final AlertDialog alert = builder.create();
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				final boolean dbCheck = getStorage().validate();
+				runOnUiThread(new Runnable() {
+					public void run() {
+						if (waitDialog != null) {
+							waitDialog.dismiss();
+							waitDialog = null;
+						}
+						if (dbCheck == false) {
+							alert.show();
+						} else {
+							MainActivity.this
+									.registerReceiver(
+											wifiReceiver,
+											new IntentFilter(
+													WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+						}
+					}
+				});
+			}
+		});
+		t.start();
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
@@ -121,6 +163,7 @@ public class MainActivity extends SuperActivity implements
 				Location myLoc = new Location(sth);
 				Cardinal direction = Cardinal.getFromAzimuth(comp
 						.getMeanAzimut());
+				long start = System.currentTimeMillis();
 				LocationResult myLocRes = myLoc.getLocation(results, direction,
 						0);
 				if (myLocRes == null) {
@@ -128,7 +171,9 @@ public class MainActivity extends SuperActivity implements
 							"Position nicht gefunden", Toast.LENGTH_LONG)
 							.show();
 				} else {
+					long stop = System.currentTimeMillis();
 					Floor map = myLocRes.getFloor();
+					long mStart = System.currentTimeMillis();
 					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed reload it
 						byte[] file = myLocRes.getFloor().getFile();
@@ -139,7 +184,8 @@ public class MainActivity extends SuperActivity implements
 							List<MeasurePoint> mpl = getStorage()
 									.getMeasurePoints(map);
 							for (MeasurePoint mp : mpl) {
-								mp.setQuality(getStorage().getQuality(mp));
+								mp.setQuality(QualityCheck.getQuality(
+										getStorage(), mp));
 								viewMap.addOldPoint(mp);
 							}
 						} else {
@@ -148,15 +194,18 @@ public class MainActivity extends SuperActivity implements
 									Toast.LENGTH_LONG).show();
 						}
 					}
+					long mStop = System.currentTimeMillis();
 					viewMap.setPoint(myLocRes);
-					/**
-					viewMap.setPoint((float) myLocRes.getX(),
-							(float) myLocRes.getY());**/
 					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed focus position once
 						lastMap = map;
 						viewMap.zoomPoint();
 					}
+					Toast.makeText(
+							MainActivity.this,
+							"Loc: " + (stop - start) + "ms\nMap: "
+									+ (mStop - mStart) + "ms",
+							Toast.LENGTH_LONG).show();
 				}
 			}
 		}

@@ -1,20 +1,16 @@
 package de.rwth.ti.wps;
 
-import java.io.IOException;
 import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.webkit.WebView;
 import android.widget.Toast;
-import de.rwth.ti.common.ChooseFileDialog;
-import de.rwth.ti.common.Constants;
+import de.rwth.ti.common.DatabaseTransformer;
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
@@ -22,12 +18,12 @@ import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.Scan;
 
 /**
- * This is the main activity class
+ * This activity shows the raw database content
  * 
  */
 public class DebugActivity extends SuperActivity {
 
-	private TextView textStatus;
+	private WebView dataView;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -35,7 +31,7 @@ public class DebugActivity extends SuperActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_debug);
 		// Setup UI
-		textStatus = (TextView) findViewById(R.id.textStatus);
+		dataView = (WebView) findViewById(R.id.debug_data_view);
 	}
 
 	@Override
@@ -60,40 +56,64 @@ public class DebugActivity extends SuperActivity {
 	}
 
 	public void showDebug() {
-		textStatus.setText("Database:\n");
-		textStatus.append("\nBuildings: " + getStorage().countAllBuildings()
-				+ "\n");
-		for (Building b : getStorage().getAllBuildings()) {
-			textStatus.append("Building\t" + b.getId() + "\t" + b.getName()
-					+ "\n");
-		}
-		textStatus.append("\nFloors: " + getStorage().countAllFloors() + "\n");
-		for (Floor m : getStorage().getAllFloors()) {
-			byte[] f = m.getFile();
-			textStatus.append("Floor\t" + m.getId() + "\t" + m.getName() + "\t"
-					+ (f != null && f.length != 0) + "\n");
-		}
-		textStatus.append("\nMeasurePoints: "
-				+ getStorage().countAllMeasurePoints() + "\n");
-		for (MeasurePoint cp : getStorage().getAllMeasurePoints()) {
-			textStatus.append("MeasurePoint\t" + cp.getId() + "\t"
-					+ cp.getFloorId() + "\t" + cp.getPosx() + "\t"
-					+ cp.getPosy() + "\n");
-		}
-		textStatus.append("\nScans: " + getStorage().countAllScans() + "\n");
-		for (Scan scan : getStorage().getAllScans()) {
-			textStatus.append("Scan\t" + scan.getId() + "\t" + scan.getMpid()
-					+ "\t" + scan.getTime() + "\t" + scan.getCompass() + "\n");
-		}
-		textStatus.append("\nAccessPoints: "
-				+ getStorage().countAllAccessPoints() + "\n");
-		List<AccessPoint> all = getStorage().getAllAccessPoints();
-		for (AccessPoint ap : all) {
-			textStatus.append("AP\t" + ap.getId() + "\t" + ap.getScanId()
-					+ "\t" + ap.getBssid() + "\t" + ap.getLevel() + "\t"
-					+ ap.getFreq() + "\t'" + ap.getSsid() + "'\t"
-					+ ap.getProps() + "\n");
-		}
+		dataView.loadData(getString(R.string.please_wait), "text/html", null);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				StringBuilder sb = new StringBuilder("<nobr>Database:<br/>");
+				sb.append("Buildings: " + getStorage().countAllBuildings()
+						+ "<br/>");
+				sb.append("Floors: " + getStorage().countAllFloors() + "<br/>");
+				sb.append("MeasurePoints: "
+						+ getStorage().countAllMeasurePoints() + "<br/>");
+				sb.append("Scans: " + getStorage().countAllScans() + "<br/>");
+				sb.append("AccessPoints: "
+						+ getStorage().countAllAccessPoints() + "<br/>");
+				sb.append("<br/>Buildings: " + getStorage().countAllBuildings()
+						+ "<br/>");
+				for (Building b : getStorage().getAllBuildings()) {
+					sb.append("Building " + b.getId() + " " + b.getName()
+							+ "<br/>");
+				}
+				sb.append("<br/>Floors: " + getStorage().countAllFloors()
+						+ "<br/>");
+				for (Floor m : getStorage().getAllFloors()) {
+					byte[] f = m.getFile();
+					sb.append("Floor " + m.getId() + " " + m.getName() + " "
+							+ (f != null && f.length != 0) + "<br/>");
+				}
+				sb.append("<br/>MeasurePoints: "
+						+ getStorage().countAllMeasurePoints() + "<br/>");
+				for (MeasurePoint cp : getStorage().getAllMeasurePoints()) {
+					sb.append("MeasurePoint " + cp.getId() + " "
+							+ cp.getFloorId() + " " + cp.getPosx() + " "
+							+ cp.getPosy() + "<br/>");
+				}
+				sb.append("<br/>Scans: " + getStorage().countAllScans()
+						+ "<br/>");
+				for (Scan scan : getStorage().getAllScans()) {
+					sb.append("Scan " + scan.getId() + " " + scan.getMpid()
+							+ " " + scan.getTime() + " " + scan.getCompass()
+							+ "<br/>");
+				}
+				sb.append("<br/>AccessPoints: "
+						+ getStorage().countAllAccessPoints() + "<br/>");
+				List<AccessPoint> all = getStorage().getAllAccessPoints();
+				for (AccessPoint ap : all) {
+					sb.append("AP " + ap.getId() + " " + ap.getScanId() + " "
+							+ ap.getBssid() + " " + ap.getLevel() + " "
+							+ ap.getFreq() + " '" + ap.getSsid() + "' "
+							+ ap.getProps() + "<br/>");
+				}
+				sb.append("</nobr>");
+				final String str = sb.toString();
+				runOnUiThread(new Runnable() {
+					public void run() {
+						dataView.loadData(str, "text/html", null);
+					}
+				});
+			}
+		}).start();
 	}
 
 	@Override
@@ -101,81 +121,10 @@ public class DebugActivity extends SuperActivity {
 		boolean result = super.onOptionsItemSelected(item);
 		switch (item.getItemId()) {
 		case R.id.menu_export:
-			final EditText input = new EditText(DebugActivity.this);
-			input.setText(Constants.LOCAL_DB_NAME);
-			input.requestFocus();
-			new AlertDialog.Builder(DebugActivity.this)
-					.setTitle(R.string.database_export_question)
-					.setMessage(R.string.choose_filename)
-					.setView(input)
-					.setPositiveButton(R.string.ok,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									String dbExportName = input.getText()
-											.toString();
-									if (dbExportName
-											.endsWith(Constants.DB_SUFFIX) == false) {
-										dbExportName += Constants.DB_SUFFIX;
-									}
-									try {
-										getStorage().exportDatabase(
-												dbExportName);
-									} catch (IOException e) {
-										Toast.makeText(getBaseContext(),
-												e.toString(), Toast.LENGTH_LONG)
-												.show();
-									}
-									Toast.makeText(
-											getBaseContext(),
-											getText(R.string.database_export_success)
-													+ "\n" + dbExportName,
-											Toast.LENGTH_SHORT).show();
-								}
-							})
-					.setNegativeButton(R.string.cancel,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									// Do nothing.
-								}
-							}).show();
+			DatabaseTransformer.exportDatabase(this);
 			break;
 		case R.id.menu_import:
-			ChooseFileDialog directoryChooserDialog = new ChooseFileDialog(
-					DebugActivity.this,
-					new ChooseFileDialog.ChosenFileListener() {
-						@Override
-						public void onChosenFile(String chosenFile) {
-							AsyncTask<String, Integer, Boolean> at = new AsyncTask<String, Integer, Boolean>() {
-								@Override
-								protected Boolean doInBackground(
-										String... params) {
-									return getStorage().importDatabase(
-											params[0]);
-								}
-
-								@Override
-								protected void onProgressUpdate(
-										Integer... progress) {
-//									setProgressPercent(progress[0]);
-								}
-
-								@Override
-								protected void onPostExecute(Boolean result) {
-									if (result == true) {
-										Toast.makeText(
-												getBaseContext(),
-												R.string.database_import_success,
-												Toast.LENGTH_SHORT).show();
-									}
-									showDebug();
-								}
-							};
-							at.execute(chosenFile);
-						}
-					}, Constants.DB_SUFFIX);
-			directoryChooserDialog.chooseDirectory(Constants.SD_APP_DIR);
+			DatabaseTransformer.importDatabase(this, getStorage());
 			break;
 		case R.id.menu_clear:
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -194,4 +143,5 @@ public class DebugActivity extends SuperActivity {
 		}
 		return result;
 	}
+
 }

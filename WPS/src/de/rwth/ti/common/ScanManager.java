@@ -73,7 +73,6 @@ public class ScanManager {
 			scantask.cancel();
 		}
 		scantask = new TimerTask() {
-
 			@Override
 			public void run() {
 				wifi.startScan();

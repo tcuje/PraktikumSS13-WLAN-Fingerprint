@@ -1,5 +1,11 @@
 package de.rwth.ti.common;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import android.net.wifi.ScanResult;
+
 public class DataHelper {
 
 	/**
@@ -16,6 +22,18 @@ public class DataHelper {
 			return true;
 		}
 		return false;
+	}
+
+	public static List<ScanResult> sortScanResults(List<ScanResult> results) {
+		Collections.sort(results, new Comparator<ScanResult>() {
+
+			@Override
+			public int compare(ScanResult lhs, ScanResult rhs) {
+				return (lhs.level > rhs.level ? -1
+						: (lhs.level == rhs.level ? 0 : 1));
+			}
+		});
+		return results;
 	}
 
 }

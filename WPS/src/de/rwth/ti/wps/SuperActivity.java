@@ -10,11 +10,12 @@ import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.ScanManager;
 import de.rwth.ti.db.StorageHandler;
 
+/**
+ * This is the super activity for all other acitivities
+ * 
+ */
 public abstract class SuperActivity extends Activity {
 
-	/*
-	 * Own classes
-	 */
 	private ScanManager scm;
 	private StorageHandler storage;
 	private CompassManager cmgr;
@@ -45,7 +46,7 @@ public abstract class SuperActivity extends Activity {
 
 		// Setup database storage
 		if (storage == null && hasStorage) {
-			storage = new StorageHandler(this);
+			storage = new StorageHandler(this, Constants.DB_NAME);
 		}
 
 		// Setup compass manager
@@ -64,11 +65,8 @@ public abstract class SuperActivity extends Activity {
 		if (scm != null) {
 			scm.onStart();
 		}
-		if (storage != null) {
-			storage.onStart();
-		}
 //		// launch default activity for debugging only
-//		Intent intent = new Intent(this, MeasureActivity.class);
+//		Intent intent = new Intent(this, DebugActivity.class);
 //		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 //		startActivity(intent);
 	}
@@ -82,9 +80,6 @@ public abstract class SuperActivity extends Activity {
 		}
 		if (scm != null) {
 			scm.onStop();
-		}
-		if (storage != null) {
-			storage.onStop();
 		}
 	}
 
