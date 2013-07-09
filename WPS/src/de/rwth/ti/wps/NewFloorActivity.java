@@ -23,6 +23,11 @@ import de.rwth.ti.common.Constants;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 
+/**
+ * 
+ * This activity is used to create new buildings or floors
+ * 
+ */
 public class NewFloorActivity extends SuperActivity implements
 		OnItemSelectedListener {
 

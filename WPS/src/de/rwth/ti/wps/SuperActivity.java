@@ -10,11 +10,12 @@ import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.ScanManager;
 import de.rwth.ti.db.StorageHandler;
 
+/**
+ * This is the super activity for all other acitivities
+ * 
+ */
 public abstract class SuperActivity extends Activity {
 
-	/*
-	 * Own classes
-	 */
 	private ScanManager scm;
 	private StorageHandler storage;
 	private CompassManager cmgr;

@@ -35,6 +35,10 @@ import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.Scan;
 import de.rwth.ti.loc.Location;
 
+/**
+ * This activity is used to gather measure information
+ * 
+ */
 public class MeasureActivity extends SuperActivity implements
 		OnItemSelectedListener {
 

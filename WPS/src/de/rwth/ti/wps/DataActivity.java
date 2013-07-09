@@ -19,6 +19,11 @@ import de.rwth.ti.layouthelper.FloorSpinnerHelper;
 import de.rwth.ti.layouthelper.OnBuildingChangedListener;
 import de.rwth.ti.layouthelper.OnFloorChangedListener;
 
+/**
+ * 
+ * This acitivity allows data modification
+ * 
+ */
 public class DataActivity extends SuperActivity implements
 		OnBuildingChangedListener, OnFloorChangedListener {
 

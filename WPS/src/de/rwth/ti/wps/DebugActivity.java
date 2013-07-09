@@ -18,7 +18,7 @@ import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.Scan;
 
 /**
- * This is the main activity class
+ * This activity shows the raw database content
  * 
  */
 public class DebugActivity extends SuperActivity {
