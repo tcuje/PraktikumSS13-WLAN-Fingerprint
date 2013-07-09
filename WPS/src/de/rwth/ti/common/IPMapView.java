@@ -12,7 +12,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -37,7 +36,6 @@ public class IPMapView extends View {
 	private float mYScaleFocus = 0;
 	private float mAccXPoint = 0;
 	private float mAccYPoint = 0;
-	//private PointF mPoint = null;
 	private LocationResult location = null;
 	private PointF mMPoint = null;
 	private float mHeight = 0;
@@ -48,8 +46,8 @@ public class IPMapView extends View {
 	private ArrayList<Path> myPaths;
 	private ArrayList<Path> myFillPaths;
 	private ArrayList<MeasurePoint> myOldPoints;
-	private Paint mPaint = new Paint();
-	private Rect mRect = new Rect();
+	private Paint mPaint;
+	private Rect mRect;
 	private OnScaleChangeListener onScaleChangeListener;
 
 	public IPMapView(Context context, AttributeSet attrs) {
@@ -59,13 +57,11 @@ public class IPMapView extends View {
 		myOldPoints = new ArrayList<MeasurePoint>();
 		mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
 		mGestureDetector = new GestureDetector(context, new MyGestureListener());
+		mPaint = new Paint();
 		mPaint.setStrokeCap(Paint.Cap.ROUND);
-	}
-
-	public IPMapView(Context context, AttributeSet attrs,
-			InputStream inputStream) {
-		this(context, attrs);
-		newMap(inputStream);
+		mPaint.setAntiAlias(true);
+		mPaint.setStrokeWidth(0.432f);
+		mRect = new Rect();
 	}
 
 	@Override
@@ -74,11 +70,6 @@ public class IPMapView extends View {
 		mGestureDetector.onTouchEvent(ev);
 		return true;
 	}
-
-	@Override
-	protected void onFinishInflate() {
-		super.onFinishInflate();
-	};
 
 	@Override
 	protected void onSizeChanged(int xNew, int yNew, int xOld, int yOld) {
@@ -95,46 +86,37 @@ public class IPMapView extends View {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		canvas.save();
-		// canvas.drawColor(android.graphics.Color.GRAY);
 		boolean test = false;
 		canvas.getClipBounds(mRect);
 		if (mRect.top == 0 && mRect.left == 0 && mRect.right == mViewWidth
 				&& mRect.bottom == mViewHeight) {
 			test = true;
 		}
-		// mXScaleFocus -= mXFocus;
-		// mYScaleFocus -= mYFocus;
 		canvas.scale(mScaleFactor, mScaleFactor);
-		// canvas.scale(mScaleFactor, mScaleFactor, mXScaleFocus, mYScaleFocus);
 		canvas.translate(mXFocus, mYFocus);
 		canvas.getClipBounds(mRect);
 		if (test) {
 			mAccXPoint = mRect.exactCenterX();
 			mAccYPoint = mRect.exactCenterY();
-			// System.out.println("Mitte: "+mAccXPoint+","+mAccYPoint);
 		}
-
-		mPaint.setAntiAlias(true);
-		mPaint.setStrokeWidth(0.432f);
-		mPaint.setColor(android.graphics.Color.GRAY);
-		mPaint.setStyle(Paint.Style.STROKE);
-
+		// draw filled paths
 		if (myFillPaths != null) {
+			mPaint.setColor(android.graphics.Color.GRAY);
+			mPaint.setStyle(Paint.Style.STROKE);
 			for (Path aPath : myFillPaths) {
 				canvas.drawPath(aPath, mPaint);
 			}
 		}
-
-		mPaint.setColor(android.graphics.Color.BLACK);
-		mPaint.setStyle(Paint.Style.STROKE);
-
+		// draw walls
 		if (myPaths != null) {
+			mPaint.setColor(android.graphics.Color.BLACK);
+			mPaint.setStyle(Paint.Style.STROKE);
 			for (Path aPath : myPaths) {
 				canvas.drawPath(aPath, mPaint);
 			}
 		}
 		// draw old measure points
-		mPaint.setStyle(Style.FILL);
+		mPaint.setStyle(Paint.Style.FILL);
 		for (MeasurePoint aPoint : myOldPoints) {
 			mPaint.setColor(Color.BLACK);
 			canvas.drawCircle((float) aPoint.getPosx(),
@@ -150,32 +132,24 @@ public class IPMapView extends View {
 					(float) aPoint.getPosy(), 1.5f, mPaint);
 		}
 		// draw position
-		if (!mMeasureMode && location != null) {
-			if (location.getAccuracy()==0){
+		if (mMeasureMode == false && location != null) {
+			if (location.getAccuracy() == 0) {
 				mPaint.setColor(android.graphics.Color.RED);
-			}else if (location.getAccuracy()==1){
+			} else if (location.getAccuracy() == 1) {
 				mPaint.setColor(android.graphics.Color.YELLOW);
-			}
-			else if (location.getAccuracy()==2){
+			} else if (location.getAccuracy() == 2) {
 				mPaint.setColor(android.graphics.Color.GREEN);
 			}
-			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-			canvas.drawCircle((float)location.getX(), (float)location.getY(), 3, mPaint);
+			mPaint.setStyle(Paint.Style.FILL);
+			canvas.drawCircle((float) location.getX(), (float) location.getY(),
+					3, mPaint);
 		}
 		// draw active measure point
-		if (mMeasureMode && mMPoint != null) {
+		if (mMeasureMode == true && mMPoint != null) {
 			mPaint.setColor(android.graphics.Color.GREEN);
-			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+			mPaint.setStyle(Paint.Style.FILL);
 			canvas.drawCircle(mMPoint.x, mMPoint.y, 3, mPaint);
 		}
-//		// draw grid
-//		mPaint.setColor(Color.BLACK);
-//		for (int x = 0; x < mWidth; x += mScaleFactor) {
-//			canvas.drawLine(x, 0, x, mHeight, mPaint);
-//		}
-//		for (int y = 0; y < mHeight; y += mScaleFactor) {
-//			canvas.drawLine(0, y, mWidth, y, mPaint);
-//		}
 		// restore it
 		canvas.restore();
 	}
@@ -191,7 +165,6 @@ public class IPMapView extends View {
 		mYScaleFocus = 0;
 		mAccXPoint = 0;
 		mAccYPoint = 0;
-		//mPoint = null;
 		location = null;
 		mMPoint = null;
 		mHeight = 0;
@@ -473,35 +446,23 @@ public class IPMapView extends View {
 		myOldPoints.add(punkt);
 	}
 
-/**	public void setPoint(float x, float y) {
-		if (mPoint == null) {
-			mPoint = new PointF(x, y);
-		} else {
-			mPoint.set(x, y);
-		}
-		invalidate();
-	}
-**/
 	public void setPoint(LocationResult passedLocation) {
-		location = new LocationResult(passedLocation.getBuilding(), passedLocation.getFloor(), passedLocation.getX(), passedLocation.getY(), passedLocation.getAccuracy());
+		location = new LocationResult(passedLocation.getBuilding(),
+				passedLocation.getFloor(), passedLocation.getX(),
+				passedLocation.getY(), passedLocation.getAccuracy());
 		invalidate();
 	}
-	
-	/**public void focusPoint() {
-		if (mPoint != null) {
-			mXFocus = -mPoint.x + mViewWidth / (2 * mScaleFactor);
-			mYFocus = -mPoint.y + mViewHeight / (2 * mScaleFactor);
-			invalidate();
-		}
-	}
-	**/
+
 	public void focusPoint() {
 		if (location != null) {
-			mXFocus = -(float)location.getX() + mViewWidth / (2 * mScaleFactor);
-			mYFocus = -(float)location.getY() + mViewHeight / (2 * mScaleFactor);
+			mXFocus = -(float) location.getX() + mViewWidth
+					/ (2 * mScaleFactor);
+			mYFocus = -(float) location.getY() + mViewHeight
+					/ (2 * mScaleFactor);
 			invalidate();
 		}
 	}
+
 	public void zoomPoint() {
 		setScaleFactor((mMaxScaleFactor - mMinScaleFactor) / 2);
 		focusPoint();
@@ -525,8 +486,6 @@ public class IPMapView extends View {
 				+ mAccXPoint;
 		mMPoint.y = (y / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))
 				+ mAccYPoint;
-		// mXMPoint = (x-mXFocus)/mScaleFactor;
-		// mYMPoint = (y-mYFocus)/mScaleFactor;
 		invalidate();
 	}
 

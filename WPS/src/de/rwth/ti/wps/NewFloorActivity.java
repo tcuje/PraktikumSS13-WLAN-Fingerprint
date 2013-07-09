@@ -61,6 +61,9 @@ public class NewFloorActivity extends SuperActivity implements
 		floorLevelEdit = (EditText) findViewById(R.id.floorLevelEdit);
 		floorNameEdit = (EditText) findViewById(R.id.floorNameEdit);
 		northEdit = (EditText) findViewById(R.id.northEdit);
+		// XXX remove default value and make visible
+		northEdit.setText("0");
+		northEdit.setVisibility(View.GONE);
 		floorFilenameView = (TextView) findViewById(R.id.filePathEdit);
 
 		TextWatcher textWatch = new TextWatcher() {
