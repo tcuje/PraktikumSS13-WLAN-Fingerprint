@@ -22,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import de.rwth.ti.db.MeasurePoint;
+import de.rwth.ti.loc.LocationResult;
 
 public class IPMapView extends View {
 
@@ -36,7 +37,8 @@ public class IPMapView extends View {
 	private float mYScaleFocus = 0;
 	private float mAccXPoint = 0;
 	private float mAccYPoint = 0;
-	private PointF mPoint = null;
+	//private PointF mPoint = null;
+	private LocationResult location = null;
 	private PointF mMPoint = null;
 	private float mHeight = 0;
 	private float mWidth = 0;
@@ -148,10 +150,17 @@ public class IPMapView extends View {
 					(float) aPoint.getPosy(), 1.5f, mPaint);
 		}
 		// draw position
-		if (!mMeasureMode && mPoint != null) {
-			mPaint.setColor(android.graphics.Color.BLUE);
+		if (!mMeasureMode && location != null) {
+			if (location.getAccuracy()==0){
+				mPaint.setColor(android.graphics.Color.RED);
+			}else if (location.getAccuracy()==1){
+				mPaint.setColor(android.graphics.Color.YELLOW);
+			}
+			else if (location.getAccuracy()==2){
+				mPaint.setColor(android.graphics.Color.GREEN);
+			}
 			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-			canvas.drawCircle(mPoint.x, mPoint.y, 3, mPaint);
+			canvas.drawCircle((float)location.getX(), (float)location.getY(), 3, mPaint);
 		}
 		// draw active measure point
 		if (mMeasureMode && mMPoint != null) {
@@ -182,7 +191,8 @@ public class IPMapView extends View {
 		mYScaleFocus = 0;
 		mAccXPoint = 0;
 		mAccYPoint = 0;
-		mPoint = null;
+		//mPoint = null;
+		location = null;
 		mMPoint = null;
 		mHeight = 0;
 		mWidth = 0;
@@ -463,7 +473,7 @@ public class IPMapView extends View {
 		myOldPoints.add(punkt);
 	}
 
-	public void setPoint(float x, float y) {
+/**	public void setPoint(float x, float y) {
 		if (mPoint == null) {
 			mPoint = new PointF(x, y);
 		} else {
@@ -471,15 +481,27 @@ public class IPMapView extends View {
 		}
 		invalidate();
 	}
-
-	public void focusPoint() {
+**/
+	public void setPoint(LocationResult passedLocation) {
+		location = new LocationResult(passedLocation.getBuilding(), passedLocation.getFloor(), passedLocation.getX(), passedLocation.getY(), passedLocation.getAccuracy());
+		invalidate();
+	}
+	
+	/**public void focusPoint() {
 		if (mPoint != null) {
 			mXFocus = -mPoint.x + mViewWidth / (2 * mScaleFactor);
 			mYFocus = -mPoint.y + mViewHeight / (2 * mScaleFactor);
 			invalidate();
 		}
 	}
-
+	**/
+	public void focusPoint() {
+		if (location != null) {
+			mXFocus = -(float)location.getX() + mViewWidth / (2 * mScaleFactor);
+			mYFocus = -(float)location.getY() + mViewHeight / (2 * mScaleFactor);
+			invalidate();
+		}
+	}
 	public void zoomPoint() {
 		setScaleFactor((mMaxScaleFactor - mMinScaleFactor) / 2);
 		focusPoint();

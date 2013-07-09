@@ -148,8 +148,10 @@ public class MainActivity extends SuperActivity implements
 									Toast.LENGTH_LONG).show();
 						}
 					}
+					viewMap.setPoint(myLocRes);
+					/**
 					viewMap.setPoint((float) myLocRes.getX(),
-							(float) myLocRes.getY());
+							(float) myLocRes.getY());**/
 					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed focus position once
 						lastMap = map;
