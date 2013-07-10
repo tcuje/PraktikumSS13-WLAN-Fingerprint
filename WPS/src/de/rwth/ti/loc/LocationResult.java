@@ -14,6 +14,7 @@ public class LocationResult {
 	private double x;
 	private double y;
 	private int accuracy;
+	private int errorCode=0;
 
 	public LocationResult(Building building, Floor floor, double x, double y, int accuracy) {
 		this.floor = floor;
@@ -27,7 +28,12 @@ public class LocationResult {
 			accuracy=0;
 		}
 	}
-
+	public void setError(int errorcode){
+		this.errorCode=errorcode;
+	}
+	public int getError(){
+		return errorCode;
+	}
 	public Floor getFloor() {
 		return floor;
 	}
