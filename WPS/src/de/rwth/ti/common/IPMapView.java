@@ -133,6 +133,9 @@ public class IPMapView extends View {
 		}
 		// draw position
 		if (mMeasureMode == false && location != null) {
+			mPaint.setColor(android.graphics.Color.BLACK);
+			canvas.drawCircle((float) location.getX(),
+					(float) location.getY(), 3, mPaint);
 			if (location.getAccuracy() == 0) {
 				mPaint.setColor(android.graphics.Color.RED);
 			} else if (location.getAccuracy() == 1) {
@@ -142,7 +145,7 @@ public class IPMapView extends View {
 			}
 			mPaint.setStyle(Paint.Style.FILL);
 			canvas.drawCircle((float) location.getX(), (float) location.getY(),
-					3, mPaint);
+					2.5f, mPaint);
 		}
 		// draw active measure point
 		if (mMeasureMode == true && mMPoint != null) {

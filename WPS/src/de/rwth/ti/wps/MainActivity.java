@@ -21,7 +21,9 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.CompassManager;
 import de.rwth.ti.common.Constants;
@@ -40,7 +42,7 @@ import de.rwth.ti.loc.LocationResult;
 public class MainActivity extends SuperActivity implements
 		OnCheckedChangeListener {
 
-	private CheckBox checkLoc;
+	private ToggleButton checkLoc;
 	private IPMapView viewMap;
 	private ImageButton btCenter;
 	private Button btZoom;
@@ -60,7 +62,7 @@ public class MainActivity extends SuperActivity implements
 						.show();
 			}
 		}
-		checkLoc = (CheckBox) findViewById(R.id.toggleLocalization);
+		checkLoc = (ToggleButton) findViewById(R.id.toggleLocalization);
 		checkLoc.setOnCheckedChangeListener(this);
 		viewMap = (IPMapView) findViewById(R.id.viewMap);
 		viewMap.setMeasureMode(false);
@@ -166,10 +168,31 @@ public class MainActivity extends SuperActivity implements
 				long start = System.currentTimeMillis();
 				LocationResult myLocRes = myLoc.getLocation(results, direction,
 						0);
-				if (myLocRes == null) {
-					Toast.makeText(MainActivity.this,
-							"Position nicht gefunden", Toast.LENGTH_LONG)
-							.show();
+				if (myLocRes.getError()!=0) {
+//					Toast.makeText(MainActivity.this,
+//							"Position nicht gefunden", Toast.LENGTH_LONG)
+//							.show();
+//					
+					String errorMessage="";
+					TextView errormessageView = (TextView) findViewById(R.id.debugInfo);
+					switch (myLocRes.getError()){
+					case 1:
+						errorMessage = "Gebaeude nicht gefunden.";
+						break;
+					case 2:
+						errorMessage = "Stockwerk nicht gefunden.";
+						break;
+					case 3:
+						errorMessage = "Keine Accesspoints gefunden.";
+						break;
+					case 4:
+						errorMessage = "Leere Map.";
+						break;
+					case 5:
+						errorMessage = "Position nicht gefunden.";
+						break;				
+					}
+					errormessageView.setText(errorMessage);
 				} else {
 					long stop = System.currentTimeMillis();
 					Floor map = myLocRes.getFloor();
@@ -206,7 +229,12 @@ public class MainActivity extends SuperActivity implements
 							"Loc: " + (stop - start) + "ms\nMap: "
 									+ (mStop - mStart) + "ms",
 							Toast.LENGTH_LONG).show();
+					String locationInfo="";
+					locationInfo=myLocRes.getFloor().getName()+" in "+myLocRes.getBuilding().getName();
+					TextView errormessageView = (TextView) findViewById(R.id.debugInfo);
+					errormessageView.setText(locationInfo);
 				}
+				
 			}
 		}
 	}
