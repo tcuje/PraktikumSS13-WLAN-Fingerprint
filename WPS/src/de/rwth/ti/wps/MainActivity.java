@@ -224,14 +224,13 @@ public class MainActivity extends SuperActivity implements
 						lastMap = map;
 						viewMap.zoomPoint();
 					}
-					Toast.makeText(
-							MainActivity.this,
-							"Loc: " + (stop - start) + "ms\nMap: "
-									+ (mStop - mStart) + "ms",
-							Toast.LENGTH_LONG).show();
-					String locationInfo = "";
-					locationInfo = myLocRes.getFloor().getName() + " in "
-							+ myLocRes.getBuilding().getName();
+					String measureTime = "";
+					measureTime = "Loc: " + (stop - start) + "ms\nMap: "
+							+ (mStop - mStart) + "ms";
+					TextView measureTimeView = (TextView) findViewById(R.id.measureTime);
+					measureTimeView.setText(measureTime);
+					String locationInfo = myLocRes.getFloor().getName()
+							+ " in " + myLocRes.getBuilding().getName();
 					TextView errormessageView = (TextView) findViewById(R.id.debugInfo);
 					errormessageView.setText(locationInfo);
 				}
