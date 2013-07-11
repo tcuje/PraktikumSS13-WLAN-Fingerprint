@@ -36,9 +36,12 @@ public class IPMapView extends View {
 	private float mYScaleFocus = 0;
 	private float mAccXPoint = 0;
 	private float mAccYPoint = 0;
+<<<<<<< HEAD
 	private LocationResult location = null;
+=======
 	private float mapFactor = 6.7f;
 	private PointF mPoint = null;
+>>>>>>> xmlfix
 	private PointF mMPoint = null;
 	private PointF mMPointOld = null;
 	private float mHeight = 0;
@@ -103,6 +106,9 @@ public class IPMapView extends View {
 			mAccXPoint = mRect.exactCenterX();
 			mAccYPoint = mRect.exactCenterY();
 		}
+<<<<<<< HEAD
+		// draw filled paths
+=======
 		
 		
 		mPaint.setAntiAlias(true);
@@ -110,13 +116,17 @@ public class IPMapView extends View {
 		mPaint.setColor(Color.WHITE);
 		mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 		
-		// draw filled paths
+>>>>>>> xmlfix
 		if (myFillPaths != null) {
+			mPaint.setColor(android.graphics.Color.GRAY);
+			mPaint.setStyle(Paint.Style.STROKE);
 			for (Path aPath : myFillPaths) {
 				canvas.drawPath(aPath, mPaint);
 			}
 		}
+<<<<<<< HEAD
 		// draw walls
+=======
 		mPaint.setColor(Color.parseColor("#1DB1E1"));
 		mPaint.setStyle(Paint.Style.STROKE);
 		/*if (myFillPaths != null) {
@@ -125,7 +135,10 @@ public class IPMapView extends View {
 			}
 		}*/
 		
+>>>>>>> xmlfix
 		if (myPaths != null) {
+			mPaint.setColor(android.graphics.Color.BLACK);
+			mPaint.setStyle(Paint.Style.STROKE);
 			for (Path aPath : myPaths) {
 				canvas.drawPath(aPath, mPaint);
 			}
@@ -147,6 +160,7 @@ public class IPMapView extends View {
 					(float) aPoint.getPosy(), 1.5f, mPaint);
 		}
 		// draw position
+<<<<<<< HEAD
 		if (mMeasureMode == false && location != null) {
 			mPaint.setColor(android.graphics.Color.BLACK);
 			canvas.drawCircle((float) location.getX(),
@@ -161,12 +175,23 @@ public class IPMapView extends View {
 			mPaint.setStyle(Paint.Style.FILL);
 			canvas.drawCircle((float) location.getX(), (float) location.getY(),
 					2.5f, mPaint);
+=======
+		if (!mMeasureMode && mPoint != null) {
+			mPaint.setColor(android.graphics.Color.BLUE);
+			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+			canvas.drawCircle(mPoint.x, mPoint.y, 0.5f*mapFactor, mPaint);
+>>>>>>> xmlfix
 		}
 		// draw active measure point
 		if (mMeasureMode == true && mMPoint != null) {
 			mPaint.setColor(android.graphics.Color.GREEN);
+<<<<<<< HEAD
+			mPaint.setStyle(Paint.Style.FILL);
+			canvas.drawCircle(mMPoint.x, mMPoint.y, 3, mPaint);
+=======
 			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 			canvas.drawCircle(mMPoint.x, mMPoint.y, 0.5f*mapFactor, mPaint);
+>>>>>>> xmlfix
 		}
 		// restore it
 		canvas.restore();
@@ -582,6 +607,8 @@ public class IPMapView extends View {
 			scale = Math.max(mMinScaleFactor / 4,
 				Math.min(scale, mMaxScaleFactor));
 			setScaleFactor(scale);
+			
+
 			mXFocus = -mXScaleFocus + detector.getFocusX() / mScaleFactor;
 			mYFocus = -mYScaleFocus + detector.getFocusY() / mScaleFactor;
 			invalidate();

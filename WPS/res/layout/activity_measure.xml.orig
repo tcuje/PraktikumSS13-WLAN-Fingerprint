@@ -36,6 +36,7 @@
     <Spinner
         android:id="@+id/floorSelectSpinner"
         android:layout_width="match_parent"
+<<<<<<< HEAD
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/buildingSelectSpinner" />
@@ -48,6 +49,14 @@
         android:layout_centerHorizontal="true"
         android:text="@string/measure_mark_point"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+
+</RelativeLayout>
+=======
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 
         <de.rwth.ti.common.IPMapView
             android:id="@+id/map_view"
@@ -100,3 +109,4 @@
     </RelativeLayout>
 
 </LinearLayout>
+>>>>>>> xmlfix
