@@ -25,6 +25,15 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" />
 
+        <Button
+            android:id="@+id/button_next_line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:onClick="nextLine"
+            android:contentDescription="@+string/button_next_line"
+            android:text="next line" />
+        
         <TextView
             android:id="@+id/direction_text_view"
             android:layout_width="wrap_content"
@@ -32,6 +41,15 @@
             android:layout_centerHorizontal="true"
             android:text="@string/measure_mark_point"
             android:textAppearance="?android:attr/textAppearanceMedium" />
+        
+        <Button
+            android:id="@+id/button_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:onClick="next"
+            android:contentDescription="@+string/button_next_line"
+            android:text="next" />
 
         <Button
             android:id="@+id/measure_button"
