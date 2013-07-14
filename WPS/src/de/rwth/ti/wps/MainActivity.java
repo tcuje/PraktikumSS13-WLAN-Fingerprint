@@ -126,8 +126,7 @@ public class MainActivity extends SuperActivity implements
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (checkLoc != null && checkLoc.isChecked() == true
-					&& getStorage().isReady() == true) {
+			if (checkLoc != null && checkLoc.isChecked() == true) {
 				try {
 					final List<ScanResult> results = wifi.getScanResults();
 					final Cardinal direction = Cardinal.getFromAzimuth(comp

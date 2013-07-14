@@ -51,11 +51,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		}
 	}
 
-	public boolean isReady() {
-		boolean result = (db != null);
-		return result;
-	}
-
 	@Override
 	public AccessPoint createAccessPoint(Scan scan, String bssid, long level,
 			long freq, String ssid, String props) {

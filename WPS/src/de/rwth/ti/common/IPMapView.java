@@ -55,7 +55,6 @@ public class IPMapView extends View {
 	private Paint mPaint;
 	private Rect mRect;
 	private OnScaleChangeListener onScaleChangeListener;
-	private IPMapView mySelf;
 
 	public IPMapView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -70,7 +69,6 @@ public class IPMapView extends View {
 		mPaint.setAntiAlias(true);
 		mPaint.setStrokeWidth(0.432f);
 		mRect = new Rect();
-		mySelf = this;
 	}
 
 	public void setMScaleFactor(float factor) {
@@ -531,10 +529,10 @@ public class IPMapView extends View {
 			if (currentapiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 				// Do something for HonyComb and above versions
 				AnimatorSet anSet = new AnimatorSet();
-				ObjectAnimator objAnX = ObjectAnimator.ofFloat(mySelf,
-						"mXFocus", mXFocus, x);
-				ObjectAnimator objAnY = ObjectAnimator.ofFloat(mySelf,
-						"mYFocus", mYFocus, y);
+				ObjectAnimator objAnX = ObjectAnimator.ofFloat(this, "mXFocus",
+						mXFocus, x);
+				ObjectAnimator objAnY = ObjectAnimator.ofFloat(this, "mYFocus",
+						mYFocus, y);
 				anSet.playTogether(objAnX, objAnY);
 				anSet.setDuration(1000);
 				anSet.start();
@@ -554,11 +552,11 @@ public class IPMapView extends View {
 		if (currentapiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 			// Do something for HonyComb and above versions
 			AnimatorSet anSet = new AnimatorSet();
-			ObjectAnimator objAnScale = ObjectAnimator.ofFloat(mySelf,
+			ObjectAnimator objAnScale = ObjectAnimator.ofFloat(this,
 					"mScaleFactor", mScaleFactor, newScale);
-			ObjectAnimator objAnX = ObjectAnimator.ofFloat(mySelf, "mXFocus",
+			ObjectAnimator objAnX = ObjectAnimator.ofFloat(this, "mXFocus",
 					mXFocus, x);
-			ObjectAnimator objAnY = ObjectAnimator.ofFloat(mySelf, "mYFocus",
+			ObjectAnimator objAnY = ObjectAnimator.ofFloat(this, "mYFocus",
 					mYFocus, y);
 			anSet.playTogether(objAnScale, objAnX, objAnY);
 			anSet.setDuration(1000);
@@ -663,12 +661,12 @@ public class IPMapView extends View {
 			if (currentapiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 				// Do something for HonyComb and above versions
 				AnimatorSet anSet = new AnimatorSet();
-				ObjectAnimator objAnScale = ObjectAnimator.ofFloat(mySelf,
+				ObjectAnimator objAnScale = ObjectAnimator.ofFloat(this,
 						"mScaleFactor", mScaleFactor, newScale);
-				ObjectAnimator objAnX = ObjectAnimator.ofFloat(mySelf,
-						"mXFocus", mXFocus, x);
-				ObjectAnimator objAnY = ObjectAnimator.ofFloat(mySelf,
-						"mYFocus", mYFocus, y);
+				ObjectAnimator objAnX = ObjectAnimator.ofFloat(this, "mXFocus",
+						mXFocus, x);
+				ObjectAnimator objAnY = ObjectAnimator.ofFloat(this, "mYFocus",
+						mYFocus, y);
 				anSet.playTogether(objAnScale, objAnX, objAnY);
 				anSet.setDuration(1000);
 				anSet.start();
