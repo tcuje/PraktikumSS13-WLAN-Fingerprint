@@ -4,11 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.List;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
@@ -45,7 +42,6 @@ public class MainActivity extends SuperActivity implements
 	private ImageButton btCenter;
 	private Button btZoom;
 	private BroadcastReceiver wifiReceiver;
-	private ProgressDialog waitDialog;
 	private int control;
 	private TextView measureTimeView;
 	private TextView errormessageView;
@@ -87,46 +83,9 @@ public class MainActivity extends SuperActivity implements
 			getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
 			getWindow()
 					.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			this.registerReceiver(wifiReceiver, new IntentFilter(
+					WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 		}
-		// start async task to validate the database
-		waitDialog = ProgressDialog.show(this, "",
-				getString(R.string.please_wait));
-		waitDialog.setCancelable(false);
-		AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-		builder.setMessage(R.string.error_db_failure);
-		builder.setCancelable(false);
-		builder.setPositiveButton(R.string.ok,
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						finish();
-					}
-				});
-		final AlertDialog alert = builder.create();
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				final boolean dbCheck = getStorage().onStart();
-				runOnUiThread(new Runnable() {
-					public void run() {
-						if (waitDialog != null) {
-							waitDialog.dismiss();
-							waitDialog = null;
-						}
-						if (dbCheck == false) {
-							alert.show();
-						} else {
-							MainActivity.this
-									.registerReceiver(
-											wifiReceiver,
-											new IntentFilter(
-													WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-						}
-					}
-				});
-			}
-		});
-		t.start();
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
@@ -140,7 +99,6 @@ public class MainActivity extends SuperActivity implements
 		} catch (IllegalArgumentException ex) {
 			// just ignore it
 		}
-		getStorage().onStop();
 	}
 
 	@Override
@@ -168,7 +126,8 @@ public class MainActivity extends SuperActivity implements
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (checkLoc != null && checkLoc.isChecked() == true) {
+			if (checkLoc != null && checkLoc.isChecked() == true
+					&& getStorage().isReady() == true) {
 				try {
 					final List<ScanResult> results = wifi.getScanResults();
 					final Cardinal direction = Cardinal.getFromAzimuth(comp

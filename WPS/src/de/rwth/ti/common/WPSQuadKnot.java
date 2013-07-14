@@ -3,9 +3,10 @@ package de.rwth.ti.common;
 import de.rwth.ti.db.MeasurePoint;
 
 public class WPSQuadKnot {
-	MeasurePoint value = null;
-	WPSQuadKnot tl, tr, bl, br;
-	float xMin, xMax, yMin, yMax;
+
+	private MeasurePoint value = null;
+	private WPSQuadKnot tl, tr, bl, br;
+	private float xMin, xMax, yMin, yMax;
 
 	public WPSQuadKnot(float xMi, float xMa, float yMi, float yMa) {
 		xMin = xMi;
@@ -30,17 +31,19 @@ public class WPSQuadKnot {
 					yMax);
 			br = new WPSQuadKnot((xMax + xMin) / 2, xMax, (yMin + yMax) / 2,
 					yMax);
-			if (value.getPosx() > (xMax + xMin) / 2) {
-				if (value.getPosy() > (yMax + yMin) / 2) {
-					br.addMPoint(value);
+			if (value != null) {
+				if (value.getPosx() > (xMax + xMin) / 2) {
+					if (value.getPosy() > (yMax + yMin) / 2) {
+						br.addMPoint(value);
+					} else {
+						tr.addMPoint(value);
+					}
 				} else {
-					tr.addMPoint(value);
-				}
-			} else {
-				if (value.getPosy() > (yMax + yMin) / 2) {
-					bl.addMPoint(value);
-				} else {
-					tl.addMPoint(value);
+					if (value.getPosy() > (yMax + yMin) / 2) {
+						bl.addMPoint(value);
+					} else {
+						tl.addMPoint(value);
+					}
 				}
 			}
 			value = null;
@@ -75,4 +78,9 @@ public class WPSQuadKnot {
 			}
 		}
 	}
+
+	public MeasurePoint getValue() {
+		return value;
+	}
+
 }

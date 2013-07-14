@@ -1,6 +1,9 @@
 package de.rwth.ti.wps;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -68,6 +71,40 @@ public abstract class SuperActivity extends Activity {
 		if (scm != null) {
 			scm.onStart();
 		}
+		if (storage != null) {
+			// start async task to validate the database
+			final ProgressDialog waitDialog = ProgressDialog.show(this, "",
+					getString(R.string.please_wait));
+			waitDialog.setCancelable(false);
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.error_db_failure);
+			builder.setCancelable(false);
+			builder.setPositiveButton(R.string.ok,
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							finish();
+						}
+					});
+			final AlertDialog alert = builder.create();
+			Thread t = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					final boolean dbCheck = getStorage().onStart();
+					runOnUiThread(new Runnable() {
+						public void run() {
+							if (waitDialog != null) {
+								waitDialog.dismiss();
+							}
+							if (dbCheck == false) {
+								alert.show();
+							}
+						}
+					});
+				}
+			});
+			t.start();
+		}
 		// // launch default activity for debugging only
 		// Intent intent = new Intent(this, MeasureActivity.class);
 		// intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -84,6 +121,13 @@ public abstract class SuperActivity extends Activity {
 		if (scm != null) {
 			scm.onStop();
 		}
+		if (storage != null) {
+			storage.onStop();
+		}
+	}
+
+	public CompassManager getCompassManager() {
+		return cmgr;
 	}
 
 	public ScanManager getScanManager() {
@@ -92,10 +136,6 @@ public abstract class SuperActivity extends Activity {
 
 	public StorageHandler getStorage() {
 		return storage;
-	}
-
-	public CompassManager getCompassManager() {
-		return cmgr;
 	}
 
 	protected String createFloorNameFromLevel(int level) {
@@ -155,4 +195,5 @@ public abstract class SuperActivity extends Activity {
 		}
 		return true;
 	}
+
 }

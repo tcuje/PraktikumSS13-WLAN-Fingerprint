@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.graphics.PointF;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -26,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.Constants;
+import de.rwth.ti.common.DataHelper;
 import de.rwth.ti.common.IPMapView;
 import de.rwth.ti.common.QualityCheck;
 import de.rwth.ti.db.Building;
@@ -109,26 +109,22 @@ public class MeasureActivity extends SuperActivity implements
 		// update face text
 		switch (direction) {
 		case NORTH:
-			if (lastAzimuth > -Constants.ANGLE_DIFF
-					&& lastAzimuth < Constants.ANGLE_DIFF) {
+			if (DataHelper.isInRange(lastAzimuth, 0, Constants.ANGLE_DIFF) == true) {
 				color = Color.GREEN;
 			}
 			break;
 		case EAST:
-			if (lastAzimuth > 90 - Constants.ANGLE_DIFF
-					&& lastAzimuth < 90 + Constants.ANGLE_DIFF) {
+			if (DataHelper.isInRange(lastAzimuth, 90, Constants.ANGLE_DIFF) == true) {
 				color = Color.GREEN;
 			}
 			break;
 		case SOUTH:
-			if (lastAzimuth > 180 - Constants.ANGLE_DIFF
-					|| lastAzimuth < -180 + Constants.ANGLE_DIFF) {
+			if (DataHelper.isInRange(lastAzimuth, 180, Constants.ANGLE_DIFF) == true) {
 				color = Color.GREEN;
 			}
 			break;
 		case WEST:
-			if (lastAzimuth > -90 - Constants.ANGLE_DIFF
-					&& lastAzimuth < -90 + Constants.ANGLE_DIFF) {
+			if (DataHelper.isInRange(lastAzimuth, 270, Constants.ANGLE_DIFF) == true) {
 				color = Color.GREEN;
 			}
 			break;

@@ -20,8 +20,8 @@ import de.rwth.ti.share.IMeasureDataHandler;
  */
 public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
-	private Storage storage;
 	private SQLiteDatabase db;
+	private Storage storage;
 
 	public StorageHandler(Context context, String dbName) {
 		this.storage = new Storage(context, dbName);
@@ -47,7 +47,13 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	public void onStop() {
 		if (db != null && db.isOpen() == true) {
 			db.close();
+			db = null;
 		}
+	}
+
+	public boolean isReady() {
+		boolean result = (db != null);
+		return result;
 	}
 
 	@Override
@@ -101,7 +107,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public List<AccessPoint> getAllAccessPoints() {
-		SQLiteDatabase db = storage.getReadableDatabase();
 		Cursor cursor = db.query(AccessPoint.TABLE_NAME,
 				AccessPoint.ALL_COLUMNS, null, null, null, null, null);
 		List<AccessPoint> result = cursorToAccessPoints(cursor);
@@ -110,7 +115,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public List<AccessPoint> getAccessPoints(Scan scan) {
-		SQLiteDatabase db = storage.getReadableDatabase();
 		Cursor cursor = db
 				.query(AccessPoint.TABLE_NAME, AccessPoint.ALL_COLUMNS,
 						AccessPoint.COLUMN_SCANID + "=?",
@@ -122,7 +126,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public List<AccessPoint> getAccessPoints(Scan scan, int limit) {
-		SQLiteDatabase db = storage.getReadableDatabase();
 		Cursor cursor = db.query(AccessPoint.TABLE_NAME,
 				AccessPoint.ALL_COLUMNS, AccessPoint.COLUMN_SCANID + "=?",
 				new String[] { String.valueOf(scan.getId()) }, null, null,
@@ -153,7 +156,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public List<AccessPoint> getAccessPoint(String bssid) {
-		SQLiteDatabase db = storage.getReadableDatabase();
 		Cursor cursor = db.query(AccessPoint.TABLE_NAME,
 				AccessPoint.ALL_COLUMNS, AccessPoint.COLUMN_BSSID + "=?",
 				new String[] { bssid }, null, null, AccessPoint.COLUMN_LEVEL
@@ -206,7 +208,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public List<Scan> getAllScans() {
-		SQLiteDatabase db = storage.getReadableDatabase();
 		Cursor cursor = db.query(Scan.TABLE_NAME, Scan.ALL_COLUMNS, null, null,
 				null, null, null);
 		List<Scan> result = cursorToScans(cursor);
@@ -215,7 +216,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public List<Scan> getScans(MeasurePoint mp) {
-		SQLiteDatabase db = storage.getReadableDatabase();
 		Cursor cursor = db.query(Scan.TABLE_NAME, Scan.ALL_COLUMNS,
 				Scan.COLUMN_MPID + "=?",
 				new String[] { String.valueOf(mp.getId()) }, null, null, null);
@@ -225,7 +225,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public Scan getScan(AccessPoint ap) {
-		SQLiteDatabase db = storage.getReadableDatabase();
 		Cursor cursor = db.query(Scan.TABLE_NAME, Scan.ALL_COLUMNS,
 				Scan.COLUMN_ID + "=?",
 				new String[] { String.valueOf(ap.getScanId()) }, null, null,
@@ -282,7 +281,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public List<MeasurePoint> getAllMeasurePoints() {
-		SQLiteDatabase db = storage.getReadableDatabase();
 		Cursor cursor = db.query(MeasurePoint.TABLE_NAME,
 				MeasurePoint.ALL_COLUMNS, null, null, null, null, null);
 		List<MeasurePoint> result = cursorToMeasurePoints(cursor);
@@ -291,7 +289,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public MeasurePoint getMeasurePoint(Scan scan) {
-		SQLiteDatabase db = storage.getReadableDatabase();
 		Cursor cursor = db.query(MeasurePoint.TABLE_NAME,
 				MeasurePoint.ALL_COLUMNS, MeasurePoint.COLUMN_ID + "=?",
 				new String[] { String.valueOf(scan.getMpid()) }, null, null,
@@ -306,7 +303,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public List<MeasurePoint> getMeasurePoints(Floor floor) {
-		SQLiteDatabase db = storage.getReadableDatabase();
 		Cursor cursor = db.query(MeasurePoint.TABLE_NAME,
 				MeasurePoint.ALL_COLUMNS, MeasurePoint.COLUMN_FLOORID + "=?",
 				new String[] { String.valueOf(floor.getId()) }, null, null,
@@ -364,7 +360,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public List<Floor> getAllFloors() {
-		SQLiteDatabase db = storage.getReadableDatabase();
 		Cursor cursor = db.query(Floor.TABLE_NAME, Floor.ALL_COLUMNS, null,
 				null, null, null, null);
 		List<Floor> result = cursorToFloors(cursor);
@@ -373,7 +368,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public List<Floor> getFloors(Building b) {
-		SQLiteDatabase db = storage.getReadableDatabase();
 		Cursor cursor = db.query(Floor.TABLE_NAME, Floor.ALL_COLUMNS,
 				Floor.COLUMN_BID + "=?",
 				new String[] { String.valueOf(b.getId()) }, null, null, null,
@@ -384,7 +378,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public Floor getFloor(MeasurePoint mp) {
-		SQLiteDatabase db = storage.getReadableDatabase();
 		Cursor cursor = db.query(Floor.TABLE_NAME, Floor.ALL_COLUMNS,
 				Floor.COLUMN_ID + "=?",
 				new String[] { String.valueOf(mp.getFloorId()) }, null, null,
@@ -572,7 +565,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public List<Building> getAllBuildings() {
-		SQLiteDatabase db = storage.getReadableDatabase();
 		Cursor cursor = db.query(Building.TABLE_NAME, Building.ALL_COLUMNS,
 				null, null, null, null, Building.COLUMN_NAME + " ASC");
 		List<Building> result = cursorToBuildings(cursor);
@@ -581,7 +573,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public Building getBuilding(Floor floor) {
-		SQLiteDatabase db = storage.getReadableDatabase();
 		Cursor cursor = db.query(Building.TABLE_NAME, Building.ALL_COLUMNS,
 				Building.COLUMN_ID + "=?",
 				new String[] { String.valueOf(floor.getBId()) }, null, null,
@@ -595,7 +586,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	private long countTable(String tableName) {
-		SQLiteDatabase db = storage.getReadableDatabase();
 		Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + tableName, null);
 		cursor.moveToFirst();
 		long result = cursor.getLong(0);

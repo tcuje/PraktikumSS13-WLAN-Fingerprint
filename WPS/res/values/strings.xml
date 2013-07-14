@@ -71,13 +71,14 @@
     <string name="floor">Etage</string>
     <string name="measurepoint">Messpunkt</string>
     <string name="error_short_name">Name zu kurz</string>
-	<string name="scan">Scan</string>
+    <string name="scan">Scan</string>
     <string name="scans">Scans</string>
-	<string name="delete_last_scan">Letzten Scan löschen</string>
-	<string name="error_db_failure">Schwerwiegender Datenbankfehler! Bitte alle Daten löschen und erneut versuchen.</string>
-	<string name="error_loc_building_not_found">Gebäude nicht gefunden.</string>
-	<string name="error_loc_floor_not_found">Stockwerk nicht gefunden.</string>
-	<string name="error_loc_aps_not_found">Keine Accesspoints gefunden.</string>
-	<string name="error_loc_empty_map">Leere Map.</string>
-	<string name="error_loc_position_not_found">Position nicht gefunden.</string>
+    <string name="delete_last_scan">Letzten Scan löschen</string>
+    <string name="error_db_failure">Schwerwiegender Datenbankfehler! Bitte alle Daten löschen und erneut versuchen.</string>
+    <string name="error_loc_building_not_found">Gebäude nicht gefunden.</string>
+    <string name="error_loc_floor_not_found">Stockwerk nicht gefunden.</string>
+    <string name="error_loc_aps_not_found">Keine Accesspoints gefunden.</string>
+    <string name="error_loc_empty_map">Leere Map.</string>
+    <string name="error_loc_position_not_found">Position nicht gefunden.</string>
+
 </resources>
