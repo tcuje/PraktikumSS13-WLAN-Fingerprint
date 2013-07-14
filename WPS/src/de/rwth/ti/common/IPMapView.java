@@ -2,7 +2,8 @@ package de.rwth.ti.common;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -45,18 +46,18 @@ public class IPMapView extends View {
 	private float mViewHeight = 0;
 	private float mViewWidth = 0;
 	private boolean mMeasureMode = true;
-	private ArrayList<Path> myPaths;
-	private ArrayList<Path> myFillPaths;
-	private ArrayList<MeasurePoint> myOldPoints;
+	private List<Path> myPaths;
+	private List<Path> myFillPaths;
+	private List<MeasurePoint> myOldPoints;
 	private Paint mPaint;
 	private Rect mRect;
 	private OnScaleChangeListener onScaleChangeListener;
 
 	public IPMapView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		myPaths = new ArrayList<Path>();
-		myFillPaths = new ArrayList<Path>();
-		myOldPoints = new ArrayList<MeasurePoint>();
+		myPaths = new LinkedList<Path>();
+		myFillPaths = new LinkedList<Path>();
+		myOldPoints = new LinkedList<MeasurePoint>();
 		mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
 		mGestureDetector = new GestureDetector(context, new MyGestureListener());
 		mPaint = new Paint();

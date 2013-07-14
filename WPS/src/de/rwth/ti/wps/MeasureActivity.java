@@ -178,16 +178,14 @@ public class MeasureActivity extends SuperActivity implements
 		}
 	}
 
-	public void next(View view)
-	{
+	public void next(View view) {
 		mapView.next();
 	}
-	
-	public void nextLine(View view)
-	{
+
+	public void nextLine(View view) {
 		mapView.nextLine();
 	}
-	
+
 	public void measure(View view) {
 		if (view.getId() == R.id.measure_button) {
 			// check if building/floor is selected
@@ -252,9 +250,6 @@ public class MeasureActivity extends SuperActivity implements
 			byte[] file = floorSelected.getFile();
 			if (file != null) {
 				ByteArrayInputStream bin = new ByteArrayInputStream(file);
-				// List<MeasurePoint> mps = getStorage().getMeasurePoints(
-				// floorSelected);
-				// mapView.newMap(bin, mps);
 				mapView.newMap(bin);
 				List<MeasurePoint> mpl = getStorage().getMeasurePoints(
 						floorSelected);
