@@ -220,7 +220,7 @@ public class IPMapView extends View {
 		 * e1.printStackTrace(); }
 		 */
 		this.clearMap();
-		
+
 		XmlPullParserFactory factory = null;
 		
 		try {

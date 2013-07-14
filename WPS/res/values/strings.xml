@@ -3,9 +3,9 @@
 
     <string name="app_name">WPS</string>
     <string name="app_description">WiFi Positioning System</string>
-    <string name="action_navigation">Navigation</string>
-    <string name="action_localisation">Lokalisation</string>
-    <string name="action_new_floor">Neue Karte</string>
+    <string name="action_navigation">Menü</string>
+    <string name="action_localisation">Lokalisationsmodus</string>
+    <string name="action_new_floor">Neue Karte erstellen</string>
     <string name="action_measure">Messmodus</string>
     <string name="action_debug">Datenbank anzeigen</string>
     <string name="building">Gebäude</string>
@@ -78,7 +78,8 @@
     <string name="error_save">%1$s: Fehler beim Speichern</string>
     <string name="floor">Etage</string>
     <string name="measurepoint">Messpunkt</string>
-    <string name="scan">Scan</string>
+    <string name="error_short_name">Name zu kurz</string>
+	<string name="scan">Scan</string>
     <string name="scans">Scans</string>
 	<string name="delete_last_scan">Letzten Scan löschen</string>
 	<string name="error_db_failure">Schwerwiegender Datenbankfehler! Bitte alle Daten löschen und erneut versuchen.</string>

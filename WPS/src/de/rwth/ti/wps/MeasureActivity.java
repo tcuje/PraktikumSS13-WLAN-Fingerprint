@@ -26,7 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.Constants;
-import de.rwth.ti.common.DataHelper;
 import de.rwth.ti.common.IPMapView;
 import de.rwth.ti.common.QualityCheck;
 import de.rwth.ti.db.Building;
@@ -110,22 +109,26 @@ public class MeasureActivity extends SuperActivity implements
 		// update face text
 		switch (direction) {
 		case NORTH:
-			if (DataHelper.isInRange(lastAzimuth, 0, Constants.ANGLE_DIFF)) {
+			if (lastAzimuth > -Constants.ANGLE_DIFF
+					&& lastAzimuth < Constants.ANGLE_DIFF) {
 				color = Color.GREEN;
 			}
 			break;
 		case EAST:
-			if (DataHelper.isInRange(lastAzimuth, 90, Constants.ANGLE_DIFF)) {
+			if (lastAzimuth > 90 - Constants.ANGLE_DIFF
+					&& lastAzimuth < 90 + Constants.ANGLE_DIFF) {
 				color = Color.GREEN;
 			}
 			break;
 		case SOUTH:
-			if (DataHelper.isInRange(lastAzimuth, 180, Constants.ANGLE_DIFF)) {
+			if (lastAzimuth > 180 - Constants.ANGLE_DIFF
+					|| lastAzimuth < -180 + Constants.ANGLE_DIFF) {
 				color = Color.GREEN;
 			}
 			break;
 		case WEST:
-			if (DataHelper.isInRange(lastAzimuth, 270, Constants.ANGLE_DIFF)) {
+			if (lastAzimuth > -90 - Constants.ANGLE_DIFF
+					&& lastAzimuth < -90 + Constants.ANGLE_DIFF) {
 				color = Color.GREEN;
 			}
 			break;
@@ -178,16 +181,14 @@ public class MeasureActivity extends SuperActivity implements
 		}
 	}
 
-	public void next(View view)
-	{
+	public void next(View view) {
 		mapView.next();
 	}
-	
-	public void nextLine(View view)
-	{
+
+	public void nextLine(View view) {
 		mapView.nextLine();
 	}
-	
+
 	public void measure(View view) {
 		if (view.getId() == R.id.measure_button) {
 			// check if building/floor is selected

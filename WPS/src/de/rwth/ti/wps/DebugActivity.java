@@ -143,5 +143,4 @@ public class DebugActivity extends SuperActivity {
 		}
 		return result;
 	}
-
 }

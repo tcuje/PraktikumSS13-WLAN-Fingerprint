@@ -3,6 +3,8 @@ package de.rwth.ti.wps;
 import java.util.List;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -91,6 +93,21 @@ public class DataActivity extends SuperActivity implements
 		buildingEdit = (EditText) findViewById(R.id.dataBuildingRenameEdit);
 		floorEdit = (EditText) findViewById(R.id.dataFloorRenameEdit);
 		floorLevelEdit = (EditText) findViewById(R.id.dataFloorFloorLevelEdit);
+
+		TextWatcher textWatch = new TextWatcher() {
+			public void afterTextChanged(Editable s) {
+				onFloorLevelChanged();
+			}
+
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+			};
+
+			public void onTextChanged(CharSequence s, int start, int count,
+					int after) {
+			};
+		};
+		floorLevelEdit.addTextChangedListener(textWatch);
 	}
 
 	/** Called when the activity is first created or restarted */
@@ -110,6 +127,23 @@ public class DataActivity extends SuperActivity implements
 		selectedFloor = helper.getSelectedFloor();
 		if (selectedFloor != null) {
 			floorLevelEdit.setText(String.valueOf(selectedFloor.getLevel()));
+		} else {
+			floorLevelEdit.setText("");
+		}
+	}
+
+	public void onFloorLevelChanged() {
+		int tFloorLevel;
+		String tFloorLevelText = floorLevelEdit.getText().toString().trim();
+		if (tFloorLevelText.equals("") || tFloorLevelText.equals("-")) {
+			tFloorLevel = 0;
+		} else {
+			tFloorLevel = Integer.parseInt(tFloorLevelText);
+		}
+		if (tFloorLevel == selectedFloor.getLevel()) {
+			floorEdit.setText("");
+		} else {
+			floorEdit.setText(createFloorNameFromLevel(tFloorLevel));
 		}
 	}
 
@@ -123,6 +157,7 @@ public class DataActivity extends SuperActivity implements
 		if (selectedBuilding != null) {
 			if (getStorage().deleteBuilding(selectedBuilding)) {
 				buildingHelper.refresh();
+				buildingEdit.setText("");
 				makeToast(String.format(getString(R.string.success_delete),
 						getString(R.string.building)));
 			} else {
@@ -134,17 +169,21 @@ public class DataActivity extends SuperActivity implements
 
 	public void dataRenameBuilding(View v) {
 		String buildingName = buildingEdit.getText().toString().trim();
-		newBuilding = new Building();
-		newBuilding.setName(buildingName);
-		newBuilding.setId(selectedBuilding.getId());
-		if (getStorage().changeBuilding(newBuilding)) {
-			buildingHelper.refresh();
-			buildingEdit.setText("");
-			makeToast(String.format(getString(R.string.success_save),
-					getString(R.string.building)));
+		if (buildingName.length() >= 3) {
+			newBuilding = new Building();
+			newBuilding.setName(buildingName);
+			newBuilding.setId(selectedBuilding.getId());
+			if (getStorage().changeBuilding(newBuilding)) {
+				buildingHelper.refresh();
+				buildingEdit.setText("");
+				makeToast(String.format(getString(R.string.success_save),
+						getString(R.string.building)));
+			} else {
+				makeToast(String.format(getString(R.string.error_save),
+						getString(R.string.building)));
+			}
 		} else {
-			makeToast(String.format(getString(R.string.error_save),
-					getString(R.string.building)));
+			makeToast(getString(R.string.error_short_name));
 		}
 	}
 
@@ -190,13 +229,15 @@ public class DataActivity extends SuperActivity implements
 
 	public void dataDeleteLastMP(View v) {
 		List<MeasurePoint> mpList = getStorage().getAllMeasurePoints();
-		MeasurePoint deleteMP = mpList.get(mpList.size() - 1);
-		if (getStorage().deleteMeasurePoint(deleteMP)) {
-			makeToast(String.format(getString(R.string.success_delete),
-					getString(R.string.measurepoint)));
-		} else {
-			makeToast(String.format(getString(R.string.error_delete),
-					getString(R.string.measurepoint)));
+		if (mpList.size() > 0) {
+			MeasurePoint deleteMP = mpList.get(mpList.size() - 1);
+			if (getStorage().deleteMeasurePoint(deleteMP)) {
+				makeToast(String.format(getString(R.string.success_delete),
+						getString(R.string.measurepoint)));
+			} else {
+				makeToast(String.format(getString(R.string.error_delete),
+						getString(R.string.measurepoint)));
+			}
 		}
 	}
 
@@ -207,6 +248,7 @@ public class DataActivity extends SuperActivity implements
 				if (getStorage().deleteFloor(selectedFloor)) {
 					buildingHelper.refresh();
 					floorHelper.refresh();
+					floorEdit.setText("");
 					makeToast(String.format(getString(R.string.success_save),
 							getString(R.string.floor)));
 				} else {
@@ -221,22 +263,28 @@ public class DataActivity extends SuperActivity implements
 		String floorName = floorEdit.getText().toString().trim();
 		long floorLevel = Long.valueOf(
 				floorLevelEdit.getText().toString().trim()).longValue();
-		if (selectedBuilding != null) {
-			if (selectedFloor != null) {
-				newFloor = new Floor();
-				newFloor.setId(selectedFloor.getId());
-				newFloor.setLevel(floorLevel);
-				newFloor.setName(floorName);
-				if (getStorage().changeFloor(newFloor)) {
-					buildingHelper.refresh();
-					floorHelper.refresh();
-					makeToast(String.format(getString(R.string.success_save),
-							getString(R.string.floor)));
-				} else {
-					makeToast(String.format(getString(R.string.error_save),
-							getString(R.string.floor)));
+		if (floorName.length() >= 3) {
+			if (selectedBuilding != null) {
+				if (selectedFloor != null) {
+					newFloor = new Floor();
+					newFloor.setId(selectedFloor.getId());
+					newFloor.setLevel(floorLevel);
+					newFloor.setName(floorName);
+					if (getStorage().changeFloor(newFloor)) {
+						buildingHelper.refresh();
+						floorHelper.refresh();
+						floorEdit.setText("");
+						makeToast(String.format(
+								getString(R.string.success_save),
+								getString(R.string.floor)));
+					} else {
+						makeToast(String.format(getString(R.string.error_save),
+								getString(R.string.floor)));
+					}
 				}
 			}
+		} else {
+			makeToast(getString(R.string.error_short_name));
 		}
 	}
 
