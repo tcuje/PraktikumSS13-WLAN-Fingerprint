@@ -43,7 +43,7 @@ public class IPMapView extends View {
 	private float mAccYPoint = 0;
 	private LocationResult location = null;
 	private float mapFactor = 6.7f;
-	private PointF mMPoint = null;
+	private MeasurePoint mMPoint = null;
 	private PointF mMPointOld = null;
 	private float mHeight = 0;
 	private float mWidth = 0;
@@ -52,7 +52,8 @@ public class IPMapView extends View {
 	private boolean mMeasureMode = true;
 	private ArrayList<Path> myPaths;
 	private ArrayList<Path> myFillPaths;
-	private ArrayList<MeasurePoint> myOldPoints;
+	private WPSQuadTree myOldPoints;
+	private ArrayList<MeasurePoint> myOldPointsList;
 	private Paint mPaint;
 	private Rect mRect;
 	private OnScaleChangeListener onScaleChangeListener;
@@ -62,7 +63,8 @@ public class IPMapView extends View {
 		super(context, attrs);
 		myPaths = new ArrayList<Path>();
 		myFillPaths = new ArrayList<Path>();
-		myOldPoints = new ArrayList<MeasurePoint>();
+		myOldPointsList = new ArrayList<MeasurePoint>();
+		myOldPoints = null;
 		mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
 		mGestureDetector = new GestureDetector(context, new MyGestureListener());
 		mPaint = new Paint();
@@ -154,7 +156,7 @@ public class IPMapView extends View {
 		}
 		// draw old measure points
 		mPaint.setStyle(Paint.Style.FILL);
-		for (MeasurePoint aPoint : myOldPoints) {
+		for (MeasurePoint aPoint : myOldPointsList) {
 			mPaint.setColor(Color.BLACK);
 			canvas.drawCircle((float) aPoint.getPosx(),
 					(float) aPoint.getPosy(), 2, mPaint);
@@ -188,7 +190,7 @@ public class IPMapView extends View {
 		if (mMeasureMode == true && mMPoint != null) {
 			mPaint.setColor(android.graphics.Color.GREEN);
 			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-			canvas.drawCircle(mMPoint.x, mMPoint.y, 0.5f*mapFactor, mPaint);
+			canvas.drawCircle((float)mMPoint.getPosx(), (float)mMPoint.getPosy(), 0.5f*mapFactor, mPaint);
 		}
 		// restore it
 		canvas.restore();
@@ -197,7 +199,8 @@ public class IPMapView extends View {
 	public void clearMap() {
 		myPaths.clear();
 		myFillPaths.clear();
-		myOldPoints.clear();
+		myOldPoints = null;
+		myOldPointsList.clear();
 		setScaleFactor(1.0f);
 		mXFocus = 0;
 		mYFocus = 0;
@@ -489,11 +492,13 @@ public class IPMapView extends View {
 			}
 		}
 		System.out.println("End document");
+		myOldPoints = new WPSQuadTree(mWidth, mHeight);
 		invalidate();
 	}
 
 	public void addOldPoint(MeasurePoint punkt) {
-		myOldPoints.add(punkt);
+		myOldPoints.addPoint(punkt);
+		myOldPointsList.add(punkt);
 	}
 
 	public void setPoint(LocationResult passedLocation) {
@@ -558,14 +563,14 @@ public class IPMapView extends View {
 		mMeasureMode = measuremode;
 	}
 
-	public PointF getMeasurePoint() {
+	public MeasurePoint getMeasurePoint() {
 		return mMPoint;
 	}
 	
 	public void next()
 	{
 		if(mMPoint != null){
-			mMPoint.x = mMPoint.x + 2*mapFactor;
+			setMeasurePoint((float)mMPoint.getPosx()+ 2*mapFactor, (float)mMPoint.getPosy());
 			invalidate();
 		}
 	}
@@ -574,30 +579,40 @@ public class IPMapView extends View {
 	{
 		if(mMPointOld != null && mMPoint !=  null){
 			mMPointOld.y = mMPointOld.y + 2*mapFactor;
-			mMPoint.y = mMPointOld.y;
-			mMPoint.x = mMPointOld.x;
+			setMeasurePoint(mMPointOld.x, mMPointOld.y);
 			invalidate();
 		}
 	}
 	
+	public void setMMPoint(MeasurePoint mp){
+		mMPoint = mp;
+	}
+	
 	protected void setMeasurePoint(float x, float y) {
-		mMPoint = new PointF();
-		mMPoint.x = (x / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
-				+ mAccXPoint;
-		mMPoint.y = (y / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))
-				+ mAccYPoint;
-		invalidate();
+		mMPoint = myOldPoints.getMPoint(x,y);
+		if(mMPoint == null){
+			mMPoint = new MeasurePoint();
+			mMPoint.setPosx(x);
+			mMPoint.setPosy(y);
+			mMPoint.setId(-1);
+		}else if(Math.abs(mMPoint.getPosx()-x)>mapFactor || Math.abs(mMPoint.getPosy()-y)>mapFactor){
+			mMPoint = new MeasurePoint();
+			mMPoint.setPosx(x);
+			mMPoint.setPosy(y);
+			mMPoint.setId(-1);
+		}
 	}
 	
 	protected void setMeasurePointTouch(float x, float y) {
-		mMPoint = new PointF();
-		mMPoint.x = (x / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
+
+		float xP = (x / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
 				+ mAccXPoint;
-		mMPoint.y = (y / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))
+		float yP = (y / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))
 				+ mAccYPoint;
+		setMeasurePoint(xP, yP);
 		mMPointOld = new PointF();
-		mMPointOld.x = mMPoint.x;
-		mMPointOld.y = mMPoint.y;
+		mMPointOld.x = (float) mMPoint.getPosx();
+		mMPointOld.y = (float) mMPoint.getPosy();
 		
 		// mXMPoint = (x-mXFocus)/mScaleFactor;
 		// mYMPoint = (y-mYFocus)/mScaleFactor;
