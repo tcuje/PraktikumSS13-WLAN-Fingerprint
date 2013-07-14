@@ -129,31 +129,55 @@ public class IPMapView extends View {
 		}
 		// draw old measure points
 		mPaint.setStyle(Paint.Style.FILL);
-		for (MeasurePoint aPoint : myOldPoints) {
-			mPaint.setColor(Color.BLACK);
-			canvas.drawCircle((float) aPoint.getPosx(),
-					(float) aPoint.getPosy(), 2, mPaint);
-			if (aPoint.getQuality() < 0.25) {
-				mPaint.setColor(Color.RED);
-			} else if (aPoint.getQuality() < 0.75) {
-				mPaint.setColor(Color.YELLOW);
-			} else {
-				mPaint.setColor(Color.GREEN);
+		if (mMeasureMode == true) {
+			for (MeasurePoint aPoint : myOldPoints) {
+				mPaint.setColor(Color.BLACK);
+				canvas.drawCircle((float) aPoint.getPosx(),
+						(float) aPoint.getPosy(), 2, mPaint);
+				if (aPoint.getQuality() < 0.25) {
+					mPaint.setColor(Color.RED);
+				} else if (aPoint.getQuality() < 0.75) {
+					mPaint.setColor(Color.YELLOW);
+				} else {
+					mPaint.setColor(Color.GREEN);
+				}
+				canvas.drawCircle((float) aPoint.getPosx(),
+						(float) aPoint.getPosy(), 1.5f, mPaint);
 			}
-			canvas.drawCircle((float) aPoint.getPosx(),
-					(float) aPoint.getPosy(), 1.5f, mPaint);
 		}
 		// draw position
 		if (mMeasureMode == false && location != null) {
 			mPaint.setColor(android.graphics.Color.BLACK);
 			canvas.drawCircle((float) location.getX(), (float) location.getY(),
 					3, mPaint);
+			mPaint.setStyle(Paint.Style.FILL);
 			if (location.getAccuracy() == 0) {
-				mPaint.setColor(android.graphics.Color.RED);
+				mPaint.setARGB(100, 72, 189, 224);
+				canvas.drawCircle((float) location.getX(),
+						(float) location.getY(), 40f, mPaint);
+				mPaint.setStyle(Paint.Style.STROKE);
+				mPaint.setARGB(200, 72, 189, 224);
+				canvas.drawCircle((float) location.getX(),
+						(float) location.getY(), 40f, mPaint);
+				mPaint.setARGB(200, 184, 11, 11);
 			} else if (location.getAccuracy() == 1) {
-				mPaint.setColor(android.graphics.Color.YELLOW);
+				mPaint.setARGB(100, 72, 189, 224);
+				canvas.drawCircle((float) location.getX(),
+						(float) location.getY(), 20f, mPaint);
+				mPaint.setStyle(Paint.Style.STROKE);
+				mPaint.setARGB(200, 72, 189, 224);
+				canvas.drawCircle((float) location.getX(),
+						(float) location.getY(), 20f, mPaint);
+				mPaint.setARGB(200, 247, 255, 47);
 			} else if (location.getAccuracy() == 2) {
-				mPaint.setColor(android.graphics.Color.GREEN);
+				mPaint.setARGB(100, 72, 189, 224);
+				canvas.drawCircle((float) location.getX(),
+						(float) location.getY(), 10f, mPaint);
+				mPaint.setStyle(Paint.Style.STROKE);
+				mPaint.setARGB(200, 72, 189, 224);
+				canvas.drawCircle((float) location.getX(),
+						(float) location.getY(), 10f, mPaint);
+				mPaint.setARGB(200, 76, 255, 5);
 			}
 			mPaint.setStyle(Paint.Style.FILL);
 			canvas.drawCircle((float) location.getX(), (float) location.getY(),
