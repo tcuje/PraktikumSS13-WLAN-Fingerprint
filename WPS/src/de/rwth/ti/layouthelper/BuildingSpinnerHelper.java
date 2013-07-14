@@ -131,17 +131,21 @@ public class BuildingSpinnerHelper implements OnItemSelectedListener {
 		for (Spinner tSpinner : spinnerList) {
 			tSpinner.setSelection(pos);
 		}
-
-		notifyListener();
 	}
 
 	@Override
 	public void onNothingSelected(AdapterView<?> parent) {
-		selectedBuilding = null;
-		notifyListener();
+		setBuildingSelected(null);
 	}
 
 	public void setBuildingSelected(Building buildingSelected) {
 		this.selectedBuilding = buildingSelected;
+		notifyListener();
+	}
+
+	public void setSelectedPosition(int position) {
+		for (Spinner tSpinner : spinnerList) {
+			tSpinner.setSelection(position);
+		}
 	}
 }

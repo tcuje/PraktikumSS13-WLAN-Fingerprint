@@ -3,9 +3,9 @@
 
     <string name="app_name">WPS</string>
     <string name="app_description">WiFi Positioning System</string>
-    <string name="action_navigation">Navigation</string>
-    <string name="action_localisation">Lokalisation</string>
-    <string name="action_new_floor">Neue Karte</string>
+    <string name="action_navigation">Menü</string>
+    <string name="action_localisation">Lokalisationsmodus</string>
+    <string name="action_new_floor">Neue Karte erstellen</string>
     <string name="action_measure">Messmodus</string>
     <string name="action_debug">Datenbank anzeigen</string>
     <string name="building">Gebäude</string>

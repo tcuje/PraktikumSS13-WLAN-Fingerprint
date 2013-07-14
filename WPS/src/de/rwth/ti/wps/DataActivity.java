@@ -40,7 +40,6 @@ public class DataActivity extends SuperActivity implements
 	CustomTabHelper tabHelper;
 	BuildingSpinnerHelper buildingHelper;
 	FloorSpinnerHelper floorHelper;
-	Spinner buildingSpinner;
 
 	EditText buildingEdit;
 	EditText floorEdit;
@@ -220,13 +219,15 @@ public class DataActivity extends SuperActivity implements
 
 	public void dataDeleteLastMP(View v) {
 		mpList = getStorage().getAllMeasurePoints();
-		MeasurePoint deleteMP = mpList.get(mpList.size() - 1);
-		if (getStorage().deleteMeasurePoint(deleteMP)) {
-			makeToast(String.format(getString(R.string.success_delete),
-					getString(R.string.measurepoint)));
-		} else {
-			makeToast(String.format(getString(R.string.error_delete),
-					getString(R.string.measurepoint)));
+		if (mpList.size() > 0) {
+			MeasurePoint deleteMP = mpList.get(mpList.size() - 1);
+			if (getStorage().deleteMeasurePoint(deleteMP)) {
+				makeToast(String.format(getString(R.string.success_delete),
+						getString(R.string.measurepoint)));
+			} else {
+				makeToast(String.format(getString(R.string.error_delete),
+						getString(R.string.measurepoint)));
+			}
 		}
 	}
 
