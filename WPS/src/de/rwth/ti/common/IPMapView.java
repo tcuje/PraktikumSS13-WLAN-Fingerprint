@@ -71,6 +71,11 @@ public class IPMapView extends View {
 		mySelf = this;
 	}
 
+	public void setMScaleFactor(float factor) {
+		mScaleFactor = factor;
+		invalidate();
+	}
+
 	public void setMXFocus(float x) {
 		mXFocus = x;
 		invalidate();
@@ -238,6 +243,7 @@ public class IPMapView extends View {
 		XmlPullParserFactory factory = null;
 
 		try {
+
 			factory = XmlPullParserFactory.newInstance();
 		} catch (XmlPullParserException e1) {
 			// TODO Auto-generated catch block

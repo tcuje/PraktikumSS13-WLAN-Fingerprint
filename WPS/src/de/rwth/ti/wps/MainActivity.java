@@ -314,5 +314,4 @@ public class MainActivity extends SuperActivity implements
 			});
 		}
 	}
-
 }

@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <issue id="NewApi">
         <ignore path="src/de/rwth/ti/common/IPMapView.java" />
     </issue>
+=======
+    <issue id="NewApi" severity="warning" />
+>>>>>>> origin/dev
 =======
     <issue id="NewApi" severity="warning" />
 >>>>>>> origin/dev
