@@ -213,12 +213,12 @@ public class MeasureActivity extends SuperActivity implements
 				Toast.makeText(this, R.string.error_scanning, Toast.LENGTH_LONG)
 						.show();
 			} else {
-				if(p.getId() == -1){
+				if (p.getId() == -1) {
 					lastMP = getStorage().createMeasurePoint(floorSelected,
 							p.getPosx(), p.getPosy());
 					mapView.setMMPoint(lastMP);
 					mapView.addOldPoint(lastMP);
-				}else{
+				} else {
 					lastMP = p;
 				}
 				if (waitDialog != null) {

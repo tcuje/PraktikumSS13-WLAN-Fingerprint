@@ -1,6 +1,5 @@
 package de.rwth.ti.layouthelper;
 
-
 /*
  * Interface for Reaction to a FloorChange
  */
