@@ -184,7 +184,7 @@ public class DatabaseTransformer {
 								// open import database
 								StorageHandler temp = new StorageHandler(
 										parentActivity, params[0]);
-								if (temp.validate() == false) {
+								if (temp.onStart() == false) {
 									return false;
 								}
 								// import buildings
@@ -357,6 +357,7 @@ public class DatabaseTransformer {
 										}
 									}
 								}
+								temp.onStop();
 								return true;
 							}
 
