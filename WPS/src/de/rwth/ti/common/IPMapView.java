@@ -38,7 +38,6 @@ public class IPMapView extends View {
 	private float mAccYPoint = 0;
 	private LocationResult location = null;
 	private float mapFactor = 6.7f;
-	private PointF mPoint = null;
 	private PointF mMPoint = null;
 	private PointF mMPointOld = null;
 	private float mHeight = 0;
@@ -103,13 +102,12 @@ public class IPMapView extends View {
 			mAccXPoint = mRect.exactCenterX();
 			mAccYPoint = mRect.exactCenterY();
 		}
-		
-		
+
 		mPaint.setAntiAlias(true);
-		mPaint.setStrokeWidth(0.10f*mapFactor);
+		mPaint.setStrokeWidth(0.10f * mapFactor);
 		mPaint.setColor(Color.WHITE);
 		mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-		
+
 		// draw filled paths
 		if (myFillPaths != null) {
 			for (Path aPath : myFillPaths) {
@@ -119,12 +117,11 @@ public class IPMapView extends View {
 		// draw walls
 		mPaint.setColor(Color.parseColor("#1DB1E1"));
 		mPaint.setStyle(Paint.Style.STROKE);
-		/*if (myFillPaths != null) {
-			for (Path aPath : myFillPaths) {
-				canvas.drawPath(aPath, mPaint);
-			}
-		}*/
-		
+		/*
+		 * if (myFillPaths != null) { for (Path aPath : myFillPaths) {
+		 * canvas.drawPath(aPath, mPaint); } }
+		 */
+
 		if (myPaths != null) {
 			for (Path aPath : myPaths) {
 				canvas.drawPath(aPath, mPaint);
@@ -149,8 +146,8 @@ public class IPMapView extends View {
 		// draw position
 		if (mMeasureMode == false && location != null) {
 			mPaint.setColor(android.graphics.Color.BLACK);
-			canvas.drawCircle((float) location.getX(),
-					(float) location.getY(), 3, mPaint);
+			canvas.drawCircle((float) location.getX(), (float) location.getY(),
+					3, mPaint);
 			if (location.getAccuracy() == 0) {
 				mPaint.setColor(android.graphics.Color.RED);
 			} else if (location.getAccuracy() == 1) {
@@ -166,7 +163,7 @@ public class IPMapView extends View {
 		if (mMeasureMode == true && mMPoint != null) {
 			mPaint.setColor(android.graphics.Color.GREEN);
 			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-			canvas.drawCircle(mMPoint.x, mMPoint.y, 0.5f*mapFactor, mPaint);
+			canvas.drawCircle(mMPoint.x, mMPoint.y, 0.5f * mapFactor, mPaint);
 		}
 		// restore it
 		canvas.restore();
@@ -198,18 +195,18 @@ public class IPMapView extends View {
 		 * e1.printStackTrace(); }
 		 */
 		this.clearMap();
-		
+
 		XmlPullParserFactory factory = null;
-		
+
 		try {
-			
+
 			factory = XmlPullParserFactory.newInstance();
 		} catch (XmlPullParserException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		factory.setNamespaceAware(true);
-		 
+
 		XmlPullParser xpp = null;
 		try {
 			xpp = factory.newPullParser();
@@ -500,25 +497,23 @@ public class IPMapView extends View {
 	public PointF getMeasurePoint() {
 		return mMPoint;
 	}
-	
-	public void next()
-	{
-		if(mMPoint != null){
-			mMPoint.x = mMPoint.x + 2*mapFactor;
+
+	public void next() {
+		if (mMPoint != null) {
+			mMPoint.x = mMPoint.x + 2 * mapFactor;
 			invalidate();
 		}
 	}
-	
-	public void nextLine()
-	{
-		if(mMPointOld != null && mMPoint !=  null){
-			mMPointOld.y = mMPointOld.y + 2*mapFactor;
+
+	public void nextLine() {
+		if (mMPointOld != null && mMPoint != null) {
+			mMPointOld.y = mMPointOld.y + 2 * mapFactor;
 			mMPoint.y = mMPointOld.y;
 			mMPoint.x = mMPointOld.x;
 			invalidate();
 		}
 	}
-	
+
 	protected void setMeasurePoint(float x, float y) {
 		mMPoint = new PointF();
 		mMPoint.x = (x / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
@@ -527,7 +522,7 @@ public class IPMapView extends View {
 				+ mAccYPoint;
 		invalidate();
 	}
-	
+
 	protected void setMeasurePointTouch(float x, float y) {
 		mMPoint = new PointF();
 		mMPoint.x = (x / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
@@ -537,7 +532,7 @@ public class IPMapView extends View {
 		mMPointOld = new PointF();
 		mMPointOld.x = mMPoint.x;
 		mMPointOld.y = mMPoint.y;
-		
+
 		// mXMPoint = (x-mXFocus)/mScaleFactor;
 		// mYMPoint = (y-mYFocus)/mScaleFactor;
 		invalidate();
@@ -580,7 +575,7 @@ public class IPMapView extends View {
 			float scale = mScaleFactor * detector.getScaleFactor();
 			// Don't let the object get too small or too large.
 			scale = Math.max(mMinScaleFactor / 4,
-				Math.min(scale, mMaxScaleFactor));
+					Math.min(scale, mMaxScaleFactor));
 			setScaleFactor(scale);
 			mXFocus = -mXScaleFocus + detector.getFocusX() / mScaleFactor;
 			mYFocus = -mYScaleFocus + detector.getFocusY() / mScaleFactor;

@@ -14,26 +14,30 @@ public class LocationResult {
 	private double x;
 	private double y;
 	private int accuracy;
-	private int errorCode=0;
+	private int errorCode;
 
-	public LocationResult(Building building, Floor floor, double x, double y, int accuracy) {
+	public LocationResult(Building building, Floor floor, double x, double y,
+			int accuracy) {
 		this.floor = floor;
 		this.building = building;
 		this.x = x;
 		this.y = y;
-		if (accuracy <=2 && accuracy >=0){
-			this.accuracy=accuracy;
+		if (accuracy <= 2 && accuracy >= 0) {
+			this.accuracy = accuracy;
+		} else {
+			this.accuracy = 0;
 		}
-		else{
-			accuracy=0;
-		}
+		this.errorCode = 0;
 	}
-	public void setError(int errorcode){
-		this.errorCode=errorcode;
+
+	public void setError(int errorcode) {
+		this.errorCode = errorcode;
 	}
-	public int getError(){
+
+	public int getError() {
 		return errorCode;
 	}
+
 	public Floor getFloor() {
 		return floor;
 	}
@@ -49,7 +53,8 @@ public class LocationResult {
 	public double getY() {
 		return y;
 	}
-	public int getAccuracy(){
+
+	public int getAccuracy() {
 		return accuracy;
 	}
 }

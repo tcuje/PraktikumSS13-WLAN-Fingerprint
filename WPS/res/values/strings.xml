@@ -29,15 +29,7 @@
     <string name="error_create_floor">Etage konnte nicht erstellt werden</string>
     <string name="success_create_floor">Etage erfolgreich erstellt</string>
     <string name="error_no_building">Keine Gebäude vorhanden/ausgewählt</string>
-    <string name="title_activity_data">DataActivity</string>
     <string name="action_data">Daten bearbeiten</string>
-    <string name="data_activity_floor">Flur</string>
-    <string name="data_activity_building">Gebäude</string>
-    <string name="data_activity_access_point">Access Point</string>
-    <string name="data_activity_measure_point">Measure Point</string>
-    <string name="data_activity_update">Bearbeiten</string>
-    <string name="data_activity_delete">Löschen</string>
-    <string name="title_activity_notification">NotificationActivity</string>
     <string name="error_sd_dir">Kann SD Karte nicht beschreiben!</string>
     <string name="error_no_measure_point">Bitte einen Messpunkt wählen!</string>
     <string name="error_no_floor_file">Keine Kartendatei vorhanden!</string>
@@ -82,4 +74,9 @@
     <string name="scans">Scans</string>
 	<string name="delete_last_scan">Letzten Scan löschen</string>
 	<string name="error_db_failure">Schwerwiegender Datenbankfehler! Bitte alle Daten löschen und erneut versuchen.</string>
+	<string name="error_loc_building_not_found">Gebäude nicht gefunden.</string>
+	<string name="error_loc_floor_not_found">Stockwerk nicht gefunden.</string>
+	<string name="error_loc_aps_not_found">Keine Accesspoints gefunden.</string>
+	<string name="error_loc_empty_map">Leere Map.</string>
+	<string name="error_loc_position_not_found">Position nicht gefunden.</string>
 </resources>

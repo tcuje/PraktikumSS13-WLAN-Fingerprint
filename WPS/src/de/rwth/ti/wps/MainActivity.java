@@ -30,7 +30,6 @@ import de.rwth.ti.common.IPMapView;
 import de.rwth.ti.common.QualityCheck;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
-import de.rwth.ti.db.StorageHandler;
 import de.rwth.ti.loc.Location;
 import de.rwth.ti.loc.LocationResult;
 
@@ -48,6 +47,9 @@ public class MainActivity extends SuperActivity implements
 	private BroadcastReceiver wifiReceiver;
 	private ProgressDialog waitDialog;
 	private int control;
+	private TextView measureTimeView;
+	private TextView errormessageView;
+	private Location myLoc;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -69,9 +71,12 @@ public class MainActivity extends SuperActivity implements
 		viewMap.setOnScaleChangeListener(new ScaleChangeListener());
 		btCenter = (ImageButton) findViewById(R.id.centerButton);
 		btZoom = (Button) findViewById(R.id.zoomButton);
+		measureTimeView = (TextView) findViewById(R.id.measureTime);
+		errormessageView = (TextView) findViewById(R.id.debugInfo);
 		btZoom.setText("x1.0");
 		wifiReceiver = new MyReceiver();
 		control = 0;
+		myLoc = new Location(getStorage());
 	}
 
 	/** Called when the activity is first created or restarted */
@@ -101,7 +106,7 @@ public class MainActivity extends SuperActivity implements
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				final boolean dbCheck = getStorage().validate();
+				final boolean dbCheck = getStorage().onStart();
 				runOnUiThread(new Runnable() {
 					public void run() {
 						if (waitDialog != null) {
@@ -135,6 +140,7 @@ public class MainActivity extends SuperActivity implements
 		} catch (IllegalArgumentException ex) {
 			// just ignore it
 		}
+		getStorage().onStop();
 	}
 
 	@Override
@@ -158,83 +164,112 @@ public class MainActivity extends SuperActivity implements
 
 		private WifiManager wifi = MainActivity.this.getScanManager().getWifi();
 		private CompassManager comp = MainActivity.this.getCompassManager();
-		private StorageHandler sth = MainActivity.this.getStorage();
 		private Floor lastMap;
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (checkLoc.isChecked() == true) {
-				List<ScanResult> results = wifi.getScanResults();
-				Location myLoc = new Location(sth);
-				Cardinal direction = Cardinal.getFromAzimuth(comp
-						.getMeanAzimut());
-				long start = System.currentTimeMillis();
-				LocationResult myLocRes = myLoc.getLocation(results, direction,
-						control);
-				control = 0;
-				if (myLocRes.getError() != 0) {
-					String errorMessage = "";
-					TextView errormessageView = (TextView) findViewById(R.id.debugInfo);
-					switch (myLocRes.getError()) {
-					case 1:
-						errorMessage = "Gebaeude nicht gefunden.";
-						break;
-					case 2:
-						errorMessage = "Stockwerk nicht gefunden.";
-						break;
-					case 3:
-						errorMessage = "Keine Accesspoints gefunden.";
-						break;
-					case 4:
-						errorMessage = "Leere Map.";
-						break;
-					case 5:
-						errorMessage = "Position nicht gefunden.";
-						break;
-					}
-					errormessageView.setText(errorMessage);
-				} else {
-					long stop = System.currentTimeMillis();
-					Floor map = myLocRes.getFloor();
-					long mStart = System.currentTimeMillis();
-					if (lastMap == null || map.getId() != lastMap.getId()) {
-						// map has changed reload it
-						byte[] file = myLocRes.getFloor().getFile();
-						if (file != null) {
-							ByteArrayInputStream bin = new ByteArrayInputStream(
-									file);
-							viewMap.newMap(bin);
-							List<MeasurePoint> mpl = getStorage()
-									.getMeasurePoints(map);
-							for (MeasurePoint mp : mpl) {
-								mp.setQuality(QualityCheck.getQuality(
-										getStorage(), mp));
-								viewMap.addOldPoint(mp);
-							}
-						} else {
-							Toast.makeText(MainActivity.this,
-									R.string.error_no_floor_file,
-									Toast.LENGTH_LONG).show();
+			if (checkLoc != null && checkLoc.isChecked() == true) {
+				try {
+					final List<ScanResult> results = wifi.getScanResults();
+					final Cardinal direction = Cardinal.getFromAzimuth(comp
+							.getMeanAzimut());
+					Thread t = new Thread(new Runnable() {
+						@Override
+						public void run() {
+							final long start = System.currentTimeMillis();
+							final LocationResult myLocRes = myLoc.getLocation(
+									results, direction, control);
+							control = 0;
+							final long stop = System.currentTimeMillis();
+							runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									String measureTime = "Loc: "
+											+ (stop - start) + "ms";
+									int errorCode = myLocRes.getError();
+									if (errorCode != 0) {
+										String errorMessage = "";
+										switch (errorCode) {
+										case 1:
+											errorMessage = getString(R.string.error_loc_building_not_found);
+											break;
+										case 2:
+											errorMessage = getString(R.string.error_loc_floor_not_found);
+											break;
+										case 3:
+											errorMessage = getString(R.string.error_loc_aps_not_found);
+											break;
+										case 4:
+											errorMessage = getString(R.string.error_loc_empty_map);
+											break;
+										case 5:
+											errorMessage = getString(R.string.error_loc_position_not_found);
+											break;
+										default:
+											errorMessage = "Error: "
+													+ errorCode;
+											break;
+										}
+										errormessageView.setText(errorMessage);
+									} else {
+										Floor map = myLocRes.getFloor();
+										long mStart = System
+												.currentTimeMillis();
+										if (lastMap == null
+												|| map.getId() != lastMap
+														.getId()) {
+											// map has changed reload it
+											byte[] file = myLocRes.getFloor()
+													.getFile();
+											if (file != null) {
+												ByteArrayInputStream bin = new ByteArrayInputStream(
+														file);
+												viewMap.newMap(bin);
+												List<MeasurePoint> mpl = getStorage()
+														.getMeasurePoints(map);
+												for (MeasurePoint mp : mpl) {
+													mp.setQuality(QualityCheck
+															.getQuality(
+																	getStorage(),
+																	mp));
+													viewMap.addOldPoint(mp);
+												}
+											} else {
+												Toast.makeText(
+														MainActivity.this,
+														R.string.error_no_floor_file,
+														Toast.LENGTH_LONG)
+														.show();
+											}
+										}
+										long mStop = System.currentTimeMillis();
+										viewMap.setPoint(myLocRes);
+										if (lastMap == null
+												|| map.getId() != lastMap
+														.getId()) {
+											// map has changed focus position
+											// once
+											lastMap = map;
+											viewMap.zoomPoint();
+										}
+										measureTime += "\nMap: "
+												+ (mStop - mStart) + "ms";
+										String locationInfo = myLocRes
+												.getFloor().getName()
+												+ " in "
+												+ myLocRes.getBuilding()
+														.getName();
+										errormessageView.setText(locationInfo);
+									}
+									measureTimeView.setText(measureTime);
+								}
+							});
 						}
-					}
-					long mStop = System.currentTimeMillis();
-					viewMap.setPoint(myLocRes);
-					if (lastMap == null || map.getId() != lastMap.getId()) {
-						// map has changed focus position once
-						lastMap = map;
-						viewMap.zoomPoint();
-					}
-					String measureTime = "";
-					measureTime = "Loc: " + (stop - start) + "ms\nMap: "
-							+ (mStop - mStart) + "ms";
-					TextView measureTimeView = (TextView) findViewById(R.id.measureTime);
-					measureTimeView.setText(measureTime);
-					String locationInfo = myLocRes.getFloor().getName()
-							+ " in " + myLocRes.getBuilding().getName();
-					TextView errormessageView = (TextView) findViewById(R.id.debugInfo);
-					errormessageView.setText(locationInfo);
+					});
+					t.start();
+				} catch (Exception ex) {
+					errormessageView.setText(ex.toString());
 				}
-
 			}
 		}
 	}
@@ -260,14 +295,22 @@ public class MainActivity extends SuperActivity implements
 				// do nothing
 				return;
 			}
-			String zStr = Float.toString(scale);
-			int ind = zStr.indexOf(".");
+			StringBuilder strBuilder = new StringBuilder();
+			strBuilder.append(Float.toString(scale));
+			int ind = strBuilder.indexOf(".");
+			final String zStr;
 			if (ind != -1) {
-				int len = Math.min(ind + 3, zStr.length());
-				zStr = zStr.substring(0, len);
+				int len = Math.min(ind + 3, strBuilder.length());
+				zStr = strBuilder.substring(0, len);
+			} else {
+				zStr = "x" + strBuilder.toString();
 			}
-			zStr = "x" + zStr;
-			btZoom.setText(zStr);
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					btZoom.setText(zStr);
+				}
+			});
 		}
 
 	}
