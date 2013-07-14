@@ -16,6 +16,9 @@ import de.rwth.ti.db.StorageHandler;
  */
 public abstract class SuperActivity extends Activity {
 
+	/*
+	 * Own classes
+	 */
 	private ScanManager scm;
 	private StorageHandler storage;
 	private CompassManager cmgr;
@@ -65,10 +68,10 @@ public abstract class SuperActivity extends Activity {
 		if (scm != null) {
 			scm.onStart();
 		}
-//		// launch default activity for debugging only
-//		Intent intent = new Intent(this, DebugActivity.class);
-//		intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//		startActivity(intent);
+		// // launch default activity for debugging only
+		// Intent intent = new Intent(this, MeasureActivity.class);
+		// intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		// startActivity(intent);
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
@@ -95,6 +98,20 @@ public abstract class SuperActivity extends Activity {
 		return cmgr;
 	}
 
+	protected String createFloorNameFromLevel(int level) {
+		String tString = "";
+		if (level < 0) {
+			tString = String.valueOf((-1) * level) + ". "
+					+ getString(R.string.floor_basement);
+		} else if (level > 0) {
+			tString = String.valueOf(level) + ". "
+					+ getString(R.string.floor_upper);
+		} else {
+			tString = getString(R.string.floor_ground);
+		}
+		return tString;
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -108,12 +125,18 @@ public abstract class SuperActivity extends Activity {
 		// Start other Activities, when the related MenuItem is selected
 		Intent intent = null;
 		switch (item.getItemId()) {
-		case R.id.action_new_floor:
-			intent = new Intent(this, NewFloorActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		case R.id.action_localisation:
+			if (this.getClass() != MainActivity.class) {
+				intent = new Intent(this, MainActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			}
 			break;
 		case R.id.action_measure:
 			intent = new Intent(this, MeasureActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			break;
+		case R.id.action_new_floor:
+			intent = new Intent(this, NewFloorActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			break;
 		case R.id.action_data:
