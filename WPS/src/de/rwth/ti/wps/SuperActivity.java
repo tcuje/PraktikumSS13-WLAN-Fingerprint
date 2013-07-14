@@ -139,7 +139,6 @@ public abstract class SuperActivity extends Activity {
 			intent = new Intent(this, NewFloorActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			break;
-
 		case R.id.action_data:
 			intent = new Intent(this, DataActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

@@ -25,8 +25,9 @@ public class LocationResult {
 		if (accuracy <= 2 && accuracy >= 0) {
 			this.accuracy = accuracy;
 		} else {
-			accuracy = 0;
+			this.accuracy = 0;
 		}
+		this.errorCode = 0;
 	}
 
 	public void setError(int errorcode) {

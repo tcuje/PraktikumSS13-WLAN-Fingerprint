@@ -21,6 +21,7 @@ import de.rwth.ti.share.IMeasureDataHandler;
 public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	private Storage storage;
+	private SQLiteDatabase db;
 
 	public StorageHandler(Context context, String dbName) {
 		this.storage = new Storage(context, dbName);
@@ -33,15 +34,20 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	 * @return Returns true on success, or false if there is something wrong
 	 *         with the database
 	 */
-	public boolean validate() {
+	public boolean onStart() {
 		try {
 			// just open it once so onCreate, onUpgrade and onOpen is called
-			SQLiteDatabase db = storage.getWritableDatabase();
-			db.close();
+			db = storage.getWritableDatabase();
 		} catch (SQLiteException ex) {
 			return false;
 		}
 		return true;
+	}
+
+	public void onStop() {
+		if (db != null && db.isOpen() == true) {
+			db.close();
+		}
 	}
 
 	@Override
@@ -146,7 +152,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 			} while (cursor.moveToNext() == true && result.size() < limit);
 		}
 		cursor.close();
-		db.close();
 		return result;
 	}
 
@@ -420,7 +425,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		values.put(Floor.COLUMN_LEVEL, floor.getLevel());
 		values.put(Floor.COLUMN_NORTH, floor.getNorth());
 		values.put(Floor.COLUMN_FILE, floor.getFile());
-		SQLiteDatabase db = storage.getWritableDatabase();
 		int result = db.update(Floor.TABLE_NAME, values,
 				Floor.COLUMN_ID + "=?",
 				new String[] { String.valueOf(floor.getId()) });
@@ -436,7 +440,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		for (MeasurePoint mp : getMeasurePoints(floor)) {
 			deleteMeasurePoint(mp);
 		}
-		SQLiteDatabase db = storage.getWritableDatabase();
 		int result = db.delete(Floor.TABLE_NAME, Floor.COLUMN_ID + "=?",
 				new String[] { String.valueOf(floor.getId()) });
 		db.close();
@@ -465,7 +468,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		for (Floor f : getFloors(building)) {
 			deleteFloor(f);
 		}
-		SQLiteDatabase db = storage.getWritableDatabase();
 		int result = db.delete(Building.TABLE_NAME, Building.COLUMN_ID + "=?",
 				new String[] { String.valueOf(building.getId()) });
 		db.close();
@@ -513,7 +515,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		values.put(MeasurePoint.COLUMN_FLOORID, mp.getFloorId());
 		values.put(MeasurePoint.COLUMN_POS_X, mp.getPosx());
 		values.put(MeasurePoint.COLUMN_POS_Y, mp.getPosy());
-		SQLiteDatabase db = storage.getWritableDatabase();
 		int result = db.update(MeasurePoint.TABLE_NAME, values,
 				MeasurePoint.COLUMN_ID + "=?",
 				new String[] { String.valueOf(mp.getId()) });
@@ -529,7 +530,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		for (Scan sc : getScans(mp)) {
 			deleteScan(sc);
 		}
-		SQLiteDatabase db = storage.getWritableDatabase();
 		int result = db.delete(MeasurePoint.TABLE_NAME, MeasurePoint.COLUMN_ID
 				+ "=?", new String[] { String.valueOf(mp.getId()) });
 		db.close();
@@ -560,10 +560,8 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		for (AccessPoint ap : getAccessPoints(scan)) {
 			deleteAccessPoint(ap);
 		}
-		SQLiteDatabase db = storage.getWritableDatabase();
 		int result = db.delete(Scan.TABLE_NAME, Scan.COLUMN_ID + "=?",
 				new String[] { String.valueOf(scan.getId()) });
-		db.close();
 		if (result == 1)
 			return true;
 		else

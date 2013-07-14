@@ -253,9 +253,6 @@ public class MeasureActivity extends SuperActivity implements
 			byte[] file = floorSelected.getFile();
 			if (file != null) {
 				ByteArrayInputStream bin = new ByteArrayInputStream(file);
-				// List<MeasurePoint> mps = getStorage().getMeasurePoints(
-				// floorSelected);
-				// mapView.newMap(bin, mps);
 				mapView.newMap(bin);
 				List<MeasurePoint> mpl = getStorage().getMeasurePoints(
 						floorSelected);
