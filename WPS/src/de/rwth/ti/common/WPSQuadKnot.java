@@ -33,10 +33,10 @@ public class WPSQuadKnot {
 					tr.addMPoint(value);
 				}
 			}else{
-				if(mp.getPosy()>(yMax+yMin)/2){
-					bl.addMPoint(mp);
+				if(value.getPosy()>(yMax+yMin)/2){
+					bl.addMPoint(value);
 				}else{
-					tl.addMPoint(mp);
+					tl.addMPoint(value);
 				}
 			}
 			value = null;
