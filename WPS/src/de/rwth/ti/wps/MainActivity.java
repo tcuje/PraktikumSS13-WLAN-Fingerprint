@@ -4,8 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
@@ -18,10 +21,14 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
+import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.CompassManager;
 import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.IPMapView;
+import de.rwth.ti.common.QualityCheck;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.StorageHandler;
@@ -35,11 +42,12 @@ import de.rwth.ti.loc.LocationResult;
 public class MainActivity extends SuperActivity implements
 		OnCheckedChangeListener {
 
-	private CheckBox checkLoc;
+	private ToggleButton checkLoc;
 	private IPMapView viewMap;
 	private ImageButton btCenter;
 	private Button btZoom;
 	private BroadcastReceiver wifiReceiver;
+	private ProgressDialog waitDialog;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -54,7 +62,7 @@ public class MainActivity extends SuperActivity implements
 						.show();
 			}
 		}
-		checkLoc = (CheckBox) findViewById(R.id.toggleLocalization);
+		checkLoc = (ToggleButton) findViewById(R.id.toggleLocalization);
 		checkLoc.setOnCheckedChangeListener(this);
 		viewMap = (IPMapView) findViewById(R.id.viewMap);
 		viewMap.setMeasureMode(false);
@@ -74,8 +82,45 @@ public class MainActivity extends SuperActivity implements
 			getWindow()
 					.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		}
-		this.registerReceiver(wifiReceiver, new IntentFilter(
-				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+		// start async task to validate the database
+		waitDialog = ProgressDialog.show(this, "",
+				getString(R.string.please_wait));
+		waitDialog.setCancelable(false);
+		AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+		builder.setMessage(R.string.error_db_failure);
+		builder.setCancelable(false);
+		builder.setPositiveButton(R.string.ok,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						finish();
+					}
+				});
+		final AlertDialog alert = builder.create();
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				final boolean dbCheck = getStorage().validate();
+				runOnUiThread(new Runnable() {
+					public void run() {
+						if (waitDialog != null) {
+							waitDialog.dismiss();
+							waitDialog = null;
+						}
+						if (dbCheck == false) {
+							alert.show();
+						} else {
+							MainActivity.this
+									.registerReceiver(
+											wifiReceiver,
+											new IntentFilter(
+													WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+						}
+					}
+				});
+			}
+		});
+		t.start();
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
@@ -118,14 +163,40 @@ public class MainActivity extends SuperActivity implements
 			if (checkLoc.isChecked() == true) {
 				List<ScanResult> results = wifi.getScanResults();
 				Location myLoc = new Location(sth);
-				LocationResult myLocRes = myLoc.getLocation(results,
-						(int) comp.getMeanAzimut(), 0);
-				if (myLocRes == null) {
-					Toast.makeText(MainActivity.this,
-							"Position nicht gefunden", Toast.LENGTH_LONG)
-							.show();
+				Cardinal direction = Cardinal.getFromAzimuth(comp
+						.getMeanAzimut());
+				long start = System.currentTimeMillis();
+				LocationResult myLocRes = myLoc.getLocation(results, direction,
+						0);
+				if (myLocRes.getError()!=0) {
+//					Toast.makeText(MainActivity.this,
+//							"Position nicht gefunden", Toast.LENGTH_LONG)
+//							.show();
+//					
+					String errorMessage="";
+					TextView errormessageView = (TextView) findViewById(R.id.debugInfo);
+					switch (myLocRes.getError()){
+					case 1:
+						errorMessage = "Gebaeude nicht gefunden.";
+						break;
+					case 2:
+						errorMessage = "Stockwerk nicht gefunden.";
+						break;
+					case 3:
+						errorMessage = "Keine Accesspoints gefunden.";
+						break;
+					case 4:
+						errorMessage = "Leere Map.";
+						break;
+					case 5:
+						errorMessage = "Position nicht gefunden.";
+						break;				
+					}
+					errormessageView.setText(errorMessage);
 				} else {
+					long stop = System.currentTimeMillis();
 					Floor map = myLocRes.getFloor();
+					long mStart = System.currentTimeMillis();
 					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed reload it
 						byte[] file = myLocRes.getFloor().getFile();
@@ -136,7 +207,8 @@ public class MainActivity extends SuperActivity implements
 							List<MeasurePoint> mpl = getStorage()
 									.getMeasurePoints(map);
 							for (MeasurePoint mp : mpl) {
-								mp.setQuality(getStorage().getQuality(mp));
+								mp.setQuality(QualityCheck.getQuality(
+										getStorage(), mp));
 								viewMap.addOldPoint(mp);
 							}
 						} else {
@@ -145,14 +217,23 @@ public class MainActivity extends SuperActivity implements
 									Toast.LENGTH_LONG).show();
 						}
 					}
-					viewMap.setPoint((float) myLocRes.getX(),
-							(float) myLocRes.getY());
+					long mStop = System.currentTimeMillis();
+					viewMap.setPoint(myLocRes);
 					if (lastMap == null || map.getId() != lastMap.getId()) {
 						// map has changed focus position once
 						lastMap = map;
 						viewMap.zoomPoint();
 					}
+					String measureTime="";
+					measureTime="Loc: " + (stop - start) + "ms\nMap: "+ (mStop - mStart) + "ms";
+					TextView measureTimeView = (TextView) findViewById(R.id.measureTime);
+					measureTimeView.setText(measureTime);
+					String locationInfo="";
+					locationInfo=myLocRes.getFloor().getName()+" in "+myLocRes.getBuilding().getName();
+					TextView errormessageView = (TextView) findViewById(R.id.debugInfo);
+					errormessageView.setText(locationInfo);
 				}
+				
 			}
 		}
 	}

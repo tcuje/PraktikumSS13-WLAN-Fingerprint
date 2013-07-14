@@ -14,36 +14,42 @@ import android.widget.Toast;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
+import de.rwth.ti.db.Scan;
 import de.rwth.ti.layouthelper.BuildingSpinnerHelper;
 import de.rwth.ti.layouthelper.CustomTabHelper;
 import de.rwth.ti.layouthelper.FloorSpinnerHelper;
 import de.rwth.ti.layouthelper.OnBuildingChangedListener;
 import de.rwth.ti.layouthelper.OnFloorChangedListener;
 
+/**
+ * 
+ * This acitivity allows data modification
+ * 
+ */
 public class DataActivity extends SuperActivity implements
 		OnBuildingChangedListener, OnFloorChangedListener {
 
-	Building selectedBuilding;
-	Building newBuilding;
-	Floor selectedFloor;
-	Floor newFloor;
-	List<MeasurePoint> mpList;
-	List<Floor> floorList;
+	private Building selectedBuilding;
+	private Building newBuilding;
+	private Floor selectedFloor;
+	private Floor newFloor;
 
-	TextView buildingHeader;
-	TextView floorHeader;
-	TextView measurePointHeader;
-	LinearLayout buildingLayout;
-	LinearLayout floorLayout;
-	LinearLayout measurePointLayout;
+	private TextView buildingHeader;
+	private TextView floorHeader;
+	private TextView measurePointHeader;
+	private TextView scanHeader;
+	private LinearLayout buildingLayout;
+	private LinearLayout floorLayout;
+	private LinearLayout measurePointLayout;
+	private LinearLayout scanLayout;
 
-	CustomTabHelper tabHelper;
-	BuildingSpinnerHelper buildingHelper;
-	FloorSpinnerHelper floorHelper;
+	private CustomTabHelper tabHelper;
+	private BuildingSpinnerHelper buildingHelper;
+	private FloorSpinnerHelper floorHelper;
 
-	EditText buildingEdit;
-	EditText floorEdit;
-	EditText floorLevelEdit;
+	private EditText buildingEdit;
+	private EditText floorEdit;
+	private EditText floorLevelEdit;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,15 +63,18 @@ public class DataActivity extends SuperActivity implements
 		buildingHeader = (TextView) findViewById(R.id.dataBuildingHeader);
 		floorHeader = (TextView) findViewById(R.id.dataFloorHeader);
 		measurePointHeader = (TextView) findViewById(R.id.dataMeasurePointHeader);
+		scanHeader = (TextView) findViewById(R.id.dataScanHeader);
 
 		buildingLayout = (LinearLayout) findViewById(R.id.dataBuildingLayout);
 		floorLayout = (LinearLayout) findViewById(R.id.dataFloorLayout);
 		measurePointLayout = (LinearLayout) findViewById(R.id.dataMeasurePointLayout);
+		scanLayout = (LinearLayout) findViewById(R.id.dataScanLayout);
 
 		tabHelper = CustomTabHelper.createInstance(buildingHeader,
 				buildingLayout);
 		tabHelper.addTabItem(floorHeader, floorLayout);
 		tabHelper.addTabItem(measurePointHeader, measurePointLayout);
+		tabHelper.addTabItem(scanHeader, scanLayout);
 
 		buildingHelper = BuildingSpinnerHelper.createInstance(this, this,
 				getStorage(),
@@ -179,7 +188,7 @@ public class DataActivity extends SuperActivity implements
 	}
 
 	public void dataDeleteAllMP(View v) {
-		mpList = getStorage().getAllMeasurePoints();
+		List<MeasurePoint> mpList = getStorage().getAllMeasurePoints();
 		boolean success = true;
 		for (MeasurePoint MP : mpList) {
 			if (!getStorage().deleteMeasurePoint(MP)) {
@@ -199,7 +208,8 @@ public class DataActivity extends SuperActivity implements
 	public void dataDeleteFloorMP(View v) {
 		if (selectedBuilding != null) {
 			if (selectedFloor != null) {
-				mpList = getStorage().getMeasurePoints(selectedFloor);
+				List<MeasurePoint> mpList = getStorage().getMeasurePoints(
+						selectedFloor);
 				boolean success = true;
 				for (MeasurePoint MP : mpList) {
 					if (!getStorage().deleteMeasurePoint(MP)) {
@@ -218,7 +228,7 @@ public class DataActivity extends SuperActivity implements
 	}
 
 	public void dataDeleteLastMP(View v) {
-		mpList = getStorage().getAllMeasurePoints();
+		List<MeasurePoint> mpList = getStorage().getAllMeasurePoints();
 		if (mpList.size() > 0) {
 			MeasurePoint deleteMP = mpList.get(mpList.size() - 1);
 			if (getStorage().deleteMeasurePoint(deleteMP)) {
@@ -277,4 +287,34 @@ public class DataActivity extends SuperActivity implements
 			makeToast(getString(R.string.error_short_name));
 		}
 	}
+
+	public void dataDeleteLastScan(View v) {
+		List<Scan> scanList = getStorage().getAllScans();
+		Scan sc = scanList.get(scanList.size() - 1);
+		if (getStorage().deleteScan(sc)) {
+			makeToast(String.format(getString(R.string.success_delete),
+					getString(R.string.scan)));
+		} else {
+			makeToast(String.format(getString(R.string.error_delete),
+					getString(R.string.scan)));
+		}
+	}
+
+	public void dataDeleteAllScan(View v) {
+		List<Scan> scanList = getStorage().getAllScans();
+		boolean success = true;
+		for (Scan sc : scanList) {
+			if (getStorage().deleteScan(sc) == false) {
+				success = false;
+			}
+		}
+		if (success) {
+			makeToast(String.format(getString(R.string.success_delete),
+					getString(R.string.scan)));
+		} else {
+			makeToast(String.format(getString(R.string.error_delete),
+					getString(R.string.scan)));
+		}
+	}
+
 }

@@ -21,6 +21,11 @@ import de.rwth.ti.db.Floor;
 import de.rwth.ti.layouthelper.BuildingSpinnerHelper;
 import de.rwth.ti.layouthelper.OnBuildingChangedListener;
 
+/**
+ * 
+ * This activity is used to create new buildings or floors
+ * 
+ */
 public class NewFloorActivity extends SuperActivity implements
 		OnBuildingChangedListener {
 
@@ -52,6 +57,9 @@ public class NewFloorActivity extends SuperActivity implements
 		floorLevelEdit = (EditText) findViewById(R.id.floorLevelEdit);
 		floorNameEdit = (EditText) findViewById(R.id.floorNameEdit);
 		northEdit = (EditText) findViewById(R.id.northEdit);
+		// XXX remove default value and make visible
+		northEdit.setText("0");
+		northEdit.setVisibility(View.GONE);
 		floorFilenameView = (TextView) findViewById(R.id.filePathEdit);
 
 		TextWatcher textWatch = new TextWatcher() {
@@ -187,7 +195,6 @@ public class NewFloorActivity extends SuperActivity implements
 					public void onChosenFile(String chosenFile) {
 						File f = new File(chosenFile);
 						if (f.exists() && f.isFile()) {
-							// TODO show file loading state in progress bar
 							ByteArrayOutputStream baos = new ByteArrayOutputStream();
 							FileInputStream fis = null;
 							try {

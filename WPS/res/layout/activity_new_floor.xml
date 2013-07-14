@@ -15,6 +15,15 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
+        <LinearLayout
+            android:id="@+id/focusGrabber"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:layout_width="0px"
+            android:layout_height="0px"
+            android:orientation="vertical" >
+        </LinearLayout>
+
         <EditText
             android:id="@+id/dataBuildingRenameEdit"
             android:layout_width="match_parent"
@@ -79,9 +88,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
+            android:focusable="false"
             android:hint="@string/activity_new_floor_floorpath"
-            android:onClick="chooseFile"
-            android:focusable="false" />
+            android:onClick="chooseFile" />
 
         <Button
             android:id="@+id/createFloorButton"
@@ -90,7 +99,6 @@
             android:layout_weight="1"
             android:onClick="createFloor"
             android:text="@string/activity_new_floor_create_floor" />
-
     </LinearLayout>
 
 </ScrollView>

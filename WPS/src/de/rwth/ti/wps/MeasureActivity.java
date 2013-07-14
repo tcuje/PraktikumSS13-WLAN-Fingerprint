@@ -24,15 +24,20 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import de.rwth.ti.common.CompassManager;
+import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.IPMapView;
+import de.rwth.ti.common.QualityCheck;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.Scan;
 import de.rwth.ti.loc.Location;
 
+/**
+ * This activity is used to gather measure information
+ * 
+ */
 public class MeasureActivity extends SuperActivity implements
 		OnItemSelectedListener {
 
@@ -48,7 +53,7 @@ public class MeasureActivity extends SuperActivity implements
 	private IPMapView mapView;
 	private TextView directionText;
 	private TextView compassText;
-	private CompassManager.Direction direction;
+	private Cardinal direction;
 	private BroadcastReceiver wifiReceiver;
 	private MeasurePoint lastMP;
 	private AlertDialog waitDialog;
@@ -84,7 +89,7 @@ public class MeasureActivity extends SuperActivity implements
 
 		timer = new Timer();
 
-		direction = CompassManager.Direction.NORTH;
+		direction = Cardinal.NORTH;
 		wifiReceiver = new MyReceiver();
 		updateCompass();
 	}
@@ -176,6 +181,14 @@ public class MeasureActivity extends SuperActivity implements
 		}
 	}
 
+	public void next(View view) {
+		mapView.next();
+	}
+
+	public void nextLine(View view) {
+		mapView.nextLine();
+	}
+
 	public void measure(View view) {
 		if (view.getId() == R.id.measure_button) {
 			// check if building/floor is selected
@@ -247,7 +260,7 @@ public class MeasureActivity extends SuperActivity implements
 				List<MeasurePoint> mpl = getStorage().getMeasurePoints(
 						floorSelected);
 				for (MeasurePoint mp : mpl) {
-					mp.setQuality(getStorage().getQuality(mp));
+					mp.setQuality(QualityCheck.getQuality(getStorage(), mp));
 					mapView.addOldPoint(mp);
 				}
 			} else {
@@ -288,10 +301,8 @@ public class MeasureActivity extends SuperActivity implements
 					// create scan entry
 					Date d = new Date();
 					Scan scan = MeasureActivity.this.getStorage().createScan(
-							lastMP,
-							d.getTime() / 1000,
-							MeasureActivity.this.getCompassManager()
-									.getMeanAzimut());
+							lastMP, d.getTime() / 1000,
+							getCompassManager().getMeanAzimut());
 					for (ScanResult result : results) {
 						MeasureActivity.this.getStorage().createAccessPoint(
 								scan, result.BSSID, result.level,
@@ -305,12 +316,10 @@ public class MeasureActivity extends SuperActivity implements
 					Toast.makeText(MeasureActivity.this, msg,
 							Toast.LENGTH_SHORT).show();
 					// update direction instruction
-					if (direction.ordinal() + 1 > CompassManager.Direction
-							.values().length) {
+					if (direction.ordinal() + 1 > Cardinal.values().length) {
 						lastMP = null;
 					}
-					direction = CompassManager.Direction.values()[(direction
-							.ordinal() + 1) % 4];
+					direction = Cardinal.values()[(direction.ordinal() + 1) % 4];
 					updateDirectionText();
 				} else {
 					Toast.makeText(MeasureActivity.this, R.string.scan_no_ap,

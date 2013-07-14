@@ -8,20 +8,25 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import de.rwth.ti.db.MeasurePoint;
+import de.rwth.ti.loc.LocationResult;
 
 public class IPMapView extends View {
 
@@ -36,8 +41,10 @@ public class IPMapView extends View {
 	private float mYScaleFocus = 0;
 	private float mAccXPoint = 0;
 	private float mAccYPoint = 0;
-	private PointF mPoint = null;
+	private LocationResult location = null;
+	private float mapFactor = 6.7f;
 	private PointF mMPoint = null;
+	private PointF mMPointOld = null;
 	private float mHeight = 0;
 	private float mWidth = 0;
 	private float mViewHeight = 0;
@@ -46,9 +53,10 @@ public class IPMapView extends View {
 	private ArrayList<Path> myPaths;
 	private ArrayList<Path> myFillPaths;
 	private ArrayList<MeasurePoint> myOldPoints;
-	private Paint mPaint = new Paint();
-	private Rect mRect = new Rect();
+	private Paint mPaint;
+	private Rect mRect;
 	private OnScaleChangeListener onScaleChangeListener;
+	private IPMapView mySelf;
 
 	public IPMapView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -57,26 +65,36 @@ public class IPMapView extends View {
 		myOldPoints = new ArrayList<MeasurePoint>();
 		mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
 		mGestureDetector = new GestureDetector(context, new MyGestureListener());
+		mPaint = new Paint();
 		mPaint.setStrokeCap(Paint.Cap.ROUND);
+		mPaint.setAntiAlias(true);
+		mPaint.setStrokeWidth(0.432f);
+		mRect = new Rect();
+		mySelf = this;
 	}
-
-	public IPMapView(Context context, AttributeSet attrs,
-			InputStream inputStream) {
-		this(context, attrs);
-		newMap(inputStream);
+	
+	public void setMScaleFactor(float factor)
+	{
+		mScaleFactor = factor;
+		invalidate();
 	}
-
+	
+	public void setMXFocus(float x){
+		mXFocus = x;
+		invalidate();
+	}
+	
+	public void setMYFocus(float y){
+		mYFocus = y;
+		invalidate();
+	}
+	
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
 		mScaleDetector.onTouchEvent(ev);
 		mGestureDetector.onTouchEvent(ev);
 		return true;
 	}
-
-	@Override
-	protected void onFinishInflate() {
-		super.onFinishInflate();
-	};
 
 	@Override
 	protected void onSizeChanged(int xNew, int yNew, int xOld, int yOld) {
@@ -92,47 +110,50 @@ public class IPMapView extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
+		canvas.drawColor(Color.parseColor("#F0F0F0"));
 		canvas.save();
-		// canvas.drawColor(android.graphics.Color.GRAY);
 		boolean test = false;
 		canvas.getClipBounds(mRect);
 		if (mRect.top == 0 && mRect.left == 0 && mRect.right == mViewWidth
 				&& mRect.bottom == mViewHeight) {
 			test = true;
 		}
-		// mXScaleFocus -= mXFocus;
-		// mYScaleFocus -= mYFocus;
 		canvas.scale(mScaleFactor, mScaleFactor);
-		// canvas.scale(mScaleFactor, mScaleFactor, mXScaleFocus, mYScaleFocus);
 		canvas.translate(mXFocus, mYFocus);
 		canvas.getClipBounds(mRect);
 		if (test) {
 			mAccXPoint = mRect.exactCenterX();
 			mAccYPoint = mRect.exactCenterY();
-			// System.out.println("Mitte: "+mAccXPoint+","+mAccYPoint);
 		}
-
+		
+		
 		mPaint.setAntiAlias(true);
-		mPaint.setStrokeWidth(0.432f);
-		mPaint.setColor(android.graphics.Color.GRAY);
-		mPaint.setStyle(Paint.Style.STROKE);
-
+		mPaint.setStrokeWidth(0.10f*mapFactor);
+		mPaint.setColor(Color.WHITE);
+		mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+		
+		// draw filled paths
 		if (myFillPaths != null) {
 			for (Path aPath : myFillPaths) {
 				canvas.drawPath(aPath, mPaint);
 			}
 		}
-
-		mPaint.setColor(android.graphics.Color.BLACK);
+		// draw walls
+		mPaint.setColor(Color.parseColor("#1DB1E1"));
 		mPaint.setStyle(Paint.Style.STROKE);
-
+		/*if (myFillPaths != null) {
+			for (Path aPath : myFillPaths) {
+				canvas.drawPath(aPath, mPaint);
+			}
+		}*/
+		
 		if (myPaths != null) {
 			for (Path aPath : myPaths) {
 				canvas.drawPath(aPath, mPaint);
 			}
 		}
 		// draw old measure points
-		mPaint.setStyle(Style.FILL);
+		mPaint.setStyle(Paint.Style.FILL);
 		for (MeasurePoint aPoint : myOldPoints) {
 			mPaint.setColor(Color.BLACK);
 			canvas.drawCircle((float) aPoint.getPosx(),
@@ -148,25 +169,27 @@ public class IPMapView extends View {
 					(float) aPoint.getPosy(), 1.5f, mPaint);
 		}
 		// draw position
-		if (!mMeasureMode && mPoint != null) {
-			mPaint.setColor(android.graphics.Color.BLUE);
-			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-			canvas.drawCircle(mPoint.x, mPoint.y, 3, mPaint);
+		if (mMeasureMode == false && location != null) {
+			mPaint.setColor(android.graphics.Color.BLACK);
+			canvas.drawCircle((float) location.getX(),
+					(float) location.getY(), 3, mPaint);
+			if (location.getAccuracy() == 0) {
+				mPaint.setColor(android.graphics.Color.RED);
+			} else if (location.getAccuracy() == 1) {
+				mPaint.setColor(android.graphics.Color.YELLOW);
+			} else if (location.getAccuracy() == 2) {
+				mPaint.setColor(android.graphics.Color.GREEN);
+			}
+			mPaint.setStyle(Paint.Style.FILL);
+			canvas.drawCircle((float) location.getX(), (float) location.getY(),
+					 0.5f*mapFactor, mPaint);
 		}
 		// draw active measure point
-		if (mMeasureMode && mMPoint != null) {
+		if (mMeasureMode == true && mMPoint != null) {
 			mPaint.setColor(android.graphics.Color.GREEN);
 			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-			canvas.drawCircle(mMPoint.x, mMPoint.y, 3, mPaint);
+			canvas.drawCircle(mMPoint.x, mMPoint.y, 0.5f*mapFactor, mPaint);
 		}
-//		// draw grid
-//		mPaint.setColor(Color.BLACK);
-//		for (int x = 0; x < mWidth; x += mScaleFactor) {
-//			canvas.drawLine(x, 0, x, mHeight, mPaint);
-//		}
-//		for (int y = 0; y < mHeight; y += mScaleFactor) {
-//			canvas.drawLine(0, y, mWidth, y, mPaint);
-//		}
 		// restore it
 		canvas.restore();
 	}
@@ -182,7 +205,7 @@ public class IPMapView extends View {
 		mYScaleFocus = 0;
 		mAccXPoint = 0;
 		mAccYPoint = 0;
-		mPoint = null;
+		location = null;
 		mMPoint = null;
 		mHeight = 0;
 		mWidth = 0;
@@ -199,13 +222,16 @@ public class IPMapView extends View {
 		this.clearMap();
 
 		XmlPullParserFactory factory = null;
+		
 		try {
+			
 			factory = XmlPullParserFactory.newInstance();
 		} catch (XmlPullParserException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		factory.setNamespaceAware(true);
+		 
 		XmlPullParser xpp = null;
 		try {
 			xpp = factory.newPullParser();
@@ -229,9 +255,9 @@ public class IPMapView extends View {
 		}
 		while (eventType != XmlPullParser.END_DOCUMENT) {
 			if (eventType == XmlPullParser.START_DOCUMENT) {
-				System.out.println("Start document");
+				//System.out.println("Start document");
 			} else if (eventType == XmlPullParser.START_TAG) {
-				System.out.println("Start tag " + xpp.getName());
+				//System.out.println("Start tag " + xpp.getName());
 				if (xpp.getName().equals("svg")) {
 					mWidth = 0;
 					mHeight = 0;
@@ -259,8 +285,8 @@ public class IPMapView extends View {
 				}
 				if (xpp.getName().equals("path")) {
 					Path aPath = new Path();
-					System.out.println("Attribut d "
-							+ xpp.getAttributeValue(null, "d"));
+					//System.out.println("Attribut d "
+						//	+ xpp.getAttributeValue(null, "d"));
 					String aPathRout[] = xpp.getAttributeValue(null, "d")
 							.split(" ");
 					for (int i = 0; i < aPathRout.length; i++) {
@@ -436,20 +462,27 @@ public class IPMapView extends View {
 								myFillPaths.add(aPath);
 							}
 						} else {
-							myFillPaths.add(aPath);
+							myPaths.add(aPath);
 						}
 					}
 				}
 			} else if (eventType == XmlPullParser.END_TAG) {
-				System.out.println("End tag " + xpp.getName());
+			//	System.out.println("End tag " + xpp.getName());
 			} else if (eventType == XmlPullParser.TEXT) {
-				System.out.println("Text " + xpp.getText());
+			//	System.out.println("Text " + xpp.getText());
 			}
 			try {
 				eventType = xpp.next();
 			} catch (XmlPullParserException e) {
 				// TODO Auto-generated catch block
+				
+				//AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+				//builder.setMessage("Error in File. Please Import again and check your File.");
+				//AlertDialog alert = builder.create();
+				//alert.show();
 				e.printStackTrace();
+				//invalidate();
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -463,26 +496,58 @@ public class IPMapView extends View {
 		myOldPoints.add(punkt);
 	}
 
-	public void setPoint(float x, float y) {
-		if (mPoint == null) {
-			mPoint = new PointF(x, y);
-		} else {
-			mPoint.set(x, y);
-		}
+	public void setPoint(LocationResult passedLocation) {
+		location = new LocationResult(passedLocation.getBuilding(),
+				passedLocation.getFloor(), passedLocation.getX(),
+				passedLocation.getY(), passedLocation.getAccuracy());
 		invalidate();
 	}
 
 	public void focusPoint() {
-		if (mPoint != null) {
-			mXFocus = -mPoint.x + mViewWidth / (2 * mScaleFactor);
-			mYFocus = -mPoint.y + mViewHeight / (2 * mScaleFactor);
-			invalidate();
+		if (location != null) {
+			float x = -(float) location.getX() + mViewWidth
+					/ (2 * mScaleFactor);
+			float y = -(float) location.getY() + mViewHeight
+					/ (2 * mScaleFactor);
+			int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+			if (currentapiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB){
+			    // Do something for HonyComb and above versions
+				AnimatorSet anSet = new AnimatorSet();
+				ObjectAnimator objAnX = ObjectAnimator.ofFloat(mySelf, "mXFocus", mXFocus, x);
+				ObjectAnimator objAnY = ObjectAnimator.ofFloat(mySelf, "mYFocus", mYFocus, y);
+				anSet.playTogether(objAnX,objAnY);
+				anSet.setDuration(1000);
+				anSet.start();
+			} else{
+			    // do something for phones running an SDK before HoneyComb
+				mXFocus = x;
+				mYFocus = y;
+			}
 		}
 	}
 
 	public void zoomPoint() {
-		setScaleFactor((mMaxScaleFactor - mMinScaleFactor) / 2);
-		focusPoint();
+		float newScale = ((mMaxScaleFactor - mMinScaleFactor) / 2);
+		float x = -(float) location.getX() + mViewWidth
+				/ (2 * newScale);
+		float y = -(float) location.getY() + mViewHeight
+				/ (2 * newScale);
+		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+		if (currentapiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB){
+		    // Do something for HonyComb and above versions
+			AnimatorSet anSet = new AnimatorSet();
+			ObjectAnimator objAnScale = ObjectAnimator.ofFloat(mySelf, "mScaleFactor", mScaleFactor, newScale);
+			ObjectAnimator objAnX = ObjectAnimator.ofFloat(mySelf, "mXFocus", mXFocus, x);
+			ObjectAnimator objAnY = ObjectAnimator.ofFloat(mySelf, "mYFocus", mYFocus, y);
+			anSet.playTogether(objAnScale,objAnX,objAnY);
+			anSet.setDuration(1000);
+			anSet.start();
+		} else{
+		    // do something for phones running an SDK before HoneyComb
+			mXFocus = x;
+			mYFocus = y;
+			mScaleFactor = newScale;
+		}
 	}
 
 	public boolean getMeasureMode() {
@@ -496,13 +561,44 @@ public class IPMapView extends View {
 	public PointF getMeasurePoint() {
 		return mMPoint;
 	}
-
+	
+	public void next()
+	{
+		if(mMPoint != null){
+			mMPoint.x = mMPoint.x + 2*mapFactor;
+			invalidate();
+		}
+	}
+	
+	public void nextLine()
+	{
+		if(mMPointOld != null && mMPoint !=  null){
+			mMPointOld.y = mMPointOld.y + 2*mapFactor;
+			mMPoint.y = mMPointOld.y;
+			mMPoint.x = mMPointOld.x;
+			invalidate();
+		}
+	}
+	
 	protected void setMeasurePoint(float x, float y) {
 		mMPoint = new PointF();
 		mMPoint.x = (x / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
 				+ mAccXPoint;
 		mMPoint.y = (y / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))
 				+ mAccYPoint;
+		invalidate();
+	}
+	
+	protected void setMeasurePointTouch(float x, float y) {
+		mMPoint = new PointF();
+		mMPoint.x = (x / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
+				+ mAccXPoint;
+		mMPoint.y = (y / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))
+				+ mAccYPoint;
+		mMPointOld = new PointF();
+		mMPointOld.x = mMPoint.x;
+		mMPointOld.y = mMPoint.y;
+		
 		// mXMPoint = (x-mXFocus)/mScaleFactor;
 		// mYMPoint = (y-mYFocus)/mScaleFactor;
 		invalidate();
@@ -514,12 +610,45 @@ public class IPMapView extends View {
 		@Override
 		public boolean onSingleTapConfirmed(MotionEvent e) {
 			if (mMeasureMode) {
-				setMeasurePoint(e.getX(), e.getY());
+				setMeasurePointTouch(e.getX(), e.getY());
 			}
 			super.onSingleTapConfirmed(e);
 			return true;
 		}
 
+		
+		@Override
+		public boolean onDoubleTap(MotionEvent e) {
+			float newScale = mScaleFactor * 2.5f;
+			Math.min(newScale, mMaxScaleFactor);
+
+			float x = (e.getX() / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
+					+ mAccXPoint;
+			float y = (e.getY() / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))
+					+ mAccYPoint;
+			x = -x + mViewWidth
+					/ (2*newScale);
+			y = -y + mViewHeight
+					/ (2*newScale);
+			
+			int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+			if (currentapiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB){
+			    // Do something for HonyComb and above versions
+				AnimatorSet anSet = new AnimatorSet();
+				ObjectAnimator objAnScale = ObjectAnimator.ofFloat(mySelf, "mScaleFactor", mScaleFactor, newScale);
+				ObjectAnimator objAnX = ObjectAnimator.ofFloat(mySelf, "mXFocus", mXFocus, x);
+				ObjectAnimator objAnY = ObjectAnimator.ofFloat(mySelf, "mYFocus", mYFocus, y);
+				anSet.playTogether(objAnScale,objAnX,objAnY);
+				anSet.setDuration(1000);
+				anSet.start();
+			} else{
+			    // do something for phones running an SDK before HoneyComb
+				mXFocus = x;
+				mYFocus = y;
+				mScaleFactor = newScale;
+			}
+			return true;
+		};
 		@Override
 		public boolean onScroll(MotionEvent e1, MotionEvent e2,
 				float distanceX, float distanceY) {
@@ -531,7 +660,7 @@ public class IPMapView extends View {
 			return true;
 		};
 	};
-
+	
 	private class ScaleListener extends
 			ScaleGestureDetector.SimpleOnScaleGestureListener {
 		@Override
@@ -545,7 +674,7 @@ public class IPMapView extends View {
 			float scale = mScaleFactor * detector.getScaleFactor();
 			// Don't let the object get too small or too large.
 			scale = Math.max(mMinScaleFactor / 4,
-					Math.min(scale, mMaxScaleFactor));
+				Math.min(scale, mMaxScaleFactor));
 			setScaleFactor(scale);
 			mXFocus = -mXScaleFocus + detector.getFocusX() / mScaleFactor;
 			mYFocus = -mYScaleFocus + detector.getFocusY() / mScaleFactor;

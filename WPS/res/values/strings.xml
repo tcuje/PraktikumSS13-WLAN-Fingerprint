@@ -79,4 +79,8 @@
     <string name="floor">Etage</string>
     <string name="measurepoint">Messpunkt</string>
     <string name="error_short_name">Name zu kurz</string>
+	<string name="scan">Scan</string>
+    <string name="scans">Scans</string>
+	<string name="delete_last_scan">Letzten Scan löschen</string>
+	<string name="error_db_failure">Schwerwiegender Datenbankfehler! Bitte alle Daten löschen und erneut versuchen.</string>
 </resources>

@@ -30,16 +30,18 @@ public class Storage extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// TODO make a nice upgrade
-		clearDatabase(db);
+		clearDatabase();
 	}
 
-	public void clearDatabase(SQLiteDatabase db) {
+	public void clearDatabase() {
+		SQLiteDatabase db = getWritableDatabase();
 		db.execSQL(AccessPoint.TABLE_DROP);
 		db.execSQL(Scan.TABLE_DROP);
 		db.execSQL(MeasurePoint.TABLE_DROP);
 		db.execSQL(Floor.TABLE_DROP);
 		db.execSQL(Building.TABLE_DROP);
 		onCreate(db);
+		db.close();
 	}
 
 }

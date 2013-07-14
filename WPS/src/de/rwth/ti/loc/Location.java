@@ -5,7 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.net.wifi.ScanResult;
+import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.Constants;
+import de.rwth.ti.common.DataHelper;
+import de.rwth.ti.common.Tuple;
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
@@ -20,13 +23,12 @@ public class Location {
 	private static long timeSinceBuilding = 0;
 	private static LocationResult lastScan = null;
 	private static LocationResult secondToLastScan = null;
-	private static long theTime;
 	private static Building tempBuilding;
 	private static Floor tempFloor;
-	Calendar time = Calendar.getInstance();
-	private static List<LocationResult> last_ten_results = new LinkedList();
-
-	// LocationResult result = null;
+	private static List<LocationResult> last_ten_results = new LinkedList<LocationResult>();
+	private static int accuracy;
+	private static List<Tuple<Scan, List<AccessPoint>>> cache;
+	private static long theTime;
 
 	public Location(IMeasureDataHandler dataHandler) {
 		this.dataHandler = dataHandler;
@@ -41,46 +43,75 @@ public class Location {
 	 *            Ablauf den Zeitvariablen
 	 * @return
 	 */
-	public LocationResult getLocation(List<ScanResult> aps, int compass,
+	public LocationResult getLocation(List<ScanResult> aps, Cardinal direction,
 			int kontrollvariable) {
-		theTime = time.getTime().getTime();
+		if (aps.size() == 0) {
+			LocationResult returnResult = new LocationResult(null, null, 0, 0,
+					0);
+			returnResult.setError(3);
+			return returnResult;
+		}
+		theTime = Calendar.getInstance().getTimeInMillis();
 		aps = deleteDoubles(aps);
-
+		aps = DataHelper.sortScanResults(aps);
 		if (theTime > timeSinceBuilding + 40000 || kontrollvariable == 1) {
 			Building lastBuilding = tempBuilding;
 			Floor lastFloor = tempFloor;
 			tempBuilding = findBuilding(aps);
-			tempFloor = findFloor(aps, tempBuilding);
-			if (lastBuilding != null) {
-				if ((lastBuilding.getId() != tempBuilding.getId())
-						|| (lastFloor.getId() != tempFloor.getId())) {
-					last_ten_results.clear();
-					secondToLastScan = null;
-					lastScan = null;
+			if (tempBuilding != null) {
+				timeSinceBuilding = theTime;
+				tempFloor = findFloor(aps, tempBuilding);
+				if (tempFloor != null) {
+					timeSinceFloor = theTime;
+					if (lastBuilding != null) {
+						if ((lastBuilding.getId() != tempBuilding.getId())
+								|| (lastFloor.getId() != tempFloor.getId())) {
+							last_ten_results.clear();
+							secondToLastScan = null;
+							lastScan = null;
+						}
+					}
+				} else {
+					LocationResult returnResult = new LocationResult(null,
+							null, 0, 0, 0);
+					returnResult.setError(2);
+					return returnResult;
 				}
+			} else {
+				LocationResult returnResult = new LocationResult(null, null, 0,
+						0, 0);
+				returnResult.setError(1);
+				return returnResult;
 			}
-			timeSinceFloor = theTime;
-			timeSinceBuilding = theTime;
+
 		} else if (theTime > timeSinceFloor + 10000 || kontrollvariable == 2) {
 			Floor lastFloor = tempFloor;
 			tempFloor = findFloor(aps, tempBuilding);
-			if (lastFloor != null) {
-				if (lastFloor.getId() != tempFloor.getId()) {
+			if (tempFloor != null) {
+				if (tempFloor.equals(lastFloor) == false) {
 					last_ten_results.clear();
 					secondToLastScan = null;
 					lastScan = null;
 				}
+				timeSinceFloor = theTime;
+				timeSinceBuilding = theTime;
+			} else {
+				LocationResult returnResult = new LocationResult(null, null, 0,
+						0, 0);
+				returnResult.setError(1);
+				return returnResult;
 			}
-			timeSinceFloor = theTime;
-			timeSinceBuilding = theTime;
 		}
 
-		LocationResult result = findMP(aps, tempFloor, tempBuilding, compass);
+		LocationResult result = findMP(aps, tempFloor, tempBuilding, direction);
 		secondToLastScan = lastScan;
 		lastScan = result;
 		while (secondToLastScan == null) {
 			last_ten_results.add(result);
-			result = findMP(aps, tempFloor, tempBuilding, compass);
+			result = findMP(aps, tempFloor, tempBuilding, direction);
+			if (result == null) {
+				break;
+			}
 			secondToLastScan = lastScan;
 			lastScan = result;
 		}
@@ -90,9 +121,9 @@ public class Location {
 
 		if (!(lastScan == null || result == null)) {
 			if (filter_chooser(last_ten_results, result)) {
-				result = filterLP2(secondToLastScan, lastScan, result);
+				result = filterLP2(secondToLastScan, lastScan, result, accuracy);
 			} else {
-				result = filterLP(secondToLastScan, lastScan, result);
+				result = filterLP(secondToLastScan, lastScan, result, accuracy);
 			}
 
 		}
@@ -101,22 +132,14 @@ public class Location {
 	}
 
 	private LocationResult filterLP(LocationResult secondToLastScan,
-			LocationResult lastScan, LocationResult scan) {
+			LocationResult lastScan, LocationResult scan, int accuracy) {
 		LocationResult result;
-		double x = 0;
-		double y = 0;
-//		if (scan.getMap()!=lastScan.getMap() || scan.getMap()!=secondToLastScan.getMap()){
-//			return scan;
-//		}
-
-		{
-			x = (0.7 * scan.getX() + 0.2 * lastScan.getX() + 0.1 * secondToLastScan
-					.getX());
-			y = (0.7 * scan.getY() + 0.2 * lastScan.getY() + 0.1 * secondToLastScan
-					.getY());
-		}
-		result = new LocationResult(scan.getBuilding(), scan.getFloor(), x, y);
-
+		double x = (0.7 * scan.getX() + 0.2 * lastScan.getX() + 0.1 * secondToLastScan
+				.getX());
+		double y = (0.7 * scan.getY() + 0.2 * lastScan.getY() + 0.1 * secondToLastScan
+				.getY());
+		result = new LocationResult(scan.getBuilding(), scan.getFloor(), x, y,
+				accuracy);
 		return result;
 	}
 
@@ -140,29 +163,19 @@ public class Location {
 				- last_ten_results.get(last_ten_results.size() - 1).getY());
 		if ((x1 > 1.5 * x10) || (y1 > 1.5 * y10)) {
 			return true;
-		} else {
-			return false;
 		}
-
+		return false;
 	}
 
 	private LocationResult filterLP2(LocationResult secondToLastScan,
-			LocationResult lastScan, LocationResult scan) {
+			LocationResult lastScan, LocationResult scan, int accuracy) {
 		LocationResult result;
-		double x = 0;
-		double y = 0;
-//		if (scan.getMap()!=lastScan.getMap() || scan.getMap()!=secondToLastScan.getMap()){
-//			return scan;
-//		}
-
-		{
-			x = (0.3 * scan.getX() + 0.5 * lastScan.getX() + 0.2 * secondToLastScan
-					.getX());
-			y = (0.3 * scan.getY() + 0.5 * lastScan.getY() + 0.2 * secondToLastScan
-					.getY());
-		}
-		result = new LocationResult(scan.getBuilding(), scan.getFloor(), x, y);
-
+		double x = (0.3 * scan.getX() + 0.5 * lastScan.getX() + 0.2 * secondToLastScan
+				.getX());
+		double y = (0.3 * scan.getY() + 0.5 * lastScan.getY() + 0.2 * secondToLastScan
+				.getY());
+		result = new LocationResult(scan.getBuilding(), scan.getFloor(), x, y,
+				accuracy);
 		return result;
 	}
 
@@ -170,107 +183,207 @@ public class Location {
 		if (aps.isEmpty()) {
 			return null;
 		}
-		String mac = aps.get(0).BSSID;
-		List<AccessPoint> entries = dataHandler.getAccessPoint(mac);
-		if (entries.isEmpty()) {
-			return null;
+		List<Building> bldID = new LinkedList<Building>();
+		for (int i = 0; i < 3 && i < aps.size(); i++) {
+			String mac = aps.get(i).BSSID;
+			List<AccessPoint> entries = dataHandler.getAccessPoint(mac);
+			if (entries.isEmpty()) {
+				bldID.add(null);
+				continue;
+			}
+			AccessPoint ap = entries.get(0);
+			Scan scan = dataHandler.getScan(ap);
+			if (scan == null) {
+				bldID.add(null);
+				continue;
+			}
+			MeasurePoint mp = dataHandler.getMeasurePoint(scan);
+			if (mp == null) {
+				bldID.add(null);
+				continue;
+			}
+			Floor map = dataHandler.getFloor(mp);
+			if (map == null) {
+				bldID.add(null);
+				continue;
+			}
+			bldID.add(dataHandler.getBuilding(map));
 		}
-		AccessPoint ap = entries.get(0);
-		Scan scan = dataHandler.getScan(ap);
-		if (scan == null) {
-			return null;
+		for (int j = 0; j < bldID.size(); j++) {
+			if (bldID.get(j) == null) {
+				bldID.remove(j);
+				j--;
+			}
 		}
-		MeasurePoint mp = dataHandler.getMeasurePoint(scan);
-		if (mp == null) {
+		if (bldID.size() <= 2 && bldID.size() > 0) {
+			return bldID.get(0);
+		} else if (bldID.size() == 0) {
 			return null;
+		} else if (bldID.get(0).getId() == bldID.get(1).getId()
+				|| bldID.get(0).getId() == bldID.get(2).getId()) {
+			return bldID.get(0);
+		} else if (bldID.get(1).getId() == bldID.get(2).getId()) {
+			return bldID.get(1);
 		}
-		Floor map = dataHandler.getFloor(mp);
-		if (map == null) {
-			return null;
-		}
-		Building result = dataHandler.getBuilding(map);
-		return result;
+		return bldID.get(0);
 	}
 
 	private Floor findFloor(List<ScanResult> aps, Building b) {
 		if (aps.isEmpty() || b == null) {
 			return null;
 		}
-		String mac = aps.get(0).BSSID;
-		List<AccessPoint> entries = dataHandler.getAccessPoint(mac);
-		AccessPoint ap = entries.get(0);
-		Scan scan = dataHandler.getScan(ap);
-		MeasurePoint mp = dataHandler.getMeasurePoint(scan);
-		Floor floor = dataHandler.getFloor(mp);
-		return floor;
+		List<Floor> floorlist = new LinkedList<Floor>();
+		for (int i = 0; i < 3 && i < aps.size(); i++) {
+			String mac = aps.get(i).BSSID;
+			List<AccessPoint> entries = dataHandler.getAccessPoint(mac);
+			if (entries.isEmpty()) {
+				floorlist.add(null);
+				continue;
+			}
+			AccessPoint ap = entries.get(0);
+			if (ap == null) {
+				floorlist.add(null);
+				continue;
+			}
+			Scan scan = dataHandler.getScan(ap);
+			if (scan == null) {
+				floorlist.add(null);
+				continue;
+			}
+			MeasurePoint mp = dataHandler.getMeasurePoint(scan);
+			if (mp == null) {
+				floorlist.add(null);
+				continue;
+			}
+			floorlist.add(dataHandler.getFloor(mp));
+		}
+		for (int j = 0; j < floorlist.size(); j++) {
+			if (floorlist.get(j) == null) {
+				floorlist.remove(j);
+				j--;
+			}
+		}
+		if (floorlist.size() <= 2 && floorlist.size() > 0) {
+			return floorlist.get(0);
+		} else if (floorlist.size() == 0) {
+			return null;
+		} else if (floorlist.get(0).getId() == floorlist.get(1).getId()
+				|| floorlist.get(0).getId() == floorlist.get(2).getId()) {
+			return floorlist.get(0);
+		} else if (floorlist.get(1).getId() == floorlist.get(2).getId()) {
+			return floorlist.get(1);
+		}
+		return floorlist.get(0);
 	}
 
 	private LocationResult findMP(List<ScanResult> aps, Floor map,
-			Building building, int compass) {
+			Building building, Cardinal compass) {
+		accuracy = 2;
 		if (aps.isEmpty() || map == null) {
 			return null;
 		}
-		List<Scan> scanEntries = dataHandler.getScans(map, compass);
+		List<Scan> scanEntries = dataHandler.getScans(map,
+				compass.getAsAzimuth(), 90);
+		List<Scan> scanEntriesALL = dataHandler.getScans(map,
+				compass.getAsAzimuth(), 360);
+		if (6 * scanEntries.size() < scanEntriesALL.size()) {
+			scanEntries = scanEntriesALL;
+		}
+		if (scanEntries.size() == 0) {
+			LocationResult returnResult = new LocationResult(null, null, 0, 0,
+					0);
+			returnResult.setError(4);
+			return returnResult;
+		}
 		List<ScanError> errorList = new LinkedList<ScanError>();
-		for (int j = 0; j < scanEntries.size(); j++) {
+		if (aps.size() > 1) {
+			int level = Math.abs(aps.get(0).level + aps.get(1).level) / 2;
+			if (level > 60 && level < 80) {
+				accuracy -= 1;
+				if (level > 80) {
+					accuracy -= 1;
+				}
+			}
+		} else {
+			if (aps.get(0).level < -60) {
+				accuracy = accuracy - 1;
+				if (aps.get(0).level < -80) {
+					accuracy = accuracy - 1;
+				}
+			}
+		}
+		for (Scan scan : scanEntries) {
 			double errorValue = 0;
-			List<AccessPoint> entries = dataHandler.getAccessPoints(
-					scanEntries.get(j), Constants.IMPORTANT_APS);
+			List<AccessPoint> entries = dataHandler.getAccessPoints(scan,
+					Constants.IMPORTANT_APS);
 			for (int k = 0; k < 5 && k < aps.size(); k++) {
 				String mac = aps.get(k).BSSID;
-				int l;
+				int l, levelDifference;
 				boolean success = false;
 				for (l = 0; l < entries.size(); l++) {
-					if (mac.compareTo(entries.get(l).getBssid()) == 0) {
+					mac = mac.substring(0, mac.length() - 1);
+					if (mac.compareTo(entries
+							.get(l)
+							.getBssid()
+							.substring(0,
+									(entries.get(l).getBssid()).length() - 1)) == 0) {
 						success = true;
 						break;
 					}
 				}
 				if (success) {
+					levelDifference = (Math
+							.abs((int) ((aps.get(k).level) - entries.get(l)
+									.getLevel())));
 					errorValue += (double) ((100 + (double) aps.get(k).level) / 100)
-							* (Math.abs((int) ((aps.get(k).level) - entries
-									.get(l).getLevel())));
+							* levelDifference;
 				} else {
+					levelDifference = (Math
+							.abs((int) ((aps.get(k).level) + 100)));
 					errorValue += (double) ((100 + (double) aps.get(k).level) / 100)
-							* (Math.abs((int) ((aps.get(k).level) + 100)));
+							* levelDifference;
+					if (k == 0) {
+						accuracy = 0;
+					}
 				}
 			}
 			if (errorValue == 0) {
+				MeasurePoint mp = dataHandler.getMeasurePoint(scan);
 				LocationResult result = new LocationResult(building, map,
-						dataHandler.getMeasurePoint(scanEntries.get(j))
-								.getPosx(), dataHandler.getMeasurePoint(
-								scanEntries.get(j)).getPosy());
+						mp.getPosx(), mp.getPosy(), 2);
 				return result;
 			}
 			ScanError scanErrorObject = new ScanError();
-//			errorValue=errorValue*10000;
-//			errorValue=(double)Math.round(errorValue);
-//			errorValue=errorValue/10000;
-//			scanErrorObject.setScanError(scanEntries.get(j), (Math.pow(errorValue, 2)));
-			scanErrorObject.setScanError(scanEntries.get(j), errorValue);
+			// errorValue=errorValue*10000;
+			// errorValue=(double)Math.round(errorValue);
+			// errorValue=errorValue/10000;
+			// scanErrorObject.setScanError(scan, (Math.pow(errorValue, 2)));
+			scanErrorObject.setScanError(scan, errorValue);
 			errorList.add(scanErrorObject);
+		}
+		if (errorList.size() == 0) {
+			LocationResult returnResult = new LocationResult(null, null, 0, 0,
+					0);
+			returnResult.setError(5);
+			return returnResult;
 		}
 		errorList = sortScanError(errorList);
 		double x = 0;
 		double y = 0;
 		double errorSum = 0;
-		for (int h = 0; h < errorList.size(); h++) {
-			if (h > 5) {
-				break;
-			}
-			x += (1 / (errorList.get(h).getError()))
-					* dataHandler.getMeasurePoint(errorList.get(h).getScan())
-							.getPosx();
-			y += (1 / (errorList.get(h).getError()))
-					* dataHandler.getMeasurePoint(errorList.get(h).getScan())
-							.getPosy();
+		for (int h = 0; h <= 5 && h < errorList.size(); h++) {
+			MeasurePoint mp = dataHandler.getMeasurePoint(errorList.get(h)
+					.getScan());
+			x += (1 / (errorList.get(h).getError())) * mp.getPosx();
+			y += (1 / (errorList.get(h).getError())) * mp.getPosy();
 			errorSum += (1 / (errorList.get(h).getError()));
 		}
 		if (errorSum != 0) {
 			x = x / errorSum;
 			y = y / errorSum;
 		}
-		LocationResult result = new LocationResult(building, map, x, y);
+		LocationResult result = new LocationResult(building, map, x, y,
+				accuracy);
 		return result;
 
 	}
@@ -305,7 +418,7 @@ public class Location {
 				}
 			}
 		}
-
 		return scanErrorList;
 	}
+
 }
