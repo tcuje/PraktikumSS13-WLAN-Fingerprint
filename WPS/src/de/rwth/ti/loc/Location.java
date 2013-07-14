@@ -83,6 +83,7 @@ public class Location {
 				returnResult.setError(1);
 				return returnResult;
 			}
+
 		} else if (theTime > timeSinceFloor + 10000 || kontrollvariable == 2) {
 			Floor lastFloor = tempFloor;
 			tempFloor = findFloor(aps, tempBuilding);
@@ -366,10 +367,10 @@ public class Location {
 				return result;
 			}
 			ScanError scanErrorObject = new ScanError();
-			// errorValue=errorValue*10000;
-			// errorValue=(double)Math.round(errorValue);
-			// errorValue=errorValue/10000;
-			// scanErrorObject.setScanError(scan, (Math.pow(errorValue, 2)));
+//			errorValue=errorValue*10000;
+//			errorValue=(double)Math.round(errorValue);
+//			errorValue=errorValue/10000;
+//			scanErrorObject.setScanError(scan, (Math.pow(errorValue, 2)));
 			scanErrorObject.setScanError(tple.left, errorValue);
 			errorList.add(scanErrorObject);
 		}

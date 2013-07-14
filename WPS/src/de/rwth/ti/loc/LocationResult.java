@@ -14,7 +14,7 @@ public class LocationResult {
 	private double x;
 	private double y;
 	private int accuracy;
-	private int errorCode = 0;
+	private int errorCode;
 
 	public LocationResult(Building building, Floor floor, double x, double y,
 			int accuracy) {
