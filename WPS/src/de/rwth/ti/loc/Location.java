@@ -18,7 +18,7 @@ import de.rwth.ti.share.IMeasureDataHandler;
 
 public class Location {
 
-	private static IMeasureDataHandler dataHandler;
+	private IMeasureDataHandler dataHandler;
 	private static long timeSinceFloor = 0;
 	private static long timeSinceBuilding = 0;
 	private static LocationResult lastScan = null;
@@ -27,11 +27,11 @@ public class Location {
 	private static Floor tempFloor;
 	private static List<LocationResult> last_ten_results = new LinkedList<LocationResult>();
 	private static int accuracy;
-	private static List<Tuple<Scan, List<AccessPoint>>> cache = new LinkedList<Tuple<Scan, List<AccessPoint>>>();
+	private static List<Tuple<Scan, List<AccessPoint>>> cache;
 	private static long theTime;
 
 	public Location(IMeasureDataHandler dataHandler) {
-		Location.dataHandler = dataHandler;
+		this.dataHandler = dataHandler;
 	}
 
 	/**
@@ -63,13 +63,13 @@ public class Location {
 				tempFloor = findFloor(aps, tempBuilding);
 				if (tempFloor != null) {
 					timeSinceFloor = theTime;
-					if (lastBuilding == null
-							|| lastBuilding.getId() != tempBuilding.getId()
-							|| lastFloor.getId() != tempFloor.getId()) {
-						last_ten_results.clear();
-						secondToLastScan = null;
-						lastScan = null;
-						reloadCache();
+					if (lastBuilding != null) {
+						if ((lastBuilding.getId() != tempBuilding.getId())
+								|| (lastFloor.getId() != tempFloor.getId())) {
+							last_ten_results.clear();
+							secondToLastScan = null;
+							lastScan = null;
+						}
 					}
 				} else {
 					LocationResult returnResult = new LocationResult(null,
@@ -83,10 +83,6 @@ public class Location {
 				returnResult.setError(1);
 				return returnResult;
 			}
-<<<<<<< HEAD
-=======
-
->>>>>>> 564f898fa87310e3487f1a040ca9b6bf8baa2bd7
 		} else if (theTime > timeSinceFloor + 10000 || kontrollvariable == 2) {
 			Floor lastFloor = tempFloor;
 			tempFloor = findFloor(aps, tempBuilding);
@@ -95,7 +91,6 @@ public class Location {
 					last_ten_results.clear();
 					secondToLastScan = null;
 					lastScan = null;
-					reloadCache();
 				}
 				timeSinceFloor = theTime;
 				timeSinceBuilding = theTime;
@@ -106,6 +101,7 @@ public class Location {
 				return returnResult;
 			}
 		}
+
 		LocationResult result = findMP(aps, tempFloor, tempBuilding, direction);
 		secondToLastScan = lastScan;
 		lastScan = result;
@@ -132,19 +128,6 @@ public class Location {
 		}
 		last_ten_results.add(result);
 		return result;
-	}
-
-	private static void reloadCache() {
-		cache.clear();
-		List<Scan> scanEntries = dataHandler.getScans(tempFloor, 0, 360);
-		for (Scan sc : scanEntries) {
-			Tuple<Scan, List<AccessPoint>> tp = new Tuple<Scan, List<AccessPoint>>(
-					sc, new LinkedList<AccessPoint>());
-			List<AccessPoint> entries = dataHandler.getAccessPoints(sc,
-					Constants.IMPORTANT_APS);
-			tp.right.addAll(entries);
-			cache.add(tp);
-		}
 	}
 
 	private LocationResult filterLP(LocationResult secondToLastScan,
@@ -335,26 +318,33 @@ public class Location {
 				}
 			}
 		}
-		for (Tuple<Scan, List<AccessPoint>> tple : cache) {
+		for (Scan scan : scanEntries) {
 			double errorValue = 0;
+			List<AccessPoint> entries = dataHandler.getAccessPoints(scan,
+					Constants.IMPORTANT_APS);
 			for (int k = 0; k < 5 && k < aps.size(); k++) {
 				String mac = aps.get(k).BSSID;
-				AccessPoint found = null;
-				for (AccessPoint ap : tple.right) {
+				int l, levelDifference;
+				boolean success = false;
+				for (l = 0; l < entries.size(); l++) {
 					mac = mac.substring(0, mac.length() - 1);
-					if (mac.compareTo(ap.getBssid().substring(0,
-							(ap.getBssid()).length() - 1)) == 0) {
-						found = ap;
+					if (mac.compareTo(entries
+							.get(l)
+							.getBssid()
+							.substring(0,
+									(entries.get(l).getBssid()).length() - 1)) == 0) {
+						success = true;
 						break;
 					}
 				}
-				if (found != null) {
-					int levelDifference = (Math
-							.abs((int) ((aps.get(k).level) - found.getLevel())));
+				if (success) {
+					levelDifference = (Math
+							.abs((int) ((aps.get(k).level) - entries.get(l)
+									.getLevel())));
 					errorValue += (double) ((100 + (double) aps.get(k).level) / 100)
 							* levelDifference;
 				} else {
-					int levelDifference = (Math
+					levelDifference = (Math
 							.abs((int) ((aps.get(k).level) + 100)));
 					errorValue += (double) ((100 + (double) aps.get(k).level) / 100)
 							* levelDifference;
@@ -364,25 +354,17 @@ public class Location {
 				}
 			}
 			if (errorValue == 0) {
-				MeasurePoint mp = dataHandler.getMeasurePoint(tple.left);
+				MeasurePoint mp = dataHandler.getMeasurePoint(scan);
 				LocationResult result = new LocationResult(building, map,
 						mp.getPosx(), mp.getPosy(), 2);
 				return result;
 			}
 			ScanError scanErrorObject = new ScanError();
-<<<<<<< HEAD
 			// errorValue=errorValue*10000;
 			// errorValue=(double)Math.round(errorValue);
 			// errorValue=errorValue/10000;
 			// scanErrorObject.setScanError(scan, (Math.pow(errorValue, 2)));
 			scanErrorObject.setScanError(scan, errorValue);
-=======
-//			errorValue=errorValue*10000;
-//			errorValue=(double)Math.round(errorValue);
-//			errorValue=errorValue/10000;
-//			scanErrorObject.setScanError(scan, (Math.pow(errorValue, 2)));
-			scanErrorObject.setScanError(tple.left, errorValue);
->>>>>>> 564f898fa87310e3487f1a040ca9b6bf8baa2bd7
 			errorList.add(scanErrorObject);
 		}
 		if (errorList.size() == 0) {
