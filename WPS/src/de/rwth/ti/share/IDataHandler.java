@@ -4,11 +4,7 @@ import java.util.List;
 
 import de.rwth.ti.db.AccessPoint;
 import de.rwth.ti.db.Building;
-<<<<<<< HEAD
-import de.rwth.ti.db.Map;
-=======
 import de.rwth.ti.db.Floor;
->>>>>>> origin/dev
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.Scan;
 
@@ -34,15 +30,9 @@ public interface IDataHandler {
 
 	/**
 	 * 
-<<<<<<< HEAD
-	 * @return Returns a list with all maps from the database
-	 */
-	List<Map> getAllMaps();
-=======
 	 * @return Returns a list with all floors from the database
 	 */
 	List<Floor> getAllFloors();
->>>>>>> origin/dev
 
 	/**
 	 * 
@@ -70,15 +60,9 @@ public interface IDataHandler {
 
 	/**
 	 * 
-<<<<<<< HEAD
-	 * @return Returns the number of maps stored in the database
-	 */
-	long countMaps();
-=======
 	 * @return Returns the number of floors stored in the database
 	 */
 	long countFloors();
->>>>>>> origin/dev
 
 	/**
 	 * 

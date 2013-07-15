@@ -55,23 +55,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		storage.close();
 	}
 
-<<<<<<< HEAD
-	// TODO make this async
-	public void exportDatabase(String filename) throws IOException {
-		db.close();
-		storage.exportDatabase(filename);
-		db = storage.getWritableDatabase();
-	}
-
-	// TODO make this async
-	public void importDatabase(String filename) throws IOException {
-		db.close();
-		storage.importDatabase(filename);
-		db = storage.getWritableDatabase();
-	}
-
-=======
->>>>>>> origin/dev
 	@Override
 	public AccessPoint createAccessPoint(Scan scan, String bssid, long level,
 			long freq, String ssid, String props) {
@@ -374,11 +357,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	@Override
-<<<<<<< HEAD
-	public boolean changeMap(Map map) {
-=======
 	public boolean changeFloor(Floor floor) {
->>>>>>> origin/dev
 		ContentValues values = new ContentValues();
 		if (floor.getName() != null) {
 			values.put(Floor.COLUMN_NAME, floor.getName());
@@ -392,15 +371,9 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	@Override
-<<<<<<< HEAD
-	public boolean deleteMap(Map map) {
-		int result = db.delete(Map.TABLE_NAME, Map.COLUMN_ID,
-				new String[] { String.valueOf(map.getId()) });
-=======
 	public boolean deleteFloor(Floor floor) {
 		int result = db.delete(Floor.TABLE_NAME, Floor.COLUMN_ID,
 				new String[] { String.valueOf(floor.getId()) });
->>>>>>> origin/dev
 		if (result == 1)
 			return true;
 		else
@@ -548,17 +521,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		return result;
 	}
 
-<<<<<<< HEAD
-	@Override
-	public List<Building> getAllBuildings() {
-		Cursor cursor = db.query(Building.TABLE_NAME, Building.ALL_COLUMNS,
-				null, null, null, null, null);
-		List<Building> result = cursorToBuildings(cursor);
-		return result;
-	}
-
-=======
->>>>>>> origin/dev
 	@Override
 	public List<Building> getAllBuildings() {
 		Cursor cursor = db.query(Building.TABLE_NAME, Building.ALL_COLUMNS,

@@ -96,24 +96,6 @@ public interface IGUIDataHandler extends IDataHandler {
 			long freq, String ssid, String props);
 
 	/**
-<<<<<<< HEAD
-	 * Persist a changed <code>Map</code> object
-	 * 
-	 * @param map
-	 *            Changed object to be safed
-	 * @return true on success, false otherwise
-	 */
-	boolean changeMap(Map map);
-
-	/**
-	 * Delete a <code>Map</code> object
-	 * 
-	 * @param map
-	 *            Object to be deleted
-	 * @return true on success, false otherwise
-	 */
-	boolean deleteMap(Map map);
-=======
 	 * Persist a changed <code>Floor</code> object
 	 * 
 	 * @param floor
@@ -130,7 +112,6 @@ public interface IGUIDataHandler extends IDataHandler {
 	 * @return true on success, false otherwise
 	 */
 	boolean deleteFloor(Floor floor);
->>>>>>> origin/dev
 
 	/**
 	 * Persist a changed <code>Building</code> object
