@@ -55,7 +55,7 @@
     <string name="database_export_question">Datenbank Export</string>
     <string name="choose_filename">Geben Sie den Dateinamen ein</string>
     <string name="file_not_exist">Die Datei existiert nicht</string>
-    <string name="floors">Etagen</string>
+    <string name="floors">Stockwerke</string>
     <string name="new_name">Neuer Name</string>
     <string name="rename">Umbennen</string>
     <string name="delete">Löschen</string>
@@ -82,5 +82,7 @@
     <string name="error_loc_position_not_found">Position nicht gefunden.</string>
     <string name="same_name_building">Ein Gebäude mit diesem Namen existiert bereits</string>
     <string name="same_name_floor">Eine Etage mit diesem Namen existiert bereits</string>
+    <string name="next">next</string>
+    <string name="next_line">next line</string>
 
 </resources>

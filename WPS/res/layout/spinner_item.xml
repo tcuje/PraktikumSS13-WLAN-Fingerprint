@@ -9,6 +9,8 @@
         android:id="@+id/spinner_item_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_marginBottom="@dimen/spinner_item_margin_top"
+        android:layout_marginTop="@dimen/spinner_item_margin_top"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </LinearLayout>

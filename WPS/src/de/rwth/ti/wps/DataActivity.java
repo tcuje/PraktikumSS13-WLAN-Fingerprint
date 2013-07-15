@@ -140,7 +140,7 @@ public class DataActivity extends SuperActivity implements
 		} else {
 			tFloorLevel = Integer.parseInt(tFloorLevelText);
 		}
-		if (tFloorLevel == selectedFloor.getLevel()) {
+		if (selectedFloor != null && tFloorLevel == selectedFloor.getLevel()) {
 			floorEdit.setText("");
 		} else {
 			floorEdit.setText(createFloorNameFromLevel(tFloorLevel));

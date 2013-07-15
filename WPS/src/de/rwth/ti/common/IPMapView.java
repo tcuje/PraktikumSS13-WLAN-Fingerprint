@@ -11,6 +11,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -495,6 +496,10 @@ public class IPMapView extends View {
 				eventType = xpp.next();
 			} catch (XmlPullParserException e) {
 				// TODO Auto-generated catch block
+				new AlertDialog.Builder(getContext())
+						.setMessage(
+								"Error in File. Please Import again and check your File.")
+						.show();
 				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

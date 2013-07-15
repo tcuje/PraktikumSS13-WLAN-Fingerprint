@@ -31,9 +31,7 @@ public class NewFloorActivity extends SuperActivity implements
 		OnBuildingChangedListener {
 
 	private EditText createBuildingEdit;
-	private List<Building> buildingList;
-	private List<Floor> floorList;
-	private Building buildingSelected;
+	private Building selectedBuilding;
 	private BuildingSpinnerHelper buildingHelper;
 	private EditText floorLevelEdit;
 	private EditText floorNameEdit;
@@ -77,8 +75,7 @@ public class NewFloorActivity extends SuperActivity implements
 			};
 		};
 		floorLevelEdit.addTextChangedListener(textWatch);
-
-		buildingSelected = null;
+		selectedBuilding = null;
 		floorLevel = 0;
 		floorName = null;
 		north = -1;
@@ -99,7 +96,7 @@ public class NewFloorActivity extends SuperActivity implements
 		Building b = null;
 		// check name
 		if (tBuildingName.length() != 0) {
-			buildingList = getStorage().getAllBuildings();
+			List<Building> buildingList = getStorage().getAllBuildings();
 			for (Building bi : buildingList) {
 				if (tBuildingName.equals(bi.getName())) {
 					message = getString(R.string.same_name_building);
@@ -133,7 +130,7 @@ public class NewFloorActivity extends SuperActivity implements
 
 	@Override
 	public void buildingChanged(BuildingSpinnerHelper helper) {
-		buildingSelected = helper.getSelectedBuilding();
+		selectedBuilding = helper.getSelectedBuilding();
 	}
 
 	private void onFloorLevelChanged() {
@@ -167,10 +164,10 @@ public class NewFloorActivity extends SuperActivity implements
 			north = Integer.parseInt(tNorthText);
 
 			// Überhaupt ein Gebäude vorhanden <=> Gebäude ausgewählt
-			if (buildingSelected != null) {
+			if (selectedBuilding != null) {
 				// Kartendatei ausgewählt
 				if (floorFile != null) {
-					floorList = getStorage().getAllFloors();
+					List<Floor> floorList = getStorage().getAllFloors();
 					for (Floor fi : floorList) {
 						if (floorName.equals(fi.getName())) {
 							message = getString(R.string.same_name_floor);
@@ -181,7 +178,7 @@ public class NewFloorActivity extends SuperActivity implements
 						}
 					}
 					if (e == 0) {
-						f = getStorage().createFloor(buildingSelected,
+						f = getStorage().createFloor(selectedBuilding,
 								floorName, floorFile, floorLevel, north);
 					}
 					// Floor erfolgreich erstellt
