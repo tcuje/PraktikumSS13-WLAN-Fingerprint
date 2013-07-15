@@ -80,5 +80,7 @@
     <string name="error_loc_aps_not_found">Keine Accesspoints gefunden.</string>
     <string name="error_loc_empty_map">Leere Map.</string>
     <string name="error_loc_position_not_found">Position nicht gefunden.</string>
+    <string name="same_name_building">Ein Gebäude mit diesem Namen existiert bereits</string>
+    <string name="same_name_floor">Eine Etage mit diesem Namen existiert bereits</string>
 
 </resources>
