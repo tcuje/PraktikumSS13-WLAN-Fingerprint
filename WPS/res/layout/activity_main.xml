@@ -11,36 +11,38 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true" />
-    <TextView 
+
+    <TextView
         android:id="@+id/measureTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true" />
 
-    <!-- <CheckBox
+    <!--
+         <CheckBox
         android:id="@+id/toggleLocalization"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="@string/toggle_localisation" />
-     -->
-	<ToggleButton
+        android:text="@string/toggle_localisation" />    -->
+
+    <ToggleButton
         android:id="@+id/toggleLocalization"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-       	android:layout_alignParentLeft="true"
-       	android:layout_alignParentTop="true"
-       	android:text="@string/toggle_localisation"
-       	android:checked="false" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:checked="true"
+        android:text="@string/toggle_localisation" />
 
     <ImageButton
         android:id="@+id/centerButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:contentDescription="@+string/button_center"
         android:onClick="centerPosition"
         android:src="@android:drawable/ic_menu_mylocation" />
@@ -52,11 +54,12 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:onClick="zoomPosition" />
-    
-    <TextView 
+
+    <TextView
         android:id="@+id/debugInfo"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/toggleLocalization"
-		android:textAppearance="?android:attr/textAppearanceLarge"/>
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
 </RelativeLayout>

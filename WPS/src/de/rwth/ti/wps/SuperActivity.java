@@ -68,6 +68,9 @@ public abstract class SuperActivity extends Activity {
 		if (scm != null) {
 			scm.onStart();
 		}
+		if (storage != null) {
+			storage.onStart();
+		}
 		// // launch default activity for debugging only
 		// Intent intent = new Intent(this, MeasureActivity.class);
 		// intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -86,16 +89,16 @@ public abstract class SuperActivity extends Activity {
 		}
 	}
 
+	public CompassManager getCompassManager() {
+		return cmgr;
+	}
+
 	public ScanManager getScanManager() {
 		return scm;
 	}
 
 	public StorageHandler getStorage() {
 		return storage;
-	}
-
-	public CompassManager getCompassManager() {
-		return cmgr;
 	}
 
 	protected String createFloorNameFromLevel(int level) {
@@ -155,4 +158,5 @@ public abstract class SuperActivity extends Activity {
 		}
 		return true;
 	}
+
 }

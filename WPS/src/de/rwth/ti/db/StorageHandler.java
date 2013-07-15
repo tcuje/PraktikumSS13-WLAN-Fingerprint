@@ -20,8 +20,8 @@ import de.rwth.ti.share.IMeasureDataHandler;
  */
 public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
-	private Storage storage;
 	private SQLiteDatabase db;
+	private Storage storage;
 
 	public StorageHandler(Context context, String dbName) {
 		this.storage = new Storage(context, dbName);
@@ -47,6 +47,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	public void onStop() {
 		if (db != null && db.isOpen() == true) {
 			db.close();
+			db = null;
 		}
 	}
 
@@ -126,7 +127,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public List<AccessPoint> getAccessPoints(Scan scan, int limit) {
-		SQLiteDatabase db = storage.getReadableDatabase();
 		Cursor cursor = db.query(AccessPoint.TABLE_NAME,
 				AccessPoint.ALL_COLUMNS, AccessPoint.COLUMN_SCANID + "=?",
 				new String[] { String.valueOf(scan.getId()) }, null, null,
