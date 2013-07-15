@@ -68,7 +68,7 @@
     <string name="success_save">%1$s erfolgreich gespeichert</string>
     <string name="error_delete">%1$s: Fehler beim Löschen</string>
     <string name="error_save">%1$s: Fehler beim Speichern</string>
-    <string name="floor">Etage</string>
+    <string name="floor">Stockwerk</string>
     <string name="measurepoint">Messpunkt</string>
     <string name="error_short_name">Name zu kurz</string>
     <string name="scan">Scan</string>
