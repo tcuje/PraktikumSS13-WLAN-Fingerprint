@@ -16,8 +16,8 @@
         android:id="@+id/measureTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toggleLocalization"
-        android:layout_alignParentLeft="true" />
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/toggleLocalization" />
 
     <!--
          <CheckBox
@@ -26,7 +26,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="@string/toggle_localisation" />    -->
+        android:text="@string/toggle_localisation" />
+    -->
 
     <ToggleButton
         android:id="@+id/toggleLocalization"
@@ -54,22 +55,24 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:onClick="zoomPosition" />
+
     <Button
         android:id="@+id/forceBuilding"
-        android:text="Gebäudewechsel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/zoomButton"
-        android:onClick="forceBuilding" />
+        android:onClick="forceBuilding"
+        android:text="@string/loc_force_change_building" />
+
     <Button
         android:id="@+id/forceFloor"
-        android:text="Etagenwechsel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/forceBuilding"
-        android:onClick="forceFloor" />
+        android:onClick="forceFloor"
+        android:text="@string/loc_force_change_floor" />
 
     <TextView
         android:id="@+id/debugInfo"

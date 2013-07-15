@@ -84,5 +84,7 @@
     <string name="same_name_floor">Eine Etage mit diesem Namen existiert bereits</string>
     <string name="next">next</string>
     <string name="next_line">next line</string>
+    <string name="loc_force_change_building">Gebäudewechsel</string>
+    <string name="loc_force_change_floor">Etagenwechsel</string>
 
 </resources>

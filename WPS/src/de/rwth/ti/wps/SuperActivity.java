@@ -87,8 +87,13 @@ public abstract class SuperActivity extends Activity {
 		if (scm != null) {
 			scm.onStop();
 		}
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
 		if (storage != null) {
-			storage.onStop();
+			storage.onDestroy();
 		}
 	}
 
