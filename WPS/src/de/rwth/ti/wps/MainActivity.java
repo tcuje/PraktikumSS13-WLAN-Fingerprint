@@ -64,11 +64,11 @@ public class MainActivity extends SuperActivity implements
 						.show();
 			}
 		}
-		checkLoc = (ToggleButton) findViewById(R.id.toggleLocalization);
-		checkLoc.setOnCheckedChangeListener(this);
 		viewMap = (IPMapView) findViewById(R.id.viewMap);
 		viewMap.setMeasureMode(false);
 		viewMap.setOnScaleChangeListener(new ScaleChangeListener());
+		checkLoc = (ToggleButton) findViewById(R.id.toggleLocalization);
+		checkLoc.setOnCheckedChangeListener(this);
 		btCenter = (ImageButton) findViewById(R.id.centerButton);
 		btZoom = (Button) findViewById(R.id.zoomButton);
 		measureTimeView = (TextView) findViewById(R.id.measureTime);
@@ -191,10 +191,14 @@ public class MainActivity extends SuperActivity implements
 										String errorMessage = "";
 										switch (errorCode) {
 										case 1:
-											errorMessage = getString(R.string.error_loc_building_not_found);
+											errorMessage = String
+													.format(getString(R.string.error_not_found),
+															getString(R.string.building));
 											break;
 										case 2:
-											errorMessage = getString(R.string.error_loc_floor_not_found);
+											errorMessage = String
+													.format(getString(R.string.error_not_found),
+															getString(R.string.floor));
 											break;
 										case 3:
 											errorMessage = getString(R.string.error_loc_aps_not_found);
@@ -203,7 +207,9 @@ public class MainActivity extends SuperActivity implements
 											errorMessage = getString(R.string.error_loc_empty_map);
 											break;
 										case 5:
-											errorMessage = getString(R.string.error_loc_position_not_found);
+											errorMessage = String
+													.format(getString(R.string.error_not_found),
+															getString(R.string.position));
 											break;
 										default:
 											errorMessage = "Error: "

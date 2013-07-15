@@ -17,9 +17,6 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -32,6 +29,10 @@ import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.Scan;
+import de.rwth.ti.layouthelper.BuildingSpinnerHelper;
+import de.rwth.ti.layouthelper.FloorSpinnerHelper;
+import de.rwth.ti.layouthelper.OnBuildingChangedListener;
+import de.rwth.ti.layouthelper.OnFloorChangedListener;
 import de.rwth.ti.loc.Location;
 
 /**
@@ -39,16 +40,13 @@ import de.rwth.ti.loc.Location;
  * 
  */
 public class MeasureActivity extends SuperActivity implements
-		OnItemSelectedListener {
+		OnBuildingChangedListener, OnFloorChangedListener {
 
-	private List<Building> buildingList;
-	private ArrayAdapter<CharSequence> buildingAdapter;
-	private Spinner buildingSpinner;
-	private Building buildingSelected;
-	private List<Floor> floorList;
-	private ArrayAdapter<CharSequence> floorAdapter;
-	private Spinner floorSpinner;
-	private Floor floorSelected;
+	private BuildingSpinnerHelper buildingHelper;
+	private FloorSpinnerHelper floorHelper;
+
+	private Building selectedBuilding;
+	private Floor selectedFloor;
 	private Button btMeasure;
 	private IPMapView mapView;
 	private TextView directionText;
@@ -66,17 +64,12 @@ public class MeasureActivity extends SuperActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_measure);
 
-		buildingAdapter = new ArrayAdapter<CharSequence>(this,
-				R.layout.spinner_item, R.id.spinner_item_text);
-		buildingSpinner = (Spinner) findViewById(R.id.buildingSelectSpinner);
-		buildingSpinner.setAdapter(buildingAdapter);
-		buildingSpinner.setOnItemSelectedListener(this);
-
-		floorAdapter = new ArrayAdapter<CharSequence>(this,
-				R.layout.spinner_item, R.id.spinner_item_text);
-		floorSpinner = (Spinner) findViewById(R.id.floorSelectSpinner);
-		floorSpinner.setAdapter(floorAdapter);
-		floorSpinner.setOnItemSelectedListener(this);
+		buildingHelper = BuildingSpinnerHelper.createInstance(this, this,
+				getStorage(),
+				(Spinner) findViewById(R.id.buildingSelectSpinner));
+		floorHelper = FloorSpinnerHelper.createInstance(this, this,
+				getStorage(), (Spinner) findViewById(R.id.floorSelectSpinner));
+		buildingHelper.addListener(floorHelper);
 
 		btMeasure = (Button) findViewById(R.id.measure_button);
 
@@ -88,6 +81,8 @@ public class MeasureActivity extends SuperActivity implements
 		compassText = (TextView) findViewById(R.id.compass_text);
 
 		timer = new Timer();
+		selectedBuilding = null;
+		selectedFloor = null;
 
 		direction = Cardinal.NORTH;
 		wifiReceiver = new MyReceiver();
@@ -139,16 +134,9 @@ public class MeasureActivity extends SuperActivity implements
 	@Override
 	public void onStart() {
 		super.onStart();
-		buildingAdapter.clear();
-		buildingList = getStorage().getAllBuildings();
-		for (Building b : buildingList) {
-			buildingAdapter.add(b.getName());
-		}
-		if (buildingList.size() == 0) {
-			buildingSelected = null;
-		} else {
-			buildingSelected = buildingList.get(0);
-		}
+
+		buildingHelper.refresh();
+		// floorHelper.refresh();
 		this.registerReceiver(this.wifiReceiver, new IntentFilter(
 				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 		updateComp = new TimerTask() {
@@ -192,12 +180,12 @@ public class MeasureActivity extends SuperActivity implements
 	public void measure(View view) {
 		if (view.getId() == R.id.measure_button) {
 			// check if building/floor is selected
-			if (buildingSelected == null) {
+			if (selectedBuilding == null) {
 				Toast.makeText(this, R.string.error_empty_input,
 						Toast.LENGTH_LONG).show();
 				return;
 			}
-			if (floorSelected == null) {
+			if (selectedFloor == null) {
 				Toast.makeText(this, R.string.error_empty_input,
 						Toast.LENGTH_LONG).show();
 				return;
@@ -214,11 +202,11 @@ public class MeasureActivity extends SuperActivity implements
 						.show();
 			} else {
 				if (lastMP == null) {
-					lastMP = getStorage().createMeasurePoint(floorSelected,
+					lastMP = getStorage().createMeasurePoint(selectedFloor,
 							p.x, p.y);
 					mapView.addOldPoint(lastMP);
 				} else if (lastMP.getPosx() != p.x || lastMP.getPosy() != p.y) {
-					lastMP = getStorage().createMeasurePoint(floorSelected,
+					lastMP = getStorage().createMeasurePoint(selectedFloor,
 							p.x, p.y);
 					mapView.addOldPoint(lastMP);
 				}
@@ -232,30 +220,21 @@ public class MeasureActivity extends SuperActivity implements
 	}
 
 	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int pos,
-			long id) {
-		if (parent == buildingSpinner) {
-			buildingSelected = buildingList.get(pos);
-			// update floor spinner
-			floorList = getStorage().getFloors(buildingSelected);
-			floorAdapter.clear();
-			for (Floor f : floorList) {
-				floorAdapter.add(f.getName());
-			}
-			if (floorList.size() == 0) {
-				floorSelected = null;
-			} else {
-				onItemSelected(floorSpinner, view, 0, id);
-			}
-		} else if (parent == floorSpinner) {
-			floorSelected = floorList.get(pos);
-			// update map view
-			byte[] file = floorSelected.getFile();
+	public void buildingChanged(BuildingSpinnerHelper helper) {
+		selectedBuilding = helper.getSelectedBuilding();
+	}
+
+	@Override
+	public void floorChanged(FloorSpinnerHelper helper) {
+		selectedFloor = helper.getSelectedFloor();
+
+		if (selectedFloor != null) {
+			byte[] file = selectedFloor.getFile();
 			if (file != null) {
 				ByteArrayInputStream bin = new ByteArrayInputStream(file);
 				mapView.newMap(bin);
 				List<MeasurePoint> mpl = getStorage().getMeasurePoints(
-						floorSelected);
+						selectedFloor);
 				for (MeasurePoint mp : mpl) {
 					mp.setQuality(QualityCheck.getQuality(getStorage(), mp));
 					mapView.addOldPoint(mp);
@@ -264,21 +243,8 @@ public class MeasureActivity extends SuperActivity implements
 				Toast.makeText(this, R.string.error_no_floor_file,
 						Toast.LENGTH_LONG).show();
 			}
-		}
-	}
-
-	@Override
-	public void onNothingSelected(AdapterView<?> parent) {
-		if (parent == buildingSpinner) {
-			// clear floor spinner
-			floorList.clear();
-			floorAdapter.clear();
-			buildingSelected = null;
-			floorSelected = null;
-		} else if (parent == floorSpinner) {
-			buildingSelected = null;
-			floorSelected = null;
-			mapView.clearMap();
+		} else {
+			// mapView.clearMap();
 		}
 	}
 
@@ -344,5 +310,4 @@ public class MeasureActivity extends SuperActivity implements
 			break;
 		}
 	}
-
 }

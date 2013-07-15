@@ -30,7 +30,7 @@ public class NewFloorActivity extends SuperActivity implements
 		OnBuildingChangedListener {
 
 	private EditText createBuildingEdit;
-	private Building buildingSelected;
+	private Building selectedBuilding;
 
 	BuildingSpinnerHelper buildingHelper;
 
@@ -77,7 +77,7 @@ public class NewFloorActivity extends SuperActivity implements
 		};
 		floorLevelEdit.addTextChangedListener(textWatch);
 
-		buildingSelected = null;
+		selectedBuilding = null;
 		floorLevel = 0;
 		floorName = null;
 		north = -1;
@@ -118,7 +118,7 @@ public class NewFloorActivity extends SuperActivity implements
 
 	@Override
 	public void buildingChanged(BuildingSpinnerHelper helper) {
-		buildingSelected = helper.getSelectedBuilding();
+		selectedBuilding = helper.getSelectedBuilding();
 	}
 
 	private void onFloorLevelChanged() {
@@ -150,10 +150,10 @@ public class NewFloorActivity extends SuperActivity implements
 			north = Integer.parseInt(tNorthText);
 
 			// Überhaupt ein Gebäude vorhanden <=> Gebäude ausgewählt
-			if (buildingSelected != null) {
+			if (selectedBuilding != null) {
 				// Kartendatei ausgewählt
 				if (floorFile != null) {
-					Floor f = getStorage().createFloor(buildingSelected,
+					Floor f = getStorage().createFloor(selectedBuilding,
 							floorName, floorFile, floorLevel, north);
 					// Floor erfolgreich erstellt
 					if (f != null) {
