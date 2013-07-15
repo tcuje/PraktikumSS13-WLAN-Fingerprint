@@ -23,11 +23,6 @@ public class Building {
 	private long id;
 	private String name;
 
-	public boolean equals(Building other) {
-		boolean result = this.getName().equals(other.getName());
-		return result;
-	}
-
 	public long getId() {
 		return id;
 	}
@@ -54,6 +49,17 @@ public class Building {
 		String name2 = other.getName().toLowerCase(Constants.LOCALE);
 		boolean result = name1.equals(name2);
 		return result;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other != null && other instanceof Building) {
+			Building b = (Building) other;
+			if (this.getId() == b.getId()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

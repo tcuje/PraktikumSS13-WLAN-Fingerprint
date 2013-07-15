@@ -48,6 +48,15 @@ public interface IMeasureDataHandler extends IDataHandler {
 
 	/**
 	 * 
+	 * @param scan
+	 * @param limit
+	 * @return Returns a limited list of unique <code>AccessPoint</code>s for
+	 *         the <code>Scan</code> ordered by level
+	 */
+	public List<AccessPoint> getAccessPoints(Scan scan, int limit);
+
+	/**
+	 * 
 	 * @param bssid
 	 * @return Returns a sorted list with all entries for the mac
 	 */
@@ -85,8 +94,8 @@ public interface IMeasureDataHandler extends IDataHandler {
 	 * @param floor
 	 * @param azimuth
 	 * @return Returns a list of all <code>Scan</code>s on specified floor
-	 *         within 45deg of the compass reading
+	 *         within <code>range</code> of the compass reading
 	 */
-	public List<Scan> getScans(Floor floor, int azimuth);
+	public List<Scan> getScans(Floor floor, long azimuth, long range);
 
 }

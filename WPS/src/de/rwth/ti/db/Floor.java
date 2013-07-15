@@ -21,10 +21,9 @@ public class Floor {
 
 	public static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
-			+ COLUMN_BID + " integer REFERENCES " + Building.TABLE_NAME + "("
-			+ Building.COLUMN_ID + ") ON UPDATE CASCADE ON DELETE CASCADE, "
-			+ COLUMN_NAME + " text null, " + COLUMN_FILE + " blob, "
-			+ COLUMN_LEVEL + " integer, " + COLUMN_NORTH + " integer);";
+			+ COLUMN_BID + " integer, " + COLUMN_NAME + " text null, "
+			+ COLUMN_FILE + " blob, " + COLUMN_LEVEL + " integer, "
+			+ COLUMN_NORTH + " integer);";
 	public static final String TABLE_DROP = "DROP TABLE IF EXISTS "
 			+ TABLE_NAME;
 
@@ -93,6 +92,17 @@ public class Floor {
 		String name2 = other.getName().toLowerCase(Constants.LOCALE);
 		boolean result = name1.equals(name2);
 		return result;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other != null && other instanceof Floor) {
+			Floor f = (Floor) other;
+			if (this.getId() == f.getId()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

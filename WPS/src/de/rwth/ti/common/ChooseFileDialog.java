@@ -1,6 +1,7 @@
 package de.rwth.ti.common;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,58 +21,48 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import de.rwth.ti.wps.R;
 
 public class ChooseFileDialog {
 
-	private String sdcardDirectory = "";
 	private Context context;
+	private String sdcardDirectory = "";
+	private ChosenFileListener chosenFileListener = null;
 	private TextView titleView;
-
 	private String dir = "";
 	private int numDirs = 0;
 	private List<String> entries = null;
-	private ChosenFileListener chosenFileListener = null;
 	private ArrayAdapter<String> listAdapter = null;
 	private AlertDialog dirsDialog;
+	private FilenameFilter filter;
 
-	// ////////////////////////////////////////////////////
 	// Callback interface for selected directory
-	// ////////////////////////////////////////////////////
 	public interface ChosenFileListener {
 
 		public void onChosenFile(String chosenFile);
 	}
 
-	public ChooseFileDialog(Context context,// dialogBuilder.setPositiveButton("OK",
-											// new OnClickListener() {
-//
-//			@Override
-//			public void onClick(DialogInterface dialog, int which) {
-//				// Current directory chosen
-//				if (m_chosenDirectoryListener != null) {
-//					// Call registered listener supplied with the chosen
-//					// directory
-//					m_chosenDirectoryListener.onChosenDir(m_dir);
-//				}
-//			}
-//		});
-
-			ChosenFileListener chosenFileListener) {
+	public ChooseFileDialog(Context context,
+			ChosenFileListener chosenFileListener, final String fileSuffix) {
 		this.context = context;
 		sdcardDirectory = Environment.getExternalStorageDirectory()
 				.getAbsolutePath();
 		this.chosenFileListener = chosenFileListener;
+		this.filter = new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String filename) {
+				if (filename.endsWith(fileSuffix)) {
+					return true;
+				}
+				return false;
+			}
+		};
 
 		try {
 			sdcardDirectory = new File(sdcardDirectory).getCanonicalPath();
 		} catch (IOException ioe) {
 		}
 	}
-
-	// //////////////////////////////////////////////////////////////////////////////
-	// chooseDirectory(String dir) - load directory chooser dialog for initial
-	// input 'dir' directory
-	// //////////////////////////////////////////////////////////////////////////////
 
 	public void chooseDirectory(String dirName) {
 		File dirFile = new File(dirName);
@@ -104,27 +95,15 @@ public class ChooseFileDialog {
 					updateDirectory();
 				} else {
 					// Call registered listener supplied with the chosen file
-					chosenFileListener.onChosenFile(dir);
 					dirsDialog.dismiss();
+					chosenFileListener.onChosenFile(dir);
 				}
 			}
 		}
 
 		AlertDialog.Builder dialogBuilder = createDirectoryChooserDialog(
 				dirName, entries, new DirectoryOnClickListener());
-//		dialogBuilder.setPositiveButton("OK", new OnClickListener() {
-//
-//			@Override
-//			public void onClick(DialogInterface dialog, int which) {
-//				// Current directory chosen
-//				if (m_chosenDirectoryListener != null) {
-//					// Call registered listener supplied with the chosen
-//					// directory
-//					m_chosenDirectoryListener.onChosenDir(m_dir);
-//				}
-//			}
-//		});
-		dialogBuilder.setNegativeButton("Cancel", null);
+		dialogBuilder.setNegativeButton(R.string.cancel, null);
 
 		dirsDialog = dialogBuilder.create();
 		dirsDialog.setOnKeyListener(new OnKeyListener() {
@@ -182,7 +161,7 @@ public class ChooseFileDialog {
 			if (!dirFile.exists() || !dirFile.isDirectory()) {
 				return files;
 			}
-			for (File file : dirFile.listFiles()) {
+			for (File file : dirFile.listFiles(filter)) {
 				if (file.isFile()) {
 					files.add(file.getName());
 				}
@@ -210,9 +189,6 @@ public class ChooseFileDialog {
 				LayoutParams.WRAP_CONTENT));
 		titleView.setTextAppearance(context,
 				android.R.style.TextAppearance_Large);
-		// TODO may change color to default
-		titleView.setTextColor(context.getResources().getColor(
-				android.R.color.black));
 		titleView.setGravity(Gravity.CENTER_VERTICAL
 				| Gravity.CENTER_HORIZONTAL);
 		titleView.setText(title);
@@ -246,7 +222,10 @@ public class ChooseFileDialog {
 					TextView tv = (TextView) v;
 					tv.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
 					tv.setEllipsize(null);
-					// XXX mark (color) directories
+					if (position < numDirs) {
+						// append directory marker
+						tv.append("/");
+					}
 				}
 				return v;
 			}
@@ -265,4 +244,5 @@ public class ChooseFileDialog {
 		}
 
 	}
+
 }

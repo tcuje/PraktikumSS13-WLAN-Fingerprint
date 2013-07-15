@@ -7,16 +7,25 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".NewMapActivity" >
+    tools:context=".NewFloorActivity" >
 
     <LinearLayout
-        android:id="@+id/LinearLayout1"
+        android:id="@+id/dataMainLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
+        <LinearLayout
+            android:id="@+id/focusGrabber"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:layout_width="0px"
+            android:layout_height="0px"
+            android:orientation="vertical" >
+        </LinearLayout>
+
         <EditText
-            android:id="@+id/createBuildingEdit"
+            android:id="@+id/dataBuildingRenameEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -47,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:hint="@string/activity_new_floor_floorlevel"
+            android:hint="@string/floorlevel"
             android:inputType="numberSigned"
             android:maxLength="6"
             android:maxLines="1" />
@@ -74,23 +83,22 @@
             android:maxLines="1" />
 
         <EditText
-            android:id="@+id/mapPathView"
+            android:id="@+id/filePathEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
+            android:focusable="false"
             android:hint="@string/activity_new_floor_floorpath"
-            android:onClick="chooseFile"
-            android:focusable="false" />
+            android:onClick="chooseFile" />
 
         <Button
-            android:id="@+id/createMapButton"
+            android:id="@+id/createFloorButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="createFloor"
             android:text="@string/activity_new_floor_create_floor" />
-
     </LinearLayout>
 
 </ScrollView>
