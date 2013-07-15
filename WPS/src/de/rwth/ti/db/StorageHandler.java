@@ -692,7 +692,6 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	public void clearDatabase() {
-		storage.clearDatabase();
+		storage.clearDatabase(db);
 	}
-
 }

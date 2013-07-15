@@ -41,6 +41,10 @@ public class MainActivity extends SuperActivity implements
 	private IPMapView viewMap;
 	private ImageButton btCenter;
 	private Button btZoom;
+	private Button forceBuilding;
+	private Button forceFloor;
+	private boolean forceNextBuilding = false;
+	private boolean forceNextFloor = false;
 	private BroadcastReceiver wifiReceiver;
 	private int control;
 	private TextView measureTimeView;
@@ -67,6 +71,8 @@ public class MainActivity extends SuperActivity implements
 		viewMap.setOnScaleChangeListener(new ScaleChangeListener());
 		btCenter = (ImageButton) findViewById(R.id.centerButton);
 		btZoom = (Button) findViewById(R.id.zoomButton);
+		forceBuilding = (Button) findViewById(R.id.forceBuilding);
+		forceFloor = (Button) findViewById(R.id.forceFloor);
 		measureTimeView = (TextView) findViewById(R.id.measureTime);
 		errormessageView = (TextView) findViewById(R.id.debugInfo);
 		btZoom.setText("x1.0");
@@ -79,6 +85,7 @@ public class MainActivity extends SuperActivity implements
 	@Override
 	public void onStart() {
 		super.onStart();
+		checkLoc.setChecked(true);
 		if (checkLoc.isChecked() == true) {
 			getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
 			getWindow()
@@ -91,6 +98,7 @@ public class MainActivity extends SuperActivity implements
 	/** Called when the activity is finishing or being destroyed by the system */
 	@Override
 	public void onStop() {
+		checkLoc.setChecked(false);
 		super.onStop();
 		getScanManager().stopAutoScan();
 		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -135,6 +143,16 @@ public class MainActivity extends SuperActivity implements
 					Thread t = new Thread(new Runnable() {
 						@Override
 						public void run() {
+							if (forceNextBuilding == true) {
+								control = 1;
+								forceNextBuilding = false;
+								forceNextFloor = false;
+							} else if (forceNextFloor == true) {
+								control = 2;
+								forceNextFloor = false;
+							} else {
+								control = 0;
+							}
 							final long start = System.currentTimeMillis();
 							final LocationResult myLocRes = myLoc.getLocation(
 									results, direction, control);
@@ -143,7 +161,8 @@ public class MainActivity extends SuperActivity implements
 							runOnUiThread(new Runnable() {
 								@Override
 								public void run() {
-									String measureTime = "Loc: "
+									String measureTime = "APs: "
+											+ results.size() + "\nLocTime: "
 											+ (stop - start) + "ms";
 									int errorCode = myLocRes.getError();
 									if (errorCode != 0) {
@@ -249,6 +268,18 @@ public class MainActivity extends SuperActivity implements
 	public void zoomPosition(View view) {
 		if (view == btZoom) {
 			viewMap.zoomPoint();
+		}
+	}
+
+	public void forceBuilding(View view) {
+		if (view == forceBuilding) {
+			forceNextBuilding = true;
+		}
+	}
+
+	public void forceFloor(View view) {
+		if (view == forceFloor) {
+			forceNextFloor = true;
 		}
 	}
 
