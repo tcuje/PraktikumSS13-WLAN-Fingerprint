@@ -148,7 +148,7 @@ public class IPMapView extends View {
 			}
 		}
 		// draw old measure points
-		if (mMeasureMode) {
+		if (true) {
 			mPaint.setStyle(Paint.Style.FILL);
 			for (MeasurePoint aPoint : myOldPointsList) {
 				mPaint.setColor(Color.BLACK);
@@ -174,29 +174,29 @@ public class IPMapView extends View {
 			if (location.getAccuracy() == 0) {
 				mPaint.setARGB(100, 72, 189, 224);
 				canvas.drawCircle((float) location.getX(),
-						(float) location.getY(), 40f, mPaint);
+						(float) location.getY(), 80f, mPaint);
 				mPaint.setStyle(Paint.Style.STROKE);
 				mPaint.setARGB(200, 72, 189, 224);
 				canvas.drawCircle((float) location.getX(),
-						(float) location.getY(), 40f, mPaint);
+						(float) location.getY(), 80f, mPaint);
 				mPaint.setARGB(200, 184, 11, 11);
 			} else if (location.getAccuracy() == 1) {
 				mPaint.setARGB(100, 72, 189, 224);
 				canvas.drawCircle((float) location.getX(),
-						(float) location.getY(), 20f, mPaint);
+						(float) location.getY(), 40f, mPaint);
 				mPaint.setStyle(Paint.Style.STROKE);
 				mPaint.setARGB(200, 72, 189, 224);
 				canvas.drawCircle((float) location.getX(),
-						(float) location.getY(), 20f, mPaint);
+						(float) location.getY(), 40f, mPaint);
 				mPaint.setARGB(200, 247, 255, 47);
 			} else if (location.getAccuracy() == 2) {
 				mPaint.setARGB(100, 72, 189, 224);
 				canvas.drawCircle((float) location.getX(),
-						(float) location.getY(), 10f, mPaint);
+						(float) location.getY(), 20f, mPaint);
 				mPaint.setStyle(Paint.Style.STROKE);
 				mPaint.setARGB(200, 72, 189, 224);
 				canvas.drawCircle((float) location.getX(),
-						(float) location.getY(), 10f, mPaint);
+						(float) location.getY(), 20f, mPaint);
 				mPaint.setARGB(200, 76, 255, 5);
 			}
 			mPaint.setStyle(Paint.Style.FILL);

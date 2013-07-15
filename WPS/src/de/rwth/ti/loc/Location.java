@@ -346,13 +346,11 @@ public class Location {
 					}
 				}
 				if (found != null) {
-					int levelDifference = (Math
-							.abs((int) ((aps.get(k).level) - found.getLevel())));
+					int levelDifference = (Math.abs((int) ((aps.get(k).level) - found.getLevel())));
 					errorValue += (double) ((100 + (double) aps.get(k).level) / 100)
 							* levelDifference;
 				} else {
-					int levelDifference = (Math
-							.abs((int) ((aps.get(k).level) + 100)));
+					int levelDifference = (Math.abs((int) ((aps.get(k).level) + 100)));
 					errorValue += (double) ((100 + (double) aps.get(k).level) / 100)
 							* levelDifference;
 					if (k == 0) {

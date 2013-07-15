@@ -16,8 +16,8 @@
         android:id="@+id/measureTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true" />
+        android:layout_below="@+id/toggleLocalization"
+        android:layout_alignParentLeft="true" />
 
     <!--
          <CheckBox
@@ -54,6 +54,22 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:onClick="zoomPosition" />
+    <Button
+        android:id="@+id/forceBuilding"
+        android:text="Gebäudewechsel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/zoomButton"
+        android:onClick="forceBuilding" />
+    <Button
+        android:id="@+id/forceFloor"
+        android:text="Etagenwechsel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/forceBuilding"
+        android:onClick="forceFloor" />
 
     <TextView
         android:id="@+id/debugInfo"
