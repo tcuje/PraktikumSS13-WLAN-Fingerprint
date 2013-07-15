@@ -41,7 +41,7 @@ public interface IGUIDataHandler extends IDataHandler {
 	 *         <code>null</code> otherwise
 	 */
 	public Floor createFloor(Building b, String name, byte[] file, long level,
-			long north);
+			double north);
 
 	/**
 	 * Creates a new <code>MeasurePoint</code>
@@ -102,7 +102,7 @@ public interface IGUIDataHandler extends IDataHandler {
 	 *            Changed object to be safed
 	 * @return true on success, false otherwise
 	 */
-	boolean changeFloor(Floor floor);
+	public boolean changeFloor(Floor floor);
 
 	/**
 	 * Delete a <code>Floor</code> object
@@ -111,7 +111,7 @@ public interface IGUIDataHandler extends IDataHandler {
 	 *            Object to be deleted
 	 * @return true on success, false otherwise
 	 */
-	boolean deleteFloor(Floor floor);
+	public boolean deleteFloor(Floor floor);
 
 	/**
 	 * Persist a changed <code>Building</code> object
@@ -120,7 +120,7 @@ public interface IGUIDataHandler extends IDataHandler {
 	 *            Changed object to be safed
 	 * @return true on success, false otherwise
 	 */
-	boolean changeBuilding(Building building);
+	public boolean changeBuilding(Building building);
 
 	/**
 	 * Delete a <code>Building</code> object
@@ -129,7 +129,7 @@ public interface IGUIDataHandler extends IDataHandler {
 	 *            Object to be deleted
 	 * @return true on success, false otherwise
 	 */
-	boolean deleteBuilding(Building building);
+	public boolean deleteBuilding(Building building);
 
 	/**
 	 * Persist a changed <code>AccessPoint</code> object
@@ -138,7 +138,7 @@ public interface IGUIDataHandler extends IDataHandler {
 	 *            Changed object to be safed
 	 * @return true on success, false otherwise
 	 */
-	boolean changeAccessPoint(AccessPoint ap);
+	public boolean changeAccessPoint(AccessPoint ap);
 
 	/**
 	 * Delete a <code>AccessPoint</code> object
@@ -147,7 +147,7 @@ public interface IGUIDataHandler extends IDataHandler {
 	 *            Object to be deleted
 	 * @return true on success, false otherwise
 	 */
-	boolean deleteAccessPoint(AccessPoint ap);
+	public boolean deleteAccessPoint(AccessPoint ap);
 
 	/**
 	 * Persist a changed <code>MeasurePoint</code> object
@@ -156,7 +156,7 @@ public interface IGUIDataHandler extends IDataHandler {
 	 *            Changed object to be safed
 	 * @return true on success, false otherwise
 	 */
-	boolean changeMeasurePoint(MeasurePoint mp);
+	public boolean changeMeasurePoint(MeasurePoint mp);
 
 	/**
 	 * Delete a <code>MeasurePoint</code> object
@@ -165,7 +165,7 @@ public interface IGUIDataHandler extends IDataHandler {
 	 *            Object to be deleted
 	 * @return true on success, false otherwise
 	 */
-	boolean deleteMea1surePoint(MeasurePoint mp);
+	boolean deleteMeasurePoint(MeasurePoint mp);
 
 	/**
 	 * Persist a changed <code>Scan</code> object
@@ -174,7 +174,7 @@ public interface IGUIDataHandler extends IDataHandler {
 	 *            Changed object to be safed
 	 * @return true on success, false otherwise
 	 */
-	boolean changeScan(Scan scan);
+	public boolean changeScan(Scan scan);
 
 	/**
 	 * Delete a <code>Scan</code> object
@@ -183,6 +183,6 @@ public interface IGUIDataHandler extends IDataHandler {
 	 *            Object to be deleted
 	 * @return true on success, false otherwise
 	 */
-	boolean deleteScan(Scan scan);
+	public boolean deleteScan(Scan scan);
 
 }

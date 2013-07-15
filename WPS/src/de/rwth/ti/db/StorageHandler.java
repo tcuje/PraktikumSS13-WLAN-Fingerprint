@@ -1,10 +1,5 @@
 package de.rwth.ti.db;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,12 +7,12 @@ import java.util.List;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Environment;
+import android.database.sqlite.SQLiteException;
+import de.rwth.ti.common.Constants;
+import de.rwth.ti.common.DataHelper;
 import de.rwth.ti.share.IGUIDataHandler;
 import de.rwth.ti.share.IMeasureDataHandler;
-import de.rwth.ti.wps.MainActivity;
 
 /**
  * This class handles the database or persistent storage access
@@ -25,34 +20,35 @@ import de.rwth.ti.wps.MainActivity;
  */
 public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
-	private static final String DB_NAME = "local";
-
-	private Context context;
 	private SQLiteDatabase db;
 	private Storage storage;
-	private final String dbName;
 
 	public StorageHandler(Context context, String dbName) {
-		this.context = context;
 		this.storage = new Storage(context, dbName);
-		this.dbName = dbName;
 	}
 
 	/**
-	 * Uses the default local database
+	 * This should be called first to validate and upgrade the database. It may
+	 * take so time, better use async tasks.
 	 * 
-	 * @param context
+	 * @return Returns true on success, or false if there is something wrong
+	 *         with the database
 	 */
-	public StorageHandler(Context context) {
-		this(context, DB_NAME);
-	}
-
-	public void onStart() throws SQLException {
-		db = storage.getWritableDatabase();
+	public boolean onStart() {
+		try {
+			// just open it once so onCreate, onUpgrade and onOpen is called
+			db = storage.getWritableDatabase();
+		} catch (SQLiteException ex) {
+			return false;
+		}
+		return true;
 	}
 
 	public void onStop() {
-		storage.close();
+		if (db != null && db.isOpen() == true) {
+			db.close();
+			db = null;
+		}
 	}
 
 	@Override
@@ -73,7 +69,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				AccessPoint.ALL_COLUMNS, AccessPoint.COLUMN_ID + "=?",
 				new String[] { String.valueOf(insertId) }, null, null, null);
 		AccessPoint result = null;
-		if (cursor.moveToFirst()) {
+		if (cursor.moveToFirst() == true) {
 			result = cursorToAccessPoint(cursor);
 		}
 		cursor.close();
@@ -94,7 +90,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	private List<AccessPoint> cursorToAccessPoints(Cursor cursor) {
 		List<AccessPoint> result = new ArrayList<AccessPoint>(cursor.getCount());
-		if (cursor.moveToFirst()) {
+		if (cursor.moveToFirst() == true) {
 			do {
 				AccessPoint ap = cursorToAccessPoint(cursor);
 				result.add(ap);
@@ -124,6 +120,36 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	@Override
+	public List<AccessPoint> getAccessPoints(Scan scan, int limit) {
+		Cursor cursor = db.query(AccessPoint.TABLE_NAME,
+				AccessPoint.ALL_COLUMNS, AccessPoint.COLUMN_SCANID + "=?",
+				new String[] { String.valueOf(scan.getId()) }, null, null,
+				AccessPoint.COLUMN_LEVEL + " DESC");
+		List<AccessPoint> result = new ArrayList<AccessPoint>(limit);
+		List<String> macs = new LinkedList<String>();
+		if (cursor.moveToFirst() == true) {
+			do {
+				AccessPoint ap = cursorToAccessPoint(cursor);
+				String bssid = ap.getBssid();
+				bssid = bssid.substring(0, bssid.length() - 1);
+				boolean found = false;
+				for (String mac : macs) {
+					if (mac.equals(bssid)) {
+						found = true;
+						break;
+					}
+				}
+				if (found == false) {
+					result.add(ap);
+					macs.add(bssid);
+				}
+			} while (cursor.moveToNext() == true && result.size() < limit);
+		}
+		cursor.close();
+		return result;
+	}
+
+	@Override
 	public List<AccessPoint> getAccessPoint(String bssid) {
 		Cursor cursor = db.query(AccessPoint.TABLE_NAME,
 				AccessPoint.ALL_COLUMNS, AccessPoint.COLUMN_BSSID + "=?",
@@ -147,7 +173,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				Scan.COLUMN_ID + "=?",
 				new String[] { String.valueOf(insertId) }, null, null, null);
 		Scan result = null;
-		if (cursor.moveToFirst()) {
+		if (cursor.moveToFirst() == true) {
 			result = cursorToScan(cursor);
 		}
 		cursor.close();
@@ -165,7 +191,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	private List<Scan> cursorToScans(Cursor cursor) {
 		List<Scan> result = new ArrayList<Scan>(cursor.getCount());
-		if (cursor.moveToFirst()) {
+		if (cursor.moveToFirst() == true) {
 			do {
 				Scan scan = cursorToScan(cursor);
 				result.add(scan);
@@ -198,7 +224,10 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				Scan.COLUMN_ID + "=?",
 				new String[] { String.valueOf(ap.getScanId()) }, null, null,
 				null);
-		Scan result = cursorToScan(cursor);
+		Scan result = null;
+		if (cursor.moveToFirst() == true) {
+			result = cursorToScan(cursor);
+		}
 		return result;
 	}
 
@@ -216,7 +245,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				MeasurePoint.ALL_COLUMNS, MeasurePoint.COLUMN_ID + "=?",
 				new String[] { String.valueOf(insertId) }, null, null, null);
 		MeasurePoint result = null;
-		if (cursor.moveToFirst()) {
+		if (cursor.moveToFirst() == true) {
 			result = cursorToMeasurePoint(cursor);
 		}
 		cursor.close();
@@ -235,7 +264,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	private List<MeasurePoint> cursorToMeasurePoints(Cursor cursor) {
 		List<MeasurePoint> result = new ArrayList<MeasurePoint>(
 				cursor.getCount());
-		if (cursor.moveToFirst()) {
+		if (cursor.moveToFirst() == true) {
 			do {
 				MeasurePoint cp = cursorToMeasurePoint(cursor);
 				result.add(cp);
@@ -259,8 +288,10 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				MeasurePoint.ALL_COLUMNS, MeasurePoint.COLUMN_ID + "=?",
 				new String[] { String.valueOf(scan.getMpid()) }, null, null,
 				null);
-		cursor.moveToFirst();
-		MeasurePoint result = cursorToMeasurePoint(cursor);
+		MeasurePoint result = null;
+		if (cursor.moveToFirst() == true) {
+			result = cursorToMeasurePoint(cursor);
+		}
 		cursor.close();
 		return result;
 	}
@@ -271,26 +302,20 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				MeasurePoint.ALL_COLUMNS, MeasurePoint.COLUMN_FLOORID + "=?",
 				new String[] { String.valueOf(floor.getId()) }, null, null,
 				null);
-		cursor.moveToFirst();
 		List<MeasurePoint> result = cursorToMeasurePoints(cursor);
-		cursor.close();
 		return result;
 	}
 
 	@Override
 	public Floor createFloor(Building b, String name, byte[] file, long level,
-			long north) {
+			double north) {
 		ContentValues values = new ContentValues();
 		if (b == null) {
 			return null;
 		}
 		values.put(Floor.COLUMN_BID, b.getId());
-		if (name != null) {
-			values.put(Floor.COLUMN_NAME, name);
-		}
-		if (file != null) {
-			values.put(Floor.COLUMN_FILE, file);
-		}
+		values.put(Floor.COLUMN_NAME, name);
+		values.put(Floor.COLUMN_FILE, file);
 		values.put(Floor.COLUMN_LEVEL, level);
 		values.put(Floor.COLUMN_NORTH, north);
 		long insertId = db.insert(Floor.TABLE_NAME, null, values);
@@ -298,7 +323,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				Floor.COLUMN_ID + "=?",
 				new String[] { String.valueOf(insertId) }, null, null, null);
 		Floor result = null;
-		if (cursor.moveToFirst()) {
+		if (cursor.moveToFirst() == true) {
 			result = cursorToFloor(cursor);
 		}
 		cursor.close();
@@ -318,7 +343,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	private List<Floor> cursorToFloors(Cursor cursor) {
 		List<Floor> result = new ArrayList<Floor>(cursor.getCount());
-		if (cursor.moveToFirst()) {
+		if (cursor.moveToFirst() == true) {
 			do {
 				Floor floor = cursorToFloor(cursor);
 				result.add(floor);
@@ -352,17 +377,24 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				Floor.COLUMN_ID + "=?",
 				new String[] { String.valueOf(mp.getFloorId()) }, null, null,
 				null, null);
-		Floor result = cursorToFloor(cursor);
+		Floor result = null;
+		if (cursor.moveToFirst() == true) {
+			result = cursorToFloor(cursor);
+		}
+		cursor.close();
 		return result;
 	}
 
 	@Override
 	public boolean changeFloor(Floor floor) {
 		ContentValues values = new ContentValues();
-		if (floor.getName() != null) {
-			values.put(Floor.COLUMN_NAME, floor.getName());
-		}
-		int result = db.update(Floor.TABLE_NAME, values, Floor.COLUMN_ID,
+		values.put(Floor.COLUMN_BID, floor.getBId());
+		values.put(Floor.COLUMN_NAME, floor.getName());
+		values.put(Floor.COLUMN_LEVEL, floor.getLevel());
+		values.put(Floor.COLUMN_NORTH, floor.getNorth());
+		values.put(Floor.COLUMN_FILE, floor.getFile());
+		int result = db.update(Floor.TABLE_NAME, values,
+				Floor.COLUMN_ID + "=?",
 				new String[] { String.valueOf(floor.getId()) });
 		if (result == 1)
 			return true;
@@ -372,7 +404,10 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean deleteFloor(Floor floor) {
-		int result = db.delete(Floor.TABLE_NAME, Floor.COLUMN_ID,
+		for (MeasurePoint mp : getMeasurePoints(floor)) {
+			deleteMeasurePoint(mp);
+		}
+		int result = db.delete(Floor.TABLE_NAME, Floor.COLUMN_ID + "=?",
 				new String[] { String.valueOf(floor.getId()) });
 		if (result == 1)
 			return true;
@@ -383,11 +418,9 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	@Override
 	public boolean changeBuilding(Building building) {
 		ContentValues values = new ContentValues();
-		if (building.getName() != null) {
-			values.put(Floor.COLUMN_NAME, building.getName());
-		}
-		int result = db.update(Building.TABLE_NAME, values, Building.COLUMN_ID,
-				new String[] { String.valueOf(building.getId()) });
+		values.put(Floor.COLUMN_NAME, building.getName());
+		int result = db.update(Building.TABLE_NAME, values, Building.COLUMN_ID
+				+ "=?", new String[] { String.valueOf(building.getId()) });
 		if (result == 1)
 			return true;
 		else
@@ -396,7 +429,10 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean deleteBuilding(Building building) {
-		int result = db.delete(Building.TABLE_NAME, Building.COLUMN_ID,
+		for (Floor f : getFloors(building)) {
+			deleteFloor(f);
+		}
+		int result = db.delete(Building.TABLE_NAME, Building.COLUMN_ID + "=?",
 				new String[] { String.valueOf(building.getId()) });
 		if (result == 1)
 			return true;
@@ -407,14 +443,14 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	@Override
 	public boolean changeAccessPoint(AccessPoint ap) {
 		ContentValues values = new ContentValues();
-		values.put(AccessPoint.COLUMN_SCANID, ap.getId());
+		values.put(AccessPoint.COLUMN_SCANID, ap.getScanId());
 		values.put(AccessPoint.COLUMN_BSSID, ap.getBssid());
 		values.put(AccessPoint.COLUMN_LEVEL, ap.getLevel());
 		values.put(AccessPoint.COLUMN_FREQ, ap.getFreq());
 		values.put(AccessPoint.COLUMN_SSID, ap.getSsid());
-		values.put(AccessPoint.COLUMN_PROPS, ap.getSsid());
+		values.put(AccessPoint.COLUMN_PROPS, ap.getProps());
 		int result = db.update(AccessPoint.TABLE_NAME, values,
-				AccessPoint.COLUMN_ID,
+				AccessPoint.COLUMN_ID + "=?",
 				new String[] { String.valueOf(ap.getId()) });
 		if (result == 1)
 			return true;
@@ -424,8 +460,8 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean deleteAccessPoint(AccessPoint ap) {
-		int result = db.delete(AccessPoint.TABLE_NAME, AccessPoint.COLUMN_ID,
-				new String[] { String.valueOf(ap.getId()) });
+		int result = db.delete(AccessPoint.TABLE_NAME, AccessPoint.COLUMN_ID
+				+ "=?", new String[] { String.valueOf(ap.getId()) });
 		if (result == 1)
 			return true;
 		else
@@ -434,11 +470,12 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	@Override
 	public boolean changeMeasurePoint(MeasurePoint mp) {
-
 		ContentValues values = new ContentValues();
-		values.put(MeasurePoint.COLUMN_FLOORID, mp.getId());
-		int result = db.update(AccessPoint.TABLE_NAME, values,
-				AccessPoint.COLUMN_ID,
+		values.put(MeasurePoint.COLUMN_FLOORID, mp.getFloorId());
+		values.put(MeasurePoint.COLUMN_POS_X, mp.getPosx());
+		values.put(MeasurePoint.COLUMN_POS_Y, mp.getPosy());
+		int result = db.update(MeasurePoint.TABLE_NAME, values,
+				MeasurePoint.COLUMN_ID + "=?",
 				new String[] { String.valueOf(mp.getId()) });
 		if (result == 1)
 			return true;
@@ -447,9 +484,12 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	@Override
-	public boolean deleteMea1surePoint(MeasurePoint mp) {
-		int result = db.delete(MeasurePoint.TABLE_NAME, MeasurePoint.COLUMN_ID,
-				new String[] { String.valueOf(mp.getId()) });
+	public boolean deleteMeasurePoint(MeasurePoint mp) {
+		for (Scan sc : getScans(mp)) {
+			deleteScan(sc);
+		}
+		int result = db.delete(MeasurePoint.TABLE_NAME, MeasurePoint.COLUMN_ID
+				+ "=?", new String[] { String.valueOf(mp.getId()) });
 		if (result == 1)
 			return true;
 		else
@@ -459,11 +499,10 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	@Override
 	public boolean changeScan(Scan sc) {
 		ContentValues values = new ContentValues();
-		values.put(Scan.COLUMN_MPID, sc.getId());
+		values.put(Scan.COLUMN_MPID, sc.getMpid());
 		values.put(Scan.COLUMN_TIME, sc.getTime());
 		values.put(Scan.COLUMN_COMPASS, sc.getCompass());
-		int result = db.update(AccessPoint.TABLE_NAME, values,
-				AccessPoint.COLUMN_ID,
+		int result = db.update(Scan.TABLE_NAME, values, Scan.COLUMN_ID + "=?",
 				new String[] { String.valueOf(sc.getId()) });
 		if (result == 1)
 			return true;
@@ -472,9 +511,12 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	@Override
-	public boolean deleteScan(Scan sc) {
-		int result = db.delete(Scan.TABLE_NAME, Scan.COLUMN_ID,
-				new String[] { String.valueOf(sc.getId()) });
+	public boolean deleteScan(Scan scan) {
+		for (AccessPoint ap : getAccessPoints(scan)) {
+			deleteAccessPoint(ap);
+		}
+		int result = db.delete(Scan.TABLE_NAME, Scan.COLUMN_ID + "=?",
+				new String[] { String.valueOf(scan.getId()) });
 		if (result == 1)
 			return true;
 		else
@@ -484,18 +526,13 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	@Override
 	public Building createBuilding(String name) {
 		ContentValues values = new ContentValues();
-		if (name != null) {
-			values.put(Building.COLUMN_NAME, name);
-		}
-		if (values.size() == 0) {
-			return null;
-		}
+		values.put(Building.COLUMN_NAME, name);
 		long insertId = db.insert(Building.TABLE_NAME, null, values);
 		Cursor cursor = db.query(Building.TABLE_NAME, Building.ALL_COLUMNS,
 				Building.COLUMN_ID + "=?",
 				new String[] { String.valueOf(insertId) }, null, null, null);
 		Building result = null;
-		if (cursor.moveToFirst()) {
+		if (cursor.moveToFirst() == true) {
 			result = cursorToBuilding(cursor);
 		}
 		cursor.close();
@@ -511,7 +548,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	private List<Building> cursorToBuildings(Cursor cursor) {
 		List<Building> result = new ArrayList<Building>(cursor.getCount());
-		if (cursor.moveToFirst()) {
+		if (cursor.moveToFirst() == true) {
 			do {
 				Building scan = cursorToBuilding(cursor);
 				result.add(scan);
@@ -524,7 +561,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	@Override
 	public List<Building> getAllBuildings() {
 		Cursor cursor = db.query(Building.TABLE_NAME, Building.ALL_COLUMNS,
-				null, null, null, null, null);
+				null, null, null, null, Building.COLUMN_NAME + " ASC");
 		List<Building> result = cursorToBuildings(cursor);
 		return result;
 	}
@@ -535,8 +572,10 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 				Building.COLUMN_ID + "=?",
 				new String[] { String.valueOf(floor.getBId()) }, null, null,
 				null);
-		cursor.moveToFirst();
-		Building result = cursorToBuilding(cursor);
+		Building result = null;
+		if (cursor.moveToFirst() == true) {
+			result = cursorToBuilding(cursor);
+		}
 		cursor.close();
 		return result;
 	}
@@ -550,215 +589,57 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	@Override
-	public long countScans() {
+	public long countAllScans() {
 		long result = countTable(Scan.TABLE_NAME);
 		return result;
 	}
 
 	@Override
-	public long countAccessPoints() {
+	public long countAllAccessPoints() {
 		long result = countTable(AccessPoint.TABLE_NAME);
 		return result;
 	}
 
 	@Override
-	public long countMeasurePoints() {
+	public long countAllMeasurePoints() {
 		long result = countTable(MeasurePoint.TABLE_NAME);
 		return result;
 	}
 
 	@Override
-	public long countFloors() {
+	public long countAllFloors() {
 		long result = countTable(Floor.TABLE_NAME);
 		return result;
 	}
 
 	@Override
-	public long countBuildings() {
+	public long countAllBuildings() {
 		long result = countTable(Building.TABLE_NAME);
 		return result;
 	}
 
 	@Override
-	public List<Scan> getScans(Floor floor, int compass) {
+	public List<Scan> getScans(Floor floor, long compass, long range) {
 		List<Scan> result = new LinkedList<Scan>();
 		List<MeasurePoint> mps = getMeasurePoints(floor);
 		for (MeasurePoint mp : mps) {
 			List<Scan> scans = getScans(mp);
-			for (Scan scan : scans) {
-				if (scan.getCompass() > compass - 45
-						|| scan.getCompass() < compass + 45) {
-					result.add(scan);
+			if (range >= 360) {
+				result.addAll(scans);
+			} else {
+				for (Scan scan : scans) {
+					if (DataHelper.isInRange(scan.getCompass(), compass,
+							Constants.ANGLE_DIFF)) {
+						result.add(scan);
+					}
 				}
 			}
 		}
 		return result;
 	}
 
-	/**
-	 * 
-	 * @param filename
-	 *            start directory is the root directory on the sd drive
-	 * @throws IOException
-	 */
-	public void exportDatabase(String filename) throws IOException {
-		db.close();
-		File sd = Environment.getExternalStorageDirectory();
-		File data = Environment.getDataDirectory();
-		String srcDBPath = "//data//" + MainActivity.PACKAGE_NAME
-				+ "//databases//" + dbName;
-		// String dstDBPath = "/backup/" + filename;
-		String dstDBPath = "/" + filename;
-		File srcDB = new File(data, srcDBPath);
-		File dstDB = new File(sd, dstDBPath);
-		FileChannel src = new FileInputStream(srcDB).getChannel();
-		FileChannel dst = new FileOutputStream(dstDB).getChannel();
-		dst.transferFrom(src, 0, src.size());
-		src.close();
-		dst.close();
-		db = storage.getWritableDatabase();
+	public void clearDatabase() {
+		storage.clearDatabase(db);
 	}
 
-	/**
-	 * Updates your local map information with the given database, including
-	 * import
-	 * 
-	 * @param filename
-	 *            full filepath for the import database
-	 * @return Returns an object containing import details
-	 */
-	// FIXME return ImportResult objectIOException
-	public Object importDatabase(String filename) {
-		// copy the database from sd card to internal storage
-//		File sd = Environment.getExternalStorageDirectory();
-//		File data = Environment.getDataDirectory();
-//		String dstDBPath = "//data//" + MainActivity.PACKAGE_NAME
-//				+ "//databases//" + IMPORT_DB_NAME;
-//		String srcDBPath = "/" + filename;
-//		File dstDB = new File(data, dstDBPath);
-//		File srcDB = new File(sd, srcDBPath);
-//		FileChannel src = new FileInputStream(srcDB).getChannel();
-//		FileChannel dst = new FileOutputStream(dstDB).getChannel();
-//		dst.transferFrom(src, 0, src.size());
-//		src.close();
-//		dst.close();
-		// open import database
-		StorageHandler temp = new StorageHandler(context, filename);
-		// import buildings
-		List<Building> impBuildings = temp.getAllBuildings();
-		List<Building> locBuildings = this.getAllBuildings();
-		for (Building bImp : impBuildings) {
-			Building bParent = null;
-			for (Building loc : locBuildings) {
-				if (loc.compare(bImp)) {
-					// building already exist local
-					bParent = loc;
-					// update local object
-					this.changeBuilding(bImp);
-					break;
-				}
-			}
-			if (bParent == null) {
-				// new building
-				bParent = this.createBuilding(bImp.getName());
-				if (bParent == null) {
-					// XXX handle error
-					// skip all child objects for invalid building
-					continue;
-				}
-			}
-			// import floors
-			List<Floor> impFloors = temp.getFloors(bImp);
-			List<Floor> locFloors = this.getFloors(bParent);
-			for (Floor fImp : impFloors) {
-				Floor fParent = null;
-				for (Floor loc : locFloors) {
-					if (loc.compare(fImp)) {
-						// floor already exist local
-						fParent = loc;
-						break;
-					}
-				}
-				if (fParent == null) {
-					fParent = this.createFloor(bParent, fImp.getName(),
-							fImp.getFile(), fImp.getLevel(), fImp.getNorth());
-					if (fParent == null) {
-						// XXX handle error
-						// skip all child objects for invalid floor
-						continue;
-					}
-				}
-				// import measure points
-				List<MeasurePoint> impMeasurePoints = temp
-						.getMeasurePoints(fImp);
-				List<MeasurePoint> locMeasurePoints = this
-						.getMeasurePoints(fParent);
-				for (MeasurePoint mpImp : impMeasurePoints) {
-					MeasurePoint mpParent = null;
-					for (MeasurePoint loc : locMeasurePoints) {
-						if (loc.compare(mpImp)) {
-							// measure point already exist local
-							mpParent = loc;
-							break;
-						}
-					}
-					if (mpParent == null) {
-						mpParent = this.createMeasurePoint(fParent,
-								mpImp.getPosx(), mpImp.getPosy());
-						if (mpParent == null) {
-							// XXX handle error
-							// skip all child objects for invalid floor
-							continue;
-						}
-					}
-					// import scans
-					List<Scan> impScans = temp.getScans(mpImp);
-					List<Scan> locScans = this.getScans(mpParent);
-					for (Scan scImp : impScans) {
-						Scan scParent = null;
-						for (Scan loc : locScans) {
-							if (loc.compare(scImp)) {
-								// scan already exist local
-								scParent = loc;
-								break;
-							}
-						}
-						if (scParent == null) {
-							scParent = this.createScan(mpParent,
-									scImp.getTime(), scImp.getCompass());
-							if (scParent == null) {
-								// XXX handle error
-								// skip all child objects for invalid scan
-								continue;
-							}
-						}
-						// import access points
-						List<AccessPoint> impAPs = temp.getAccessPoints(scImp);
-						List<AccessPoint> locAPs = this
-								.getAccessPoints(scParent);
-						for (AccessPoint apImp : impAPs) {
-							AccessPoint apParent = null;
-							for (AccessPoint loc : locAPs) {
-								if (loc.compare(apImp)) {
-									// access point already exist local
-									apParent = loc;
-									break;
-								}
-							}
-							if (apParent == null) {
-								apParent = this.createAccessPoint(scParent,
-										apImp.getBssid(), apImp.getLevel(),
-										apImp.getFreq(), apImp.getSsid(),
-										apImp.getProps());
-								if (apParent == null) {
-									// XXX handle error
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
 }

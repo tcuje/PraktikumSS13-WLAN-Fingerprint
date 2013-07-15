@@ -16,9 +16,8 @@ public class MeasurePoint {
 			COLUMN_POS_X, COLUMN_POS_Y };
 	public static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, "
-			+ COLUMN_FLOORID + " integer REFERENCES " + Floor.TABLE_NAME + "("
-			+ Floor.COLUMN_ID + ") ON UPDATE CASCADE ON DELETE CASCADE, "
-			+ COLUMN_POS_X + " real, " + COLUMN_POS_Y + " real);";
+			+ COLUMN_FLOORID + " integer, " + COLUMN_POS_X + " real, "
+			+ COLUMN_POS_Y + " real);";
 	public static final String TABLE_DROP = "DROP TABLE IF EXISTS "
 			+ TABLE_NAME;
 
@@ -26,6 +25,7 @@ public class MeasurePoint {
 	private long floorId;
 	private double posx;
 	private double posy;
+	private double quality;
 
 	public long getId() {
 		return id;
@@ -59,14 +59,22 @@ public class MeasurePoint {
 		this.posy = posy;
 	}
 
+	public double getQuality() {
+		return quality;
+	}
+
+	public void setQuality(double quality) {
+		this.quality = quality;
+	}
+
 	/**
 	 * 
 	 * @param other
 	 * @return Returns true, if both coordinates are equal
 	 */
 	public boolean compare(MeasurePoint other) {
-		boolean resultX = (this.getPosx() - other.getPosx()) < 2 * Float.MIN_NORMAL;
-		boolean resultY = (this.getPosy() - other.getPosy()) < 2 * Float.MIN_NORMAL;
+		boolean resultX = Math.abs(this.getPosx() - other.getPosx()) < 2 * Float.MIN_VALUE;
+		boolean resultY = Math.abs(this.getPosy() - other.getPosy()) < 2 * Float.MIN_VALUE;
 		return resultX && resultY;
 	}
 

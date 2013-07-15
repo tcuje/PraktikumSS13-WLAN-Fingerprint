@@ -5,22 +5,27 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="11"
+        android:minSdkVersion="8"
         android:targetSdkVersion="17" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
+        android:description="@string/app_description"
+        android:hardwareAccelerated="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name="de.rwth.ti.wps.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:launchMode="standard" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,29 +33,40 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="de.rwth.ti.wps.NewMapActivity"
-            android:label="@string/activity_new_map_label"
+            android:name="de.rwth.ti.wps.NewFloorActivity"
             android:icon="@drawable/new_map"
+            android:label="@string/action_new_floor"
+            android:launchMode="standard"
             android:parentActivityName="de.rwth.ti.wps.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="de.rwth.ti.wps.LocalisationActivity" />
+                android:value="de.rwth.ti.wps.MainActivity" />
         </activity>
         <activity
             android:name="de.rwth.ti.wps.MeasureActivity"
-            android:label="@string/title_activity_measure"
+            android:label="@string/action_measure"
+            android:launchMode="standard"
             android:parentActivityName="de.rwth.ti.wps.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="de.rwth.ti.wps.LocalisationActivity" />
+                android:value="de.rwth.ti.wps.MainActivity" />
         </activity>
         <activity
-            android:name="de.rwth.ti.wps.SettingsActivity"
-            android:label="@string/title_activity_settings"
+            android:name="de.rwth.ti.wps.DebugActivity"
+            android:label="@string/action_debug"
+            android:launchMode="standard"
             android:parentActivityName="de.rwth.ti.wps.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="de.rwth.ti.wps.LocalisationActivity" />
+                android:value="de.rwth.ti.wps.MainActivity" />
+        </activity>
+        <activity
+            android:name="de.rwth.ti.wps.DataActivity"
+            android:label="@string/action_data"
+            android:parentActivityName="de.rwth.ti.wps.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.rwth.ti.wps.MainActivity" />
         </activity>
     </application>
 

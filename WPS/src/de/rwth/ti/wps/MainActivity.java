@@ -1,288 +1,307 @@
 package de.rwth.ti.wps;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import android.annotation.TargetApi;
-import android.app.ActionBar;
-import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
+import android.content.IntentFilter;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Environment;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import de.rwth.ti.db.AccessPoint;
-import de.rwth.ti.db.Building;
+import android.widget.ToggleButton;
+import de.rwth.ti.common.Cardinal;
+import de.rwth.ti.common.CompassManager;
+import de.rwth.ti.common.Constants;
+import de.rwth.ti.common.IPMapView;
+import de.rwth.ti.common.QualityCheck;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
-import de.rwth.ti.db.Scan;
-import de.rwth.ti.db.StorageHandler;
+import de.rwth.ti.loc.Location;
+import de.rwth.ti.loc.LocationResult;
 
 /**
  * This is the main activity class
  * 
  */
-public class MainActivity extends Activity implements
-		ActionBar.OnNavigationListener, OnClickListener {
+public class MainActivity extends SuperActivity implements
+		OnCheckedChangeListener {
 
-	/**
-	 * The serialization (saved instance state) Bundle key representing the
-	 * current dropdown position.
-	 */
-	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
-	public static final String PACKAGE_NAME = "de.rwth.ti.wps";
-
-	private ScanManager scm;
-	private StorageHandler storage;
-	private CompassManager cmgr;
-
-	TextView textStatus;
-	Button buttonScan;
+	private ToggleButton checkLoc;
+	private IPMapView viewMap;
+	private ImageButton btCenter;
+	private Button btZoom;
+	private Button forceBuilding;
+	private Button forceFloor;
+	private boolean forceNextBuilding = false;
+	private boolean forceNextFloor = false;
+	private BroadcastReceiver wifiReceiver;
+	private int control;
+	private TextView measureTimeView;
+	private TextView errormessageView;
+	private Location myLoc;
 
 	/** Called when the activity is first created. */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_localisation);
-
-		// Set up the action bar to show a dropdown list.
-		final ActionBar actionBar = getActionBar();
-		actionBar.setDisplayShowTitleEnabled(false);
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-
-		// Set up the dropdown list navigation in the action bar.
-		actionBar.setListNavigationCallbacks(
-		// Specify a SpinnerAdapter to populate the dropdown list.
-				new ArrayAdapter<String>(getActionBarThemedContextCompat(),
-						android.R.layout.simple_list_item_1,
-						android.R.id.text1, new String[] {
-								getString(R.string.title_section1),
-								getString(R.string.title_section2),
-								getString(R.string.title_section3), }), this);
-
-		// Setup UI
-		textStatus = (TextView) findViewById(R.id.textStatus);
-		buttonScan = (Button) findViewById(R.id.buttonScan);
-		buttonScan.setOnClickListener(this);
-
-		// Setup Wifi
-		if (scm == null) {
-			scm = new ScanManager(this);
+		setContentView(R.layout.activity_main);
+		// create app sd directory
+		File sdDir = new File(Constants.SD_APP_DIR);
+		if (sdDir.exists() == false) {
+			if (sdDir.mkdirs() == false) {
+				Toast.makeText(this, R.string.error_sd_dir, Toast.LENGTH_LONG)
+						.show();
+			}
 		}
-
-		// Setup database storage
-		if (storage == null) {
-			storage = new StorageHandler(this);
-		}
-
-		// Setup compass manager
-		if (cmgr == null) {
-			cmgr = new CompassManager(this);
-		}
-	}
-
-	/**
-	 * Backward-compatible version of {@link ActionBar#getThemedContext()} that
-	 * simply returns the {@link android.app.Activity} if
-	 * <code>getThemedContext</code> is unavailable.
-	 */
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-	private Context getActionBarThemedContextCompat() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			return getActionBar().getThemedContext();
-		} else {
-			return this;
-		}
-	}
-
-	@Override
-	public void onRestoreInstanceState(Bundle savedInstanceState) {
-		// Restore the previously serialized current dropdown position.
-		if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM)) {
-			getActionBar().setSelectedNavigationItem(
-					savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
-		}
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		// Serialize the current dropdown position.
-		outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getActionBar()
-				.getSelectedNavigationIndex());
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu, menu);
-		return true;
+		checkLoc = (ToggleButton) findViewById(R.id.toggleLocalization);
+		checkLoc.setOnCheckedChangeListener(this);
+		viewMap = (IPMapView) findViewById(R.id.viewMap);
+		viewMap.setMeasureMode(false);
+		viewMap.setOnScaleChangeListener(new ScaleChangeListener());
+		btCenter = (ImageButton) findViewById(R.id.centerButton);
+		btZoom = (Button) findViewById(R.id.zoomButton);
+		forceBuilding = (Button) findViewById(R.id.forceBuilding);
+		forceFloor = (Button) findViewById(R.id.forceFloor);
+		measureTimeView = (TextView) findViewById(R.id.measureTime);
+		errormessageView = (TextView) findViewById(R.id.debugInfo);
+		btZoom.setText("x1.0");
+		wifiReceiver = new MyReceiver();
+		control = 0;
+		myLoc = new Location(getStorage());
 	}
 
 	/** Called when the activity is first created or restarted */
 	@Override
 	public void onStart() {
 		super.onStart();
-		storage.onStart();
-		scm.onStart();
-		cmgr.onStart();
-		// TODO GUI don't show debug info on startup
-		showDebug();
+		checkLoc.setChecked(true);
+		if (checkLoc.isChecked() == true) {
+			getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
+			getWindow()
+					.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			this.registerReceiver(wifiReceiver, new IntentFilter(
+					WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+		}
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
 	@Override
 	public void onStop() {
+		checkLoc.setChecked(false);
 		super.onStop();
-		storage.onStop();
-		scm.onStop();
-		cmgr.onStop();
-	}
-
-	@Override
-	public void onClick(View view) {
-		if (view.getId() == R.id.buttonScan) {
-			// FIXME GUI get real data from gui
-			scm.startSingleScan(storage.createMeasurePoint(null, 0, 0));
+		getScanManager().stopAutoScan();
+		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		try {
+			this.unregisterReceiver(wifiReceiver);
+		} catch (IllegalArgumentException ex) {
+			// just ignore it
 		}
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Start other Activities, when the related MenuItem is selected
-		// TextView textView = (TextView) findViewById(R.id.textStatus);
-		String text;
-		text = item.getTitle() + "\n" + Integer.toString(item.getItemId())
-				+ "\n";
-
-		Intent intent = null;
-		switch (item.getItemId()) {
-		case R.id.action_localisation:
-			text += "Lokalisation";
-			break;
-		case R.id.action_measure:
-			text += "Messung";
-			intent = new Intent(this, MeasureActivity.class);
-			break;
-		case R.id.action_new_map:
-			intent = new Intent(this, NewMapActivity.class);
-			break;
-		case R.id.action_settings:
-			intent = new Intent(this, SettingsActivity.class);
-			break;
-		case R.id.menu_show_debug:
-			showDebug();
-			return true;
-		case R.id.menu_export:
-			try {
-				storage.exportDatabase("local.sqlite");
-				// TODO GUI extract message
-				Toast.makeText(getBaseContext(),
-						"Datenbank erfolgreich exportiert", Toast.LENGTH_SHORT)
-						.show();
-			} catch (IOException e) {
-				Toast.makeText(getBaseContext(), e.toString(),
-						Toast.LENGTH_LONG).show();
+	public void onCheckedChanged(CompoundButton view, boolean state) {
+		if (view == checkLoc) {
+			if (state == true) {
+				getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
+				getWindow().addFlags(
+						WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			} else {
+				getScanManager().stopAutoScan();
+				getWindow().clearFlags(
+						WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 			}
-			return true;
-		case R.id.menu_import:
-			// FIXME GUI get user input for filename
-			storage.importDatabase(Environment.getDataDirectory()
-					+ File.separator + "local.sqlite");
-			// TODO GUI extract message
-			Toast.makeText(getBaseContext(),
-					"Datenbank erfolgreich importiert", Toast.LENGTH_SHORT)
-					.show();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+			// research for building and floor
+			control = 1;
 		}
-
-		if (intent != null)
-			startActivity(intent);
-
-		textStatus.setText(text);
-		return true;
 	}
 
-	public ScanManager getScanManager() {
-		return scm;
-	}
+	private class MyReceiver extends BroadcastReceiver {
 
-	public StorageHandler getStorage() {
-		return storage;
-	}
+		private WifiManager wifi = MainActivity.this.getScanManager().getWifi();
+		private CompassManager comp = MainActivity.this.getCompassManager();
+		private Floor lastMap;
 
-	public CompassManager getCompassManager() {
-		return cmgr;
-	}
-
-	public void showDebug() {
-		textStatus.setText("Database:\n");
-		textStatus.append("\nBuildings: " + storage.countBuildings() + "\n");
-		for (Building b : storage.getAllBuildings()) {
-			textStatus.append("Building\t" + b.getId() + "\t" + b.getName()
-					+ "\n");
-		}
-		textStatus.append("\nMaps: " + storage.countFloors() + "\n");
-		for (Floor m : storage.getAllFloors()) {
-			textStatus.append("Map\t" + m.getId() + "\t" + m.getName() + "\t"
-					+ m.getFile() + "\n");
-		}
-		textStatus.append("\nCheckpoints: " + storage.countMeasurePoints()
-				+ "\n");
-		for (MeasurePoint cp : storage.getAllMeasurePoints()) {
-			textStatus.append("Checkpoint\t" + cp.getId() + "\t"
-					+ cp.getFloorId() + "\t" + cp.getPosx() + "\t"
-					+ cp.getPosy() + "\n");
-		}
-		textStatus.append("\nScans: " + storage.countScans() + "\n");
-		for (Scan scan : storage.getAllScans()) {
-			textStatus.append("Scan\t" + scan.getId() + "\t" + scan.getMpid()
-					+ "\t" + scan.getTime() + "\t" + scan.getCompass() + "\n");
-		}
-		textStatus.append("\nAccessPoints: " + storage.countAccessPoints()
-				+ "\n");
-		List<AccessPoint> all = storage.getAllAccessPoints();
-		for (AccessPoint ap : all) {
-			textStatus.append("AP\t" + ap.getId() + "\t" + ap.getScanId()
-					+ "\t" + ap.getBssid() + "\t" + ap.getLevel() + "\t"
-					+ ap.getFreq() + "\t'" + ap.getSsid() + "'\t"
-					+ ap.getProps() + "\n");
-		}
-		if (all.size() > 0) {
-			String bssid = all.get(0).getBssid();
-			List<AccessPoint> first = storage.getAccessPoint(bssid);
-			textStatus.append("\n" + bssid + "\n");
-			for (AccessPoint ap : first) {
-				textStatus.append("AP\t" + ap.getId() + "\t" + ap.getScanId()
-						+ "\t" + ap.getBssid() + "\t" + ap.getLevel() + "\n");
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (checkLoc != null && checkLoc.isChecked() == true) {
+				try {
+					final List<ScanResult> results = wifi.getScanResults();
+					final Cardinal direction = Cardinal.getFromAzimuth(comp
+							.getMeanAzimut());
+					Thread t = new Thread(new Runnable() {
+						@Override
+						public void run() {
+							if (forceNextBuilding == true) {
+								control = 1;
+								forceNextBuilding = false;
+								forceNextFloor = false;
+							} else if (forceNextFloor == true) {
+								control = 2;
+								forceNextFloor = false;
+							} else {
+								control = 0;
+							}
+							final long start = System.currentTimeMillis();
+							final LocationResult myLocRes = myLoc.getLocation(
+									results, direction, control);
+							control = 0;
+							final long stop = System.currentTimeMillis();
+							runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									String measureTime = "APs: "
+											+ results.size() + "\nLocTime: "
+											+ (stop - start) + "ms";
+									int errorCode = myLocRes.getError();
+									if (errorCode != 0) {
+										String errorMessage = "";
+										switch (errorCode) {
+										case 1:
+											errorMessage = getString(R.string.error_loc_building_not_found);
+											break;
+										case 2:
+											errorMessage = getString(R.string.error_loc_floor_not_found);
+											break;
+										case 3:
+											errorMessage = getString(R.string.error_loc_aps_not_found);
+											break;
+										case 4:
+											errorMessage = getString(R.string.error_loc_empty_map);
+											break;
+										case 5:
+											errorMessage = getString(R.string.error_loc_position_not_found);
+											break;
+										default:
+											errorMessage = "Error: "
+													+ errorCode;
+											break;
+										}
+										errormessageView.setText(errorMessage);
+									} else {
+										Floor map = myLocRes.getFloor();
+										long mStart = System
+												.currentTimeMillis();
+										if (lastMap == null
+												|| map.getId() != lastMap
+														.getId()) {
+											// map has changed reload it
+											byte[] file = myLocRes.getFloor()
+													.getFile();
+											if (file != null) {
+												ByteArrayInputStream bin = new ByteArrayInputStream(
+														file);
+												viewMap.newMap(bin);
+												List<MeasurePoint> mpl = getStorage()
+														.getMeasurePoints(map);
+												for (MeasurePoint mp : mpl) {
+													mp.setQuality(QualityCheck
+															.getQuality(
+																	getStorage(),
+																	mp));
+													viewMap.addOldPoint(mp);
+												}
+											} else {
+												Toast.makeText(
+														MainActivity.this,
+														R.string.error_no_floor_file,
+														Toast.LENGTH_LONG)
+														.show();
+											}
+										}
+										long mStop = System.currentTimeMillis();
+										viewMap.setPoint(myLocRes);
+										if (lastMap == null
+												|| map.getId() != lastMap
+														.getId()) {
+											// map has changed focus position
+											// once
+											lastMap = map;
+											viewMap.zoomPoint();
+										}
+										measureTime += "\nMap: "
+												+ (mStop - mStart) + "ms";
+										String locationInfo = myLocRes
+												.getFloor().getName()
+												+ " in "
+												+ myLocRes.getBuilding()
+														.getName();
+										errormessageView.setText(locationInfo);
+									}
+									measureTimeView.setText(measureTime);
+								}
+							});
+						}
+					});
+					t.start();
+				} catch (Exception ex) {
+					errormessageView.setText(ex.toString());
+				}
 			}
 		}
 	}
 
-	@Override
-	public boolean onNavigationItemSelected(int position, long id) {
-		// When the given dropdown item is selected, show its contents in the
-		// container view.
-		// TextView textView = (TextView) findViewById(R.id.textStatus);
-		showDebug();
-		// Fragment fragment = new DummySectionFragment();
-		// Bundle args = new Bundle();
-		// args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-		// fragment.setArguments(args);
-		// getSupportFragmentManager().beginTransaction()
-		// .replace(R.id.container, fragment).commit();
-		return true;
+	public void centerPosition(View view) {
+		if (view == btCenter) {
+			viewMap.focusPoint();
+		}
+	}
+
+	public void zoomPosition(View view) {
+		if (view == btZoom) {
+			viewMap.zoomPoint();
+		}
+	}
+
+	public void forceBuilding(View view) {
+		if (view == forceBuilding) {
+			forceNextBuilding = true;
+		}
+	}
+
+	public void forceFloor(View view) {
+		if (view == forceFloor) {
+			forceNextFloor = true;
+		}
+	}
+
+	private class ScaleChangeListener implements
+			IPMapView.OnScaleChangeListener {
+
+		@Override
+		public void onScaleChange(float scale) {
+			if (btZoom == null) {
+				// do nothing
+				return;
+			}
+			StringBuilder strBuilder = new StringBuilder();
+			strBuilder.append(Float.toString(scale));
+			int ind = strBuilder.indexOf(".");
+			final String zStr;
+			if (ind != -1) {
+				int len = Math.min(ind + 3, strBuilder.length());
+				zStr = strBuilder.substring(0, len);
+			} else {
+				zStr = "x" + strBuilder.toString();
+			}
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					btZoom.setText(zStr);
+				}
+			});
+		}
+
 	}
 
 }

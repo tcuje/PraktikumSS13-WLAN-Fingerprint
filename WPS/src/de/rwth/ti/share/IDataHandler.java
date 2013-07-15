@@ -36,7 +36,8 @@ public interface IDataHandler {
 
 	/**
 	 * 
-	 * @return Returns a list with all buildings from the database
+	 * @return Returns a list with all buildings in alphabetical order from the
+	 *         database
 	 */
 	List<Building> getAllBuildings();
 
@@ -44,30 +45,30 @@ public interface IDataHandler {
 	 * 
 	 * @return Returns the number of scans stored in the database
 	 */
-	long countScans();
+	long countAllScans();
 
 	/**
 	 * 
 	 * @return Returns the number of accesspoints stored in the database
 	 */
-	long countAccessPoints();
+	long countAllAccessPoints();
 
 	/**
 	 * 
 	 * @return Returns the number of measurepoints stored in the database
 	 */
-	long countMeasurePoints();
+	long countAllMeasurePoints();
 
 	/**
 	 * 
 	 * @return Returns the number of floors stored in the database
 	 */
-	long countFloors();
+	long countAllFloors();
 
 	/**
 	 * 
 	 * @return Returns the number of buildings stored in the database
 	 */
-	long countBuildings();
+	long countAllBuildings();
 
 }

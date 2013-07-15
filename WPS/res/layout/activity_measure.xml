@@ -1,22 +1,72 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MeasureActivity"
-    tools:ignore="MergeRootFrame" >
+    tools:context=".MeasureActivity" >
+
+    <de.rwth.ti.common.IPMapView
+        android:id="@+id/map_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+
+    <Spinner
+        android:id="@+id/buildingSelectSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/measure_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="false"
+        android:onClick="measure"
+        android:text="@string/text_measure_button" />
+
+    <TextView
+        android:id="@+id/compass_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <Spinner
         android:id="@+id/floorSelectSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/floors" />
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/buildingSelectSpinner" />
 
     <TextView
-        android:id="@+id/mapPath"
+        android:id="@+id/direction_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_below="@+id/floorSelectSpinner"
+        android:layout_centerHorizontal="true"
+        android:text="@string/measure_mark_point"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-</LinearLayout>
+    <Button
+        android:id="@+id/button_next_line"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/floorSelectSpinner"
+        android:layout_alignParentLeft="true"
+        android:onClick="nextLine"
+        android:contentDescription="@+string/button_next_line"
+        android:text="next line" />
+        
+    <Button
+        android:id="@+id/button_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/floorSelectSpinner"
+        android:layout_alignParentRight="true"
+        android:onClick="next"
+        android:contentDescription="@+string/button_next_line"
+        android:text="next" />
+
+</RelativeLayout>
