@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -30,10 +31,10 @@ public class NewFloorActivity extends SuperActivity implements
 		OnBuildingChangedListener {
 
 	private EditText createBuildingEdit;
+	private List<Building> buildingList;
+	private List<Floor> floorList;
 	private Building buildingSelected;
-
-	BuildingSpinnerHelper buildingHelper;
-
+	private BuildingSpinnerHelper buildingHelper;
 	private EditText floorLevelEdit;
 	private EditText floorNameEdit;
 	private EditText northEdit;
@@ -94,9 +95,23 @@ public class NewFloorActivity extends SuperActivity implements
 	public void createBuilding(View view) {
 		String tBuildingName = createBuildingEdit.getText().toString().trim();
 		String message = null;
+		int e = 0;
+		Building b = null;
 		// check name
 		if (tBuildingName.length() != 0) {
-			Building b = getStorage().createBuilding(tBuildingName);
+			buildingList = getStorage().getAllBuildings();
+			for (Building bi : buildingList) {
+				if (tBuildingName.equals(bi.getName())) {
+					message = getString(R.string.same_name_building);
+					Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+					e = 1;
+					break;
+				}
+			}
+			if (e == 0) {
+				b = getStorage().createBuilding(tBuildingName);
+			}
+
 			// Gebäude konnte erfolgreich erstellt werden?
 			if (b != null) {
 				message = getString(R.string.success_create_building);
@@ -143,6 +158,8 @@ public class NewFloorActivity extends SuperActivity implements
 		floorName = floorNameEdit.getText().toString().trim();
 		String tFloorLevelText = floorLevelEdit.getText().toString().trim();
 		String tNorthText = northEdit.getText().toString().trim();
+		int e = 0;
+		Floor f = null;
 
 		// Kontrolliert, ob alle Inputs vernünftig gefüllt sind
 		if (floorName.length() != 0 && tFloorLevelText.length() != 0
@@ -153,8 +170,20 @@ public class NewFloorActivity extends SuperActivity implements
 			if (buildingSelected != null) {
 				// Kartendatei ausgewählt
 				if (floorFile != null) {
-					Floor f = getStorage().createFloor(buildingSelected,
-							floorName, floorFile, floorLevel, north);
+					floorList = getStorage().getAllFloors();
+					for (Floor fi : floorList) {
+						if (floorName.equals(fi.getName())) {
+							message = getString(R.string.same_name_floor);
+							Toast.makeText(this, message, Toast.LENGTH_LONG)
+									.show();
+							e = 1;
+							break;
+						}
+					}
+					if (e == 0) {
+						f = getStorage().createFloor(buildingSelected,
+								floorName, floorFile, floorLevel, north);
+					}
 					// Floor erfolgreich erstellt
 					if (f != null) {
 						message = getString(R.string.success_create_floor);
@@ -171,7 +200,9 @@ public class NewFloorActivity extends SuperActivity implements
 					} else {
 						message = getString(R.string.error_create_floor);
 					}
-				} else {
+				}
+
+				else {
 					message = getString(R.string.error_no_floor_file);
 				}
 			} else {
