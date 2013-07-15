@@ -495,6 +495,10 @@ public class IPMapView extends View {
 				eventType = xpp.next();
 			} catch (XmlPullParserException e) {
 				// TODO Auto-generated catch block
+//				new AlertDialog.Builder(getContext())
+//						.setMessage(
+//								"Error in File. Please Import again and check your File.")
+//						.show();
 				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

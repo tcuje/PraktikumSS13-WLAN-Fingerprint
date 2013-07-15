@@ -358,7 +358,7 @@ public class DatabaseTransformer {
 										}
 									}
 								}
-								temp.onStop();
+								temp.onDestroy();
 								return true;
 							}
 

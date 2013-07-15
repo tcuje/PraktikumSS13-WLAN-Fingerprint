@@ -126,9 +126,9 @@ public class FloorSpinnerHelper implements OnItemSelectedListener,
 			}
 
 			if (floorList.size() == 0) {
-				selectedFloor = null;
+				setSelectedFloor(null);
 			} else {
-				selectedFloor = floorList.get(0);
+				setSelectedFloor(floorList.get(0));
 			}
 		}
 	}
@@ -142,20 +142,22 @@ public class FloorSpinnerHelper implements OnItemSelectedListener,
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int pos,
 			long id) {
-		selectedFloor = floorList.get(pos);
+		setSelectedFloor(floorList.get(pos));
 
 		for (Spinner tSpinner : spinnerList) {
-			tSpinner.setOnItemSelectedListener(null);
 			tSpinner.setSelection(pos);
-			tSpinner.setOnItemSelectedListener(this);
 		}
 
-		notifyListener();
 	}
 
 	@Override
 	public void onNothingSelected(AdapterView<?> parent) {
-		selectedFloor = null;
+		setSelectedFloor(null);
+	}
+
+	public void setSelectedFloor(Floor selectedFloor) {
+		this.selectedFloor = selectedFloor;
 		notifyListener();
 	}
+
 }

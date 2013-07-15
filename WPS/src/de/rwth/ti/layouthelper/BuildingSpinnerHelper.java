@@ -111,9 +111,9 @@ public class BuildingSpinnerHelper implements OnItemSelectedListener {
 		}
 
 		if (buildingList.size() == 0) {
-			setBuildingSelected(null);
+			setSelectedBuilding(null);
 		} else {
-			setBuildingSelected(buildingList.get(0));
+			setSelectedBuilding(buildingList.get(0));
 		}
 	}
 
@@ -126,7 +126,7 @@ public class BuildingSpinnerHelper implements OnItemSelectedListener {
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int pos,
 			long id) {
-		setBuildingSelected(buildingList.get(pos));
+		setSelectedBuilding(buildingList.get(pos));
 
 		for (Spinner tSpinner : spinnerList) {
 			tSpinner.setSelection(pos);
@@ -135,10 +135,10 @@ public class BuildingSpinnerHelper implements OnItemSelectedListener {
 
 	@Override
 	public void onNothingSelected(AdapterView<?> parent) {
-		setBuildingSelected(null);
+		setSelectedBuilding(null);
 	}
 
-	public void setBuildingSelected(Building buildingSelected) {
+	public void setSelectedBuilding(Building buildingSelected) {
 		this.selectedBuilding = buildingSelected;
 		notifyListener();
 	}
