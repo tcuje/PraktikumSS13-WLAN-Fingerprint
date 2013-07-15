@@ -43,8 +43,8 @@ public class MainActivity extends SuperActivity implements
 	private Button btZoom;
 	private Button forceBuilding;
 	private Button forceFloor;
-	private boolean forceNextBuilding=false;
-	private boolean forceNextFloor=false;
+	private boolean forceNextBuilding = false;
+	private boolean forceNextFloor = false;
 	private BroadcastReceiver wifiReceiver;
 	private int control;
 	private TextView measureTimeView;
@@ -142,17 +142,15 @@ public class MainActivity extends SuperActivity implements
 					Thread t = new Thread(new Runnable() {
 						@Override
 						public void run() {
-							if (forceNextBuilding==true){
-								control=1;
-								forceNextBuilding=false;
-								forceNextFloor=false;
-							}
-							else if (forceNextFloor==true){
-								control=2;
-								forceNextFloor=false;
-							}
-							else{
-								control=0;
+							if (forceNextBuilding == true) {
+								control = 1;
+								forceNextBuilding = false;
+								forceNextFloor = false;
+							} else if (forceNextFloor == true) {
+								control = 2;
+								forceNextFloor = false;
+							} else {
+								control = 0;
 							}
 							final long start = System.currentTimeMillis();
 							final LocationResult myLocRes = myLoc.getLocation(
@@ -162,7 +160,8 @@ public class MainActivity extends SuperActivity implements
 							runOnUiThread(new Runnable() {
 								@Override
 								public void run() {
-									String measureTime = "Loc: "
+									String measureTime = "APs: "
+											+ results.size() + "\nLocTime: "
 											+ (stop - start) + "ms";
 									int errorCode = myLocRes.getError();
 									if (errorCode != 0) {
@@ -263,17 +262,19 @@ public class MainActivity extends SuperActivity implements
 			viewMap.zoomPoint();
 		}
 	}
-	
-	public void forceBuilding(View view){
+
+	public void forceBuilding(View view) {
 		if (view == forceBuilding) {
-			forceNextBuilding=true;
+			forceNextBuilding = true;
 		}
 	}
-	public void forceFloor(View view){
+
+	public void forceFloor(View view) {
 		if (view == forceFloor) {
-			forceNextFloor=true;
+			forceNextFloor = true;
 		}
 	}
+
 	private class ScaleChangeListener implements
 			IPMapView.OnScaleChangeListener {
 
