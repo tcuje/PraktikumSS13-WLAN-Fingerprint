@@ -58,7 +58,7 @@ public class MainActivity extends SuperActivity implements
 		File sdDir = new File(Constants.SD_APP_DIR);
 		if (sdDir.exists() == false) {
 			if (sdDir.mkdirs() == false) {
-				Toast.makeText(this, R.string.error_sd_dir, Toast.LENGTH_LONG)
+				Toast.makeText(this, R.string.error_sd_dir, Toast.LENGTH_SHORT)
 						.show();
 			}
 		}
@@ -208,7 +208,7 @@ public class MainActivity extends SuperActivity implements
 												Toast.makeText(
 														MainActivity.this,
 														R.string.error_no_floor_file,
-														Toast.LENGTH_LONG)
+														Toast.LENGTH_SHORT)
 														.show();
 											}
 										}
@@ -261,7 +261,6 @@ public class MainActivity extends SuperActivity implements
 			forceNextBuilding = true;
 		}
 	}
-
 
 	private class ScaleChangeListener implements
 			IPMapView.OnScaleChangeListener {

@@ -495,10 +495,10 @@ public class IPMapView extends View {
 				eventType = xpp.next();
 			} catch (XmlPullParserException e) {
 				// TODO Auto-generated catch block
-//				new AlertDialog.Builder(getContext())
-//						.setMessage(
-//								"Error in File. Please Import again and check your File.")
-//						.show();
+				// new AlertDialog.Builder(getContext())
+				// .setMessage(
+				// "Error in File. Please Import again and check your File.")
+				// .show();
 				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -549,28 +549,28 @@ public class IPMapView extends View {
 
 	public void zoomPoint() {
 		if (location != null) {
-		float newScale = ((mMaxScaleFactor - mMinScaleFactor) / 2);
-		float x = -(float) location.getX() + mViewWidth / (2 * newScale);
-		float y = -(float) location.getY() + mViewHeight / (2 * newScale);
-		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-		if (currentapiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-			// Do something for HonyComb and above versions
-			AnimatorSet anSet = new AnimatorSet();
-			ObjectAnimator objAnScale = ObjectAnimator.ofFloat(this,
-					"mScaleFactor", mScaleFactor, newScale);
-			ObjectAnimator objAnX = ObjectAnimator.ofFloat(this, "mXFocus",
-					mXFocus, x);
-			ObjectAnimator objAnY = ObjectAnimator.ofFloat(this, "mYFocus",
-					mYFocus, y);
-			anSet.playTogether(objAnScale, objAnX, objAnY);
-			anSet.setDuration(1000);
-			anSet.start();
-		} else {
-			// do something for phones running an SDK before HoneyComb
-			mXFocus = x;
-			mYFocus = y;
-			mScaleFactor = newScale;
-		}
+			float newScale = ((mMaxScaleFactor - mMinScaleFactor) / 2);
+			float x = -(float) location.getX() + mViewWidth / (2 * newScale);
+			float y = -(float) location.getY() + mViewHeight / (2 * newScale);
+			int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+			if (currentapiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+				// Do something for HonyComb and above versions
+				AnimatorSet anSet = new AnimatorSet();
+				ObjectAnimator objAnScale = ObjectAnimator.ofFloat(this,
+						"mScaleFactor", mScaleFactor, newScale);
+				ObjectAnimator objAnX = ObjectAnimator.ofFloat(this, "mXFocus",
+						mXFocus, x);
+				ObjectAnimator objAnY = ObjectAnimator.ofFloat(this, "mYFocus",
+						mYFocus, y);
+				anSet.playTogether(objAnScale, objAnX, objAnY);
+				anSet.setDuration(1000);
+				anSet.start();
+			} else {
+				// do something for phones running an SDK before HoneyComb
+				mXFocus = x;
+				mYFocus = y;
+				mScaleFactor = newScale;
+			}
 		}
 	}
 
@@ -607,18 +607,20 @@ public class IPMapView extends View {
 	}
 
 	protected void setMeasurePoint(float x, float y) {
-		mMPoint = myOldPoints.getMPoint(x, y);
-		if (mMPoint == null) {
-			mMPoint = new MeasurePoint();
-			mMPoint.setPosx(x);
-			mMPoint.setPosy(y);
-			mMPoint.setId(-1);
-		} else if (Math.abs(mMPoint.getPosx() - x) > mapFactor
-				|| Math.abs(mMPoint.getPosy() - y) > mapFactor) {
-			mMPoint = new MeasurePoint();
-			mMPoint.setPosx(x);
-			mMPoint.setPosy(y);
-			mMPoint.setId(-1);
+		if (myOldPoints != null) {
+			mMPoint = myOldPoints.getMPoint(x, y);
+			if (mMPoint == null) {
+				mMPoint = new MeasurePoint();
+				mMPoint.setPosx(x);
+				mMPoint.setPosy(y);
+				mMPoint.setId(-1);
+			} else if (Math.abs(mMPoint.getPosx() - x) > mapFactor
+					|| Math.abs(mMPoint.getPosy() - y) > mapFactor) {
+				mMPoint = new MeasurePoint();
+				mMPoint.setPosx(x);
+				mMPoint.setPosy(y);
+				mMPoint.setId(-1);
+			}
 		}
 	}
 
@@ -629,9 +631,11 @@ public class IPMapView extends View {
 		float yP = (y / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))
 				+ mAccYPoint;
 		setMeasurePoint(xP, yP);
-		mMPointOld = new PointF();
-		mMPointOld.x = (float) mMPoint.getPosx();
-		mMPointOld.y = (float) mMPoint.getPosy();
+		if (mMPoint != null) {
+			mMPointOld = new PointF();
+			mMPointOld.x = (float) mMPoint.getPosx();
+			mMPointOld.y = (float) mMPoint.getPosy();
+		}
 
 		// mXMPoint = (x-mXFocus)/mScaleFactor;
 		// mYMPoint = (y-mYFocus)/mScaleFactor;
@@ -667,12 +671,12 @@ public class IPMapView extends View {
 			if (currentapiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 				// Do something for HonyComb and above versions
 				AnimatorSet anSet = new AnimatorSet();
-				ObjectAnimator objAnScale = ObjectAnimator.ofFloat(IPMapView.this,
-						"mScaleFactor", mScaleFactor, newScale);
-				ObjectAnimator objAnX = ObjectAnimator.ofFloat(IPMapView.this, "mXFocus",
-						mXFocus, x);
-				ObjectAnimator objAnY = ObjectAnimator.ofFloat(IPMapView.this, "mYFocus",
-						mYFocus, y);
+				ObjectAnimator objAnScale = ObjectAnimator.ofFloat(
+						IPMapView.this, "mScaleFactor", mScaleFactor, newScale);
+				ObjectAnimator objAnX = ObjectAnimator.ofFloat(IPMapView.this,
+						"mXFocus", mXFocus, x);
+				ObjectAnimator objAnY = ObjectAnimator.ofFloat(IPMapView.this,
+						"mYFocus", mYFocus, y);
 				anSet.playTogether(objAnScale, objAnX, objAnY);
 				anSet.setDuration(1000);
 				anSet.start();
@@ -709,8 +713,8 @@ public class IPMapView extends View {
 			}
 			float scale = mScaleFactor * detector.getScaleFactor();
 			// Don't let the object get too small or too large.
-			scale = Math.max(mMinScaleFactor /1.5f,
-				Math.min(scale, mMaxScaleFactor));
+			scale = Math.max(mMinScaleFactor / 1.5f,
+					Math.min(scale, mMaxScaleFactor));
 			setScaleFactor(scale);
 			mXFocus = -mXScaleFocus + detector.getFocusX() / mScaleFactor;
 			mYFocus = -mYScaleFocus + detector.getFocusY() / mScaleFactor;

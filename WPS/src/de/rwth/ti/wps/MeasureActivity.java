@@ -130,7 +130,7 @@ public class MeasureActivity extends SuperActivity implements
 	public void onStart() {
 		super.onStart();
 		buildingHelper.refresh();
-//		floorHelper.refresh();
+		// floorHelper.refresh();
 		this.registerReceiver(this.wifiReceiver, new IntentFilter(
 				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 		updateComp = new TimerTask() {
@@ -171,40 +171,40 @@ public class MeasureActivity extends SuperActivity implements
 		mapView.nextLine();
 	}
 
-	public void deleteMeasureButton(View view){
+	public void deleteMeasureButton(View view) {
 		MeasurePoint deleteMP = mapView.getMeasurePoint();
-		if(deleteMP != null){
-			if(deleteMP.getId() != -1){
+		if (deleteMP != null) {
+			if (deleteMP.getId() != -1) {
 				getStorage().deleteMeasurePoint(deleteMP);
 				mapView.deleteOldMP(deleteMP);
 			}
 		}
-		
+
 	}
-	
+
 	public void measure(View view) {
 		if (view.getId() == R.id.measure_button) {
 			// check if building/floor is selected
 			if (selectedBuilding == null) {
 				Toast.makeText(this, R.string.error_empty_input,
-						Toast.LENGTH_LONG).show();
+						Toast.LENGTH_SHORT).show();
 				return;
 			}
 			if (selectedFloor == null) {
 				Toast.makeText(this, R.string.error_empty_input,
-						Toast.LENGTH_LONG).show();
+						Toast.LENGTH_SHORT).show();
 				return;
 			}
 			MeasurePoint p = mapView.getMeasurePoint();
 			if (p == null) {
 				Toast.makeText(this, R.string.error_no_measure_point,
-						Toast.LENGTH_LONG).show();
+						Toast.LENGTH_SHORT).show();
 				return;
 			}
 			boolean check = getScanManager().startSingleScan();
 			if (check == false) {
-				Toast.makeText(this, R.string.error_scanning, Toast.LENGTH_LONG)
-						.show();
+				Toast.makeText(this, R.string.error_scanning,
+						Toast.LENGTH_SHORT).show();
 			} else {
 				if (p.getId() == -1) {
 					lastMP = getStorage().createMeasurePoint(selectedFloor,
@@ -244,10 +244,10 @@ public class MeasureActivity extends SuperActivity implements
 				}
 			} else {
 				Toast.makeText(this, R.string.error_no_floor_file,
-						Toast.LENGTH_LONG).show();
+						Toast.LENGTH_SHORT).show();
 			}
 		} else {
-//			mapView.clearMap();
+			// mapView.clearMap();
 		}
 	}
 
@@ -289,7 +289,7 @@ public class MeasureActivity extends SuperActivity implements
 					updateDirectionText();
 				} else {
 					Toast.makeText(MeasureActivity.this, R.string.scan_no_ap,
-							Toast.LENGTH_LONG).show();
+							Toast.LENGTH_SHORT).show();
 				}
 			}
 		}
