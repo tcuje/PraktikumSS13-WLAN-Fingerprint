@@ -42,9 +42,7 @@ public class MainActivity extends SuperActivity implements
 	private ImageButton btCenter;
 	private Button btZoom;
 	private Button forceBuilding;
-	private Button forceFloor;
 	private boolean forceNextBuilding = false;
-	private boolean forceNextFloor = false;
 	private BroadcastReceiver wifiReceiver;
 	private int control;
 	private TextView measureTimeView;
@@ -72,7 +70,6 @@ public class MainActivity extends SuperActivity implements
 		btCenter = (ImageButton) findViewById(R.id.centerButton);
 		btZoom = (Button) findViewById(R.id.zoomButton);
 		forceBuilding = (Button) findViewById(R.id.forceBuilding);
-		forceFloor = (Button) findViewById(R.id.forceFloor);
 		measureTimeView = (TextView) findViewById(R.id.measureTime);
 		errormessageView = (TextView) findViewById(R.id.debugInfo);
 		btZoom.setText("x1.0");
@@ -145,10 +142,6 @@ public class MainActivity extends SuperActivity implements
 							if (forceNextBuilding == true) {
 								control = 1;
 								forceNextBuilding = false;
-								forceNextFloor = false;
-							} else if (forceNextFloor == true) {
-								control = 2;
-								forceNextFloor = false;
 							} else {
 								control = 0;
 							}
@@ -269,11 +262,6 @@ public class MainActivity extends SuperActivity implements
 		}
 	}
 
-	public void forceFloor(View view) {
-		if (view == forceFloor) {
-			forceNextFloor = true;
-		}
-	}
 
 	private class ScaleChangeListener implements
 			IPMapView.OnScaleChangeListener {
