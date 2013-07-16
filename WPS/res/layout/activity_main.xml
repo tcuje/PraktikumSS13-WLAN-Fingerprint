@@ -56,20 +56,13 @@
         android:onClick="zoomPosition" />
     <Button
         android:id="@+id/forceBuilding"
-        android:text="Gebäudewechsel"
+        android:text="Gebäude-/Etagenwechsel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/zoomButton"
+        android:layout_alignParentRight="true"
         android:onClick="forceBuilding" />
-    <Button
-        android:id="@+id/forceFloor"
-        android:text="Etagenwechsel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/forceBuilding"
-        android:onClick="forceFloor" />
+
 
     <TextView
         android:id="@+id/debugInfo"
