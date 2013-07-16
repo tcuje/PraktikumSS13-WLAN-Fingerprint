@@ -548,6 +548,7 @@ public class IPMapView extends View {
 	}
 
 	public void zoomPoint() {
+		if (location != null) {
 		float newScale = ((mMaxScaleFactor - mMinScaleFactor) / 2);
 		float x = -(float) location.getX() + mViewWidth / (2 * newScale);
 		float y = -(float) location.getY() + mViewHeight / (2 * newScale);
@@ -569,6 +570,7 @@ public class IPMapView extends View {
 			mXFocus = x;
 			mYFocus = y;
 			mScaleFactor = newScale;
+		}
 		}
 	}
 
@@ -651,7 +653,8 @@ public class IPMapView extends View {
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
 			float newScale = mScaleFactor * 2.5f;
-			Math.min(newScale, mMaxScaleFactor);
+			newScale = Math.max(mMinScaleFactor / 1.5f,
+					Math.min(newScale, mMaxScaleFactor));
 
 			float x = (e.getX() / mScaleFactor)
 					- (mViewWidth / (2 * mScaleFactor)) + mAccXPoint;
@@ -664,11 +667,11 @@ public class IPMapView extends View {
 			if (currentapiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 				// Do something for HonyComb and above versions
 				AnimatorSet anSet = new AnimatorSet();
-				ObjectAnimator objAnScale = ObjectAnimator.ofFloat(this,
+				ObjectAnimator objAnScale = ObjectAnimator.ofFloat(IPMapView.this,
 						"mScaleFactor", mScaleFactor, newScale);
-				ObjectAnimator objAnX = ObjectAnimator.ofFloat(this, "mXFocus",
+				ObjectAnimator objAnX = ObjectAnimator.ofFloat(IPMapView.this, "mXFocus",
 						mXFocus, x);
-				ObjectAnimator objAnY = ObjectAnimator.ofFloat(this, "mYFocus",
+				ObjectAnimator objAnY = ObjectAnimator.ofFloat(IPMapView.this, "mYFocus",
 						mYFocus, y);
 				anSet.playTogether(objAnScale, objAnX, objAnY);
 				anSet.setDuration(1000);
@@ -706,8 +709,8 @@ public class IPMapView extends View {
 			}
 			float scale = mScaleFactor * detector.getScaleFactor();
 			// Don't let the object get too small or too large.
-			scale = Math.max(mMinScaleFactor / 4,
-					Math.min(scale, mMaxScaleFactor));
+			scale = Math.max(mMinScaleFactor /1.5f,
+				Math.min(scale, mMaxScaleFactor));
 			setScaleFactor(scale);
 			mXFocus = -mXScaleFocus + detector.getFocusX() / mScaleFactor;
 			mYFocus = -mYScaleFocus + detector.getFocusY() / mScaleFactor;
@@ -729,6 +732,12 @@ public class IPMapView extends View {
 
 	public void setOnScaleChangeListener(OnScaleChangeListener listener) {
 		onScaleChangeListener = listener;
+	}
+
+	public void deleteOldMP(MeasurePoint deleteMP) {
+		myOldPointsList.remove(deleteMP);
+		myOldPoints.remove(deleteMP);
+		invalidate();
 	}
 
 }
