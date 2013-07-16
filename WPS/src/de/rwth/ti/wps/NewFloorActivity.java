@@ -188,7 +188,7 @@ public class NewFloorActivity extends SuperActivity implements
 						floorLevelEdit.setText("");
 						floorLevelEdit.requestFocus();
 						floorNameEdit.setText("");
-						northEdit.setText("");
+						northEdit.setText("0");
 						floorFilenameView.setText("");
 						floorLevel = 0;
 						floorName = null;

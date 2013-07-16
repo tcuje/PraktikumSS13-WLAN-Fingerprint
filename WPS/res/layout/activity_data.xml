@@ -76,7 +76,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:onClick="dataDeleteBuilding"
+                    android:onClick="onDeleteButtonClick"
                     android:text="@string/delete" />
             </LinearLayout>
         </LinearLayout>
@@ -148,7 +148,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:onClick="dataDeleteFloor"
+                    android:onClick="onDeleteButtonClick"
                     android:text="@string/delete" />
             </LinearLayout>
         </LinearLayout>
@@ -190,7 +190,7 @@
                 android:layout_height="0dp"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:onClick="dataDeleteFloorMP"
+                android:onClick="onDeleteButtonClick"
                 android:text="@string/delete_measurepoints_on_floor" />
 
             <Button
@@ -198,7 +198,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:onClick="dataDeleteLastMP"
+                android:onClick="onDeleteButtonClick"
                 android:text="@string/delete_last_measurepoint" />
 
             <Button
@@ -206,7 +206,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:onClick="dataDeleteAllMP"
+                android:onClick="onDeleteButtonClick"
                 android:text="@string/delete_all" />
         </LinearLayout>
 
@@ -235,7 +235,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:onClick="dataDeleteLastScan"
+                android:onClick="onDeleteButtonClick"
                 android:text="@string/delete_last_scan" />
 
             <Button
@@ -243,7 +243,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:onClick="dataDeleteAllScan"
+                android:onClick="onDeleteButtonClick"
                 android:text="@string/delete_all" />
         </LinearLayout>
     </LinearLayout>
