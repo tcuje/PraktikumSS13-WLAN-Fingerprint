@@ -189,6 +189,17 @@ public class MeasureActivity extends SuperActivity implements
 		mapView.nextLine();
 	}
 
+	public void deleteMeasureButton(View view){
+		MeasurePoint deleteMP = mapView.getMeasurePoint();
+		if(deleteMP != null){
+			if(deleteMP.getId() != -1){
+				getStorage().deleteMeasurePoint(deleteMP);
+				mapView.deleteOldMP(deleteMP);
+			}
+		}
+		
+	}
+	
 	public void measure(View view) {
 		if (view.getId() == R.id.measure_button) {
 			// check if building/floor is selected

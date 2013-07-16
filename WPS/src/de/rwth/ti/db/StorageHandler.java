@@ -21,7 +21,7 @@ import de.rwth.ti.share.IMeasureDataHandler;
 public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 
 	private Storage storage;
-	private SQLiteDatabase db;
+	private static SQLiteDatabase db;
 
 	public StorageHandler(Context context, String dbName) {
 		this.storage = new Storage(context, dbName);
@@ -45,9 +45,7 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 	}
 
 	public void onStop() {
-		if (db != null && db.isOpen() == true) {
-			db.close();
-		}
+		
 	}
 
 	@Override

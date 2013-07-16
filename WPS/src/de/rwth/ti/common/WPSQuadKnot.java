@@ -26,6 +26,7 @@ public class WPSQuadKnot {
 			tr = new WPSQuadKnot((xMax+xMin)/2, xMax, yMin, (yMin+yMax)/2);
 			bl = new WPSQuadKnot(xMin, (xMax+xMin)/2, (yMin+yMax)/2, yMax);
 			br = new WPSQuadKnot((xMax+xMin)/2, xMax, (yMin+yMax)/2, yMax);
+			if(value != null){
 			if(value.getPosx()>(xMax+xMin)/2){
 				if(value.getPosy()>(yMax+yMin)/2){
 					br.addMPoint(value);
@@ -38,6 +39,7 @@ public class WPSQuadKnot {
 				}else{
 					tl.addMPoint(value);
 				}
+			}
 			}
 			value = null;
 			if(mp.getPosx()>(xMax+xMin)/2){
@@ -57,18 +59,19 @@ public class WPSQuadKnot {
 	}
 	
 	public WPSQuadKnot getKnot(float x,float y){
-		if(x>(xMax+xMin)/2){
-			if(y>(yMax+yMin)/2){
+		if(x>((xMax+xMin)/2)){
+			if(y>((yMax+yMin)/2)){
 				return br;
 			}else{
 				return tr;
 			}
 		}else{
-			if(y>(yMax+yMin)/2){
+			if(y > ((yMax+yMin)/2)){
 				return bl;
 			}else{
 				return tl;
 			}
 		}
 	}
+
 }
