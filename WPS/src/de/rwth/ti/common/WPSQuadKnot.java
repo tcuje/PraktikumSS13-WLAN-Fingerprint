@@ -3,11 +3,12 @@ package de.rwth.ti.common;
 import de.rwth.ti.db.MeasurePoint;
 
 public class WPSQuadKnot {
-	MeasurePoint value = null;
-	WPSQuadKnot tl,tr,bl,br;
-	float xMin,xMax,yMin,yMax;
-	
-	public WPSQuadKnot(float xMi, float xMa,float yMi, float yMa) {
+
+	private MeasurePoint value = null;
+	private WPSQuadKnot tl, tr, bl, br;
+	private float xMin, xMax, yMin, yMax;
+
+	public WPSQuadKnot(float xMi, float xMa, float yMi, float yMa) {
 		xMin = xMi;
 		xMax = xMa;
 		yMin = yMi;
@@ -17,9 +18,17 @@ public class WPSQuadKnot {
 		bl = null;
 		br = null;
 	}
+
+	public MeasurePoint getValue(){
+		return value;
+	}
 	
-	public void addMPoint(MeasurePoint mp){
-		if(tl==null && value == null){
+	public void setValue(MeasurePoint mp){
+		value = mp;
+	}
+	
+	public void addMPoint(MeasurePoint mp) {
+		if (tl == null && value == null) {
 			value = mp;
 		}else{
 			tl = new WPSQuadKnot(xMin, (xMax+xMin)/2, yMin, (yMin+yMax)/2);
@@ -33,25 +42,19 @@ public class WPSQuadKnot {
 				}else{
 					tr.addMPoint(value);
 				}
-			}else{
-				if(value.getPosy()>(yMax+yMin)/2){
-					bl.addMPoint(value);
-				}else{
-					tl.addMPoint(value);
-				}
 			}
 			}
 			value = null;
-			if(mp.getPosx()>(xMax+xMin)/2){
-				if(mp.getPosy()>(yMax+yMin)/2){
+			if (mp.getPosx() > (xMax + xMin) / 2) {
+				if (mp.getPosy() > (yMax + yMin) / 2) {
 					br.addMPoint(mp);
-				}else{
+				} else {
 					tr.addMPoint(mp);
 				}
-			}else{
-				if(mp.getPosy()>(yMax+yMin)/2){
+			} else {
+				if (mp.getPosy() > (yMax + yMin) / 2) {
 					bl.addMPoint(mp);
-				}else{
+				} else {
 					tl.addMPoint(mp);
 				}
 			}
@@ -62,13 +65,13 @@ public class WPSQuadKnot {
 		if(x>((xMax+xMin)/2)){
 			if(y>((yMax+yMin)/2)){
 				return br;
-			}else{
+			} else {
 				return tr;
 			}
 		}else{
 			if(y > ((yMax+yMin)/2)){
 				return bl;
-			}else{
+			} else {
 				return tl;
 			}
 		}

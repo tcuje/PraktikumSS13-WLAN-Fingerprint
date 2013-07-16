@@ -4,11 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.List;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
@@ -44,8 +41,9 @@ public class MainActivity extends SuperActivity implements
 	private IPMapView viewMap;
 	private ImageButton btCenter;
 	private Button btZoom;
+	private Button forceBuilding;
+	private boolean forceNextBuilding = false;
 	private BroadcastReceiver wifiReceiver;
-	private ProgressDialog waitDialog;
 	private int control;
 	private TextView measureTimeView;
 	private TextView errormessageView;
@@ -71,6 +69,7 @@ public class MainActivity extends SuperActivity implements
 		viewMap.setOnScaleChangeListener(new ScaleChangeListener());
 		btCenter = (ImageButton) findViewById(R.id.centerButton);
 		btZoom = (Button) findViewById(R.id.zoomButton);
+		forceBuilding = (Button) findViewById(R.id.forceBuilding);
 		measureTimeView = (TextView) findViewById(R.id.measureTime);
 		errormessageView = (TextView) findViewById(R.id.debugInfo);
 		btZoom.setText("x1.0");
@@ -83,55 +82,20 @@ public class MainActivity extends SuperActivity implements
 	@Override
 	public void onStart() {
 		super.onStart();
+		checkLoc.setChecked(true);
 		if (checkLoc.isChecked() == true) {
 			getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
 			getWindow()
 					.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			this.registerReceiver(wifiReceiver, new IntentFilter(
+					WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 		}
-		// start async task to validate the database
-		waitDialog = ProgressDialog.show(this, "",
-				getString(R.string.please_wait));
-		waitDialog.setCancelable(false);
-		AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-		builder.setMessage(R.string.error_db_failure);
-		builder.setCancelable(false);
-		builder.setPositiveButton(R.string.ok,
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						finish();
-					}
-				});
-		final AlertDialog alert = builder.create();
-		Thread t = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				final boolean dbCheck = getStorage().onStart();
-				runOnUiThread(new Runnable() {
-					public void run() {
-						if (waitDialog != null) {
-							waitDialog.dismiss();
-							waitDialog = null;
-						}
-						if (dbCheck == false) {
-							alert.show();
-						} else {
-							MainActivity.this
-									.registerReceiver(
-											wifiReceiver,
-											new IntentFilter(
-													WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-						}
-					}
-				});
-			}
-		});
-		t.start();
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
 	@Override
 	public void onStop() {
+		checkLoc.setChecked(false);
 		super.onStop();
 		getScanManager().stopAutoScan();
 		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -140,7 +104,6 @@ public class MainActivity extends SuperActivity implements
 		} catch (IllegalArgumentException ex) {
 			// just ignore it
 		}
-		getStorage().onStop();
 	}
 
 	@Override
@@ -176,6 +139,12 @@ public class MainActivity extends SuperActivity implements
 					Thread t = new Thread(new Runnable() {
 						@Override
 						public void run() {
+							if (forceNextBuilding == true) {
+								control = 1;
+								forceNextBuilding = false;
+							} else {
+								control = 0;
+							}
 							final long start = System.currentTimeMillis();
 							final LocationResult myLocRes = myLoc.getLocation(
 									results, direction, control);
@@ -184,7 +153,8 @@ public class MainActivity extends SuperActivity implements
 							runOnUiThread(new Runnable() {
 								@Override
 								public void run() {
-									String measureTime = "Loc: "
+									String measureTime = "APs: "
+											+ results.size() + "\nLocTime: "
 											+ (stop - start) + "ms";
 									int errorCode = myLocRes.getError();
 									if (errorCode != 0) {
@@ -285,6 +255,13 @@ public class MainActivity extends SuperActivity implements
 			viewMap.zoomPoint();
 		}
 	}
+
+	public void forceBuilding(View view) {
+		if (view == forceBuilding) {
+			forceNextBuilding = true;
+		}
+	}
+
 
 	private class ScaleChangeListener implements
 			IPMapView.OnScaleChangeListener {

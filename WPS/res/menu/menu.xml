@@ -7,8 +7,7 @@
         <menu>
             <item
                 android:id="@+id/action_localisation"
-                android:title="@string/action_localisation"
-                android:visible="true"/>
+                android:title="@string/action_localisation"/>
             <item
                 android:id="@+id/action_measure"
                 android:title="@string/action_measure"/>

@@ -31,6 +31,7 @@ public class DatabaseTransformer {
 	public static void exportDatabase(final Activity parentActivity) {
 		final EditText input = new EditText(parentActivity);
 		input.setText(Constants.EXPORT_DEFAULT_DB_NAME);
+		input.setSingleLine();
 		input.requestFocus();
 		new AlertDialog.Builder(parentActivity)
 				.setTitle(R.string.database_export_question)
@@ -357,7 +358,7 @@ public class DatabaseTransformer {
 										}
 									}
 								}
-								temp.onStop();
+								temp.onDestroy();
 								return true;
 							}
 
