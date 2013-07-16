@@ -667,11 +667,11 @@ public class IPMapView extends View {
 			if (currentapiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 				// Do something for HonyComb and above versions
 				AnimatorSet anSet = new AnimatorSet();
-				ObjectAnimator objAnScale = ObjectAnimator.ofFloat(this,
+				ObjectAnimator objAnScale = ObjectAnimator.ofFloat(IPMapView.this,
 						"mScaleFactor", mScaleFactor, newScale);
-				ObjectAnimator objAnX = ObjectAnimator.ofFloat(this, "mXFocus",
+				ObjectAnimator objAnX = ObjectAnimator.ofFloat(IPMapView.this, "mXFocus",
 						mXFocus, x);
-				ObjectAnimator objAnY = ObjectAnimator.ofFloat(this, "mYFocus",
+				ObjectAnimator objAnY = ObjectAnimator.ofFloat(IPMapView.this, "mYFocus",
 						mYFocus, y);
 				anSet.playTogether(objAnScale, objAnX, objAnY);
 				anSet.setDuration(1000);
