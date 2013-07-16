@@ -653,7 +653,7 @@ public class IPMapView extends View {
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
 			float newScale = mScaleFactor * 2.5f;
-			newScale = Math.max(mMinScaleFactor / 4,
+			newScale = Math.max(mMinScaleFactor / 1.5f,
 					Math.min(newScale, mMaxScaleFactor));
 
 			float x = (e.getX() / mScaleFactor)
