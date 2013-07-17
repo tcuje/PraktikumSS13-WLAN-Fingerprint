@@ -186,25 +186,21 @@ public class MeasureActivity extends SuperActivity implements
 		if (view.getId() == R.id.measure_button) {
 			// check if building/floor is selected
 			if (selectedBuilding == null) {
-				Toast.makeText(this, R.string.error_empty_input,
-						Toast.LENGTH_SHORT).show();
+				makeToast(R.string.error_empty_input);
 				return;
 			}
 			if (selectedFloor == null) {
-				Toast.makeText(this, R.string.error_empty_input,
-						Toast.LENGTH_SHORT).show();
+				makeToast(R.string.error_empty_input);
 				return;
 			}
 			MeasurePoint p = mapView.getMeasurePoint();
 			if (p == null) {
-				Toast.makeText(this, R.string.error_no_measure_point,
-						Toast.LENGTH_SHORT).show();
+				makeToast(R.string.error_no_measure_point);
 				return;
 			}
 			boolean check = getScanManager().startSingleScan();
 			if (check == false) {
-				Toast.makeText(this, R.string.error_scanning,
-						Toast.LENGTH_SHORT).show();
+				makeToast(R.string.error_scanning);
 			} else {
 				if (p.getId() == -1) {
 					lastMP = getStorage().createMeasurePoint(selectedFloor,
@@ -243,8 +239,7 @@ public class MeasureActivity extends SuperActivity implements
 					mapView.addOldPoint(mp);
 				}
 			} else {
-				Toast.makeText(this, R.string.error_no_floor_file,
-						Toast.LENGTH_SHORT).show();
+				makeToast(R.string.error_no_floor_file);
 			}
 		} else {
 			// mapView.clearMap();
@@ -282,8 +277,10 @@ public class MeasureActivity extends SuperActivity implements
 					Toast.makeText(MeasureActivity.this, msg,
 							Toast.LENGTH_SHORT).show();
 					// update direction instruction
-					if (direction.ordinal() + 1 > Cardinal.values().length) {
+					if (direction.ordinal() + 1 == Cardinal.values().length) {
 						lastMP = null;
+						mapView.setMMPoint(null);
+						mapView.invalidate();
 					}
 					direction = Cardinal.values()[(direction.ordinal() + 1) % 4];
 					updateDirectionText();
@@ -296,22 +293,28 @@ public class MeasureActivity extends SuperActivity implements
 	}
 
 	private void updateDirectionText() {
+		int directionId = -1;
 		switch (direction) {
 		case NORTH:
-			directionText.setText(R.string.measure_face_north);
+			directionId = R.string.north;
 			break;
 		case EAST:
-			directionText.setText(R.string.measure_face_east);
+			directionId = R.string.east;
 			break;
 		case SOUTH:
-			directionText.setText(R.string.measure_face_south);
+			directionId = R.string.south;
 			break;
 		case WEST:
-			directionText.setText(R.string.measure_face_west);
+			directionId = R.string.west;
 			break;
 		default:
 			break;
 		}
-	}
 
+		if (directionId != -1) {
+			directionText.setText(String.format(
+					getString(R.string.measure_face_direction),
+					getString(directionId)));
+		}
+	}
 }

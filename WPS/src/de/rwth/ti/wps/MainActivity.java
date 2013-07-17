@@ -18,7 +18,6 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.CompassManager;
@@ -58,8 +57,7 @@ public class MainActivity extends SuperActivity implements
 		File sdDir = new File(Constants.SD_APP_DIR);
 		if (sdDir.exists() == false) {
 			if (sdDir.mkdirs() == false) {
-				Toast.makeText(this, R.string.error_sd_dir, Toast.LENGTH_SHORT)
-						.show();
+				makeToast(R.string.error_sd_dir);
 			}
 		}
 		checkLoc = (ToggleButton) findViewById(R.id.toggleLocalization);
@@ -161,10 +159,14 @@ public class MainActivity extends SuperActivity implements
 										String errorMessage = "";
 										switch (errorCode) {
 										case 1:
-											errorMessage = getString(R.string.error_loc_building_not_found);
+											errorMessage = String
+													.format(getString(R.string.error_not_found),
+															getString(R.string.building));
 											break;
 										case 2:
-											errorMessage = getString(R.string.error_loc_floor_not_found);
+											errorMessage = String
+													.format(getString(R.string.error_not_found),
+															getString(R.string.floor));
 											break;
 										case 3:
 											errorMessage = getString(R.string.error_loc_aps_not_found);
@@ -173,7 +175,9 @@ public class MainActivity extends SuperActivity implements
 											errorMessage = getString(R.string.error_loc_empty_map);
 											break;
 										case 5:
-											errorMessage = getString(R.string.error_loc_position_not_found);
+											errorMessage = String
+													.format(getString(R.string.error_not_found),
+															getString(R.string.position));
 											break;
 										default:
 											errorMessage = "Error: "
@@ -205,11 +209,7 @@ public class MainActivity extends SuperActivity implements
 													viewMap.addOldPoint(mp);
 												}
 											} else {
-												Toast.makeText(
-														MainActivity.this,
-														R.string.error_no_floor_file,
-														Toast.LENGTH_SHORT)
-														.show();
+												makeToast(R.string.error_no_floor_file);
 											}
 										}
 										long mStop = System.currentTimeMillis();

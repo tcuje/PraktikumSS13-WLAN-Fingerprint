@@ -170,4 +170,9 @@ public class BuildingSpinnerHelper implements OnItemSelectedListener {
 			tSpinner.setSelection(position);
 		}
 	}
+
+	public void setSelectedPosition(String text) {
+		int position = adapter.getPosition(text);
+		setSelectedPosition(position);
+	}
 }
