@@ -197,11 +197,13 @@ public class MainActivity extends SuperActivity implements
 												viewMap.newMap(bin);
 												List<MeasurePoint> mpl = getStorage()
 														.getMeasurePoints(map);
+												int counter = 0;
 												for (MeasurePoint mp : mpl) {
 													mp.setQuality(QualityCheck
 															.getQuality(
 																	getStorage(),
 																	mp));
+													counter++;
 													viewMap.addOldPoint(mp);
 												}
 											} else {
