@@ -19,16 +19,6 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/toggleLocalization" />
 
-    <!--
-         <CheckBox
-        android:id="@+id/toggleLocalization"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:text="@string/toggle_localisation" />
-    -->
-
     <ToggleButton
         android:id="@+id/toggleLocalization"
         android:layout_width="wrap_content"
@@ -55,16 +45,15 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:onClick="zoomPosition" />
-    
+
     <Button
         android:id="@+id/forceBuilding"
-        android:text="Gebäude-/Etagenwechsel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:onClick="forceBuilding" />
-
+        android:onClick="forceBuilding"
+        android:text="@string/force_building" />
 
     <TextView
         android:id="@+id/debugInfo"
