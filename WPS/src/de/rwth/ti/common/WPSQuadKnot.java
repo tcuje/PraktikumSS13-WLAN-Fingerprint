@@ -27,7 +27,7 @@ public class WPSQuadKnot {
 		value = mp;
 	}
 	
-	public void addMPoint(MeasurePoint mp) {
+	public WPSQuadKnot addMPoint(MeasurePoint mp) {
 		if (tl == null && value == null) {
 			value = mp;
 		}else{
@@ -36,37 +36,40 @@ public class WPSQuadKnot {
 				tr = new WPSQuadKnot((xMax+xMin)/2, xMax, yMin, (yMin+yMax)/2);
 				bl = new WPSQuadKnot(xMin, (xMax+xMin)/2, (yMin+yMax)/2, yMax);
 				br = new WPSQuadKnot((xMax+xMin)/2, xMax, (yMin+yMax)/2, yMax);
-			}
-			if(value != null){
-				if(value.getPosx()>(xMax+xMin)/2){
-					if(value.getPosy()>(yMax+yMin)/2){
-						br.addMPoint(value);
-					}else{
-						tr.addMPoint(value);
-					}
-				} else {
-					if (value.getPosy() > (yMax + yMin) / 2) {
-						bl.addMPoint(value);
+				
+				if(value != null){
+					if(value.getPosx()>(xMax+xMin)/2){
+						if(value.getPosy()>(yMax+yMin)/2){
+							br.setValue(value);
+						}else{
+							tr.setValue(value);
+						}
 					} else {
-						tl.addMPoint(value);
+						if (value.getPosy() > (yMax + yMin) / 2) {
+							bl.setValue(value);
+						} else {
+							tl.setValue(value);
+						}
 					}
 				}
 			}
+			
 			value = null;
 			if (mp.getPosx() > (xMax + xMin) / 2) {
 				if (mp.getPosy() > (yMax + yMin) / 2) {
-					br.addMPoint(mp);
+					return br;
 				} else {
-					tr.addMPoint(mp);
+					return tr;
 				}
 			} else {
 				if (mp.getPosy() > (yMax + yMin) / 2) {
-					bl.addMPoint(mp);
+					return bl;
 				} else {
-					tl.addMPoint(mp);
+					return tl;
 				}
 			}
 		}
+		return null;
 	}
 	
 	public WPSQuadKnot getKnot(float x,float y){
