@@ -15,7 +15,10 @@ public class WPSQuadTree {
 	}
 
 	public void addPoint(MeasurePoint mp) {
-		root.addMPoint(mp);
+		WPSQuadKnot next = root;
+		while (next != null) {
+			next = next.addMPoint(mp);
+		}
 	}
 
 	public MeasurePoint getMPoint(float x, float y) {
