@@ -100,7 +100,7 @@ public class NewFloorActivity extends SuperActivity implements
 			for (Building bi : buildingList) {
 				if (tBuildingName.equals(bi.getName())) {
 					message = getString(R.string.same_name_building);
-					Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+					Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 					e = 1;
 					break;
 				}
@@ -124,7 +124,7 @@ public class NewFloorActivity extends SuperActivity implements
 		}
 		if (message != null) {
 			// User message
-			Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -171,7 +171,7 @@ public class NewFloorActivity extends SuperActivity implements
 					for (Floor fi : floorList) {
 						if (floorName.equals(fi.getName())) {
 							message = getString(R.string.same_name_floor);
-							Toast.makeText(this, message, Toast.LENGTH_LONG)
+							Toast.makeText(this, message, Toast.LENGTH_SHORT)
 									.show();
 							e = 1;
 							break;
@@ -188,7 +188,7 @@ public class NewFloorActivity extends SuperActivity implements
 						floorLevelEdit.setText("");
 						floorLevelEdit.requestFocus();
 						floorNameEdit.setText("");
-						northEdit.setText("");
+						northEdit.setText("0");
 						floorFilenameView.setText("");
 						floorLevel = 0;
 						floorName = null;
@@ -210,7 +210,7 @@ public class NewFloorActivity extends SuperActivity implements
 		}
 		if (message != null) {
 			// User message
-			Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 		}
 	}
 

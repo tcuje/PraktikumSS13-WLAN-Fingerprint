@@ -86,5 +86,8 @@
     <string name="next_line">next line</string>
     <string name="loc_force_change_building">Gebäudewechsel</string>
     <string name="loc_force_change_floor">Etagenwechsel</string>
+    <string name="confirm_delete_question">%1$s wirklich löschen?</string>
+    <string name="confirm">Bestätigen</string>
+    <string name="spinner_empty">- Leer -</string>
 
 </resources>

@@ -355,9 +355,6 @@ public class Location {
 							.abs((int) ((aps.get(k).level) + 100)));
 					errorValue += (double) ((100 + (double) aps.get(k).level) / 100)
 							* levelDifference;
-					if (k == 0) {
-						accuracy = 0;
-					}
 				}
 			}
 			if (errorValue == 0) {

@@ -16,6 +16,8 @@ import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.db.Scan;
 import de.rwth.ti.layouthelper.BuildingSpinnerHelper;
+import de.rwth.ti.layouthelper.ConfirmDialogHelper;
+import de.rwth.ti.layouthelper.ConfirmDialogListener;
 import de.rwth.ti.layouthelper.CustomTabHelper;
 import de.rwth.ti.layouthelper.FloorSpinnerHelper;
 import de.rwth.ti.layouthelper.OnBuildingChangedListener;
@@ -27,7 +29,20 @@ import de.rwth.ti.layouthelper.OnFloorChangedListener;
  * 
  */
 public class DataActivity extends SuperActivity implements
-		OnBuildingChangedListener, OnFloorChangedListener {
+		ConfirmDialogListener, OnBuildingChangedListener,
+		OnFloorChangedListener {
+
+	public enum Action {
+		renameBuilding, deleteBuilding, saveFloor, deleteFloor, deleteFloorMP, deleteLastMP, deleteAllMP, deleteLastScan, deleteAllScan;
+
+		public static Action getFromId(int id) {
+			return Action.values()[id];
+		}
+
+		public int toInt() {
+			return this.ordinal();
+		}
+	};
 
 	private Building selectedBuilding;
 	private Building newBuilding;
@@ -43,6 +58,7 @@ public class DataActivity extends SuperActivity implements
 	private LinearLayout measurePointLayout;
 	private LinearLayout scanLayout;
 
+	private ConfirmDialogHelper dialogHelper;
 	private CustomTabHelper tabHelper;
 	private BuildingSpinnerHelper buildingHelper;
 	private FloorSpinnerHelper floorHelper;
@@ -69,6 +85,8 @@ public class DataActivity extends SuperActivity implements
 		floorLayout = (LinearLayout) findViewById(R.id.dataFloorLayout);
 		measurePointLayout = (LinearLayout) findViewById(R.id.dataMeasurePointLayout);
 		scanLayout = (LinearLayout) findViewById(R.id.dataScanLayout);
+
+		dialogHelper = new ConfirmDialogHelper(this, this);
 
 		tabHelper = CustomTabHelper.createInstance(buildingHeader,
 				buildingLayout);
@@ -153,17 +171,76 @@ public class DataActivity extends SuperActivity implements
 		Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 	}
 
-	public void dataDeleteBuilding(View v) {
-		if (selectedBuilding != null) {
-			if (getStorage().deleteBuilding(selectedBuilding)) {
-				buildingHelper.refresh();
-				buildingEdit.setText("");
-				makeToast(String.format(getString(R.string.success_delete),
-						getString(R.string.building)));
-			} else {
-				makeToast(String.format(getString(R.string.error_delete),
-						getString(R.string.building)));
-			}
+	public void onDeleteButtonClick(View v) {
+		int objectId = -1;
+		int actionId = -1;
+		switch (v.getId()) {
+		case R.id.dataBuildingDeleteButton:
+			objectId = R.string.building;
+			actionId = Action.deleteBuilding.ordinal();
+			break;
+		case R.id.dataFloorDeleteButton:
+			objectId = R.string.floor;
+			actionId = Action.deleteFloor.ordinal();
+			break;
+		case R.id.dataMeasurePointDeleteOnFloorButton:
+			objectId = R.string.measurepoints;
+			actionId = Action.deleteFloorMP.ordinal();
+			break;
+		case R.id.dataMeasurePointDeleteLastButton:
+			objectId = R.string.measurepoint;
+			actionId = Action.deleteLastMP.ordinal();
+			break;
+		case R.id.dataMeasurePointDeleteAllButton:
+			objectId = R.string.measurepoints;
+			actionId = Action.deleteAllMP.ordinal();
+			break;
+		case R.id.dataScanDeleteLastButton:
+			objectId = R.string.scan;
+			actionId = Action.deleteLastScan.ordinal();
+			break;
+		case R.id.dataScanDeleteAllButton:
+			objectId = R.string.scans;
+			actionId = Action.deleteAllScan.ordinal();
+			break;
+		default:
+			break;
+		}
+
+		if (objectId != -1 && actionId != -1) {
+			dialogHelper.createDialog(R.string.action_data, String.format(
+					getString(R.string.confirm_delete_question),
+					getString(objectId)), actionId);
+		}
+	}
+
+	public void confirmed(int id) {
+		Action lastAction = Action.getFromId(id);
+		switch (lastAction) {
+		case deleteBuilding:
+			dataDeleteBuilding();
+			break;
+		case deleteFloor:
+			dataDeleteFloor();
+			break;
+		case deleteFloorMP:
+			dataDeleteFloorMP();
+			break;
+		case deleteLastMP:
+			dataDeleteLastMP();
+			break;
+		case deleteAllMP:
+			dataDeleteAllMP();
+			break;
+		case deleteLastScan:
+			dataDeleteLastScan();
+			break;
+		case deleteAllScan:
+			dataDeleteAllScan();
+			break;
+		default:
+			break;
+
 		}
 	}
 
@@ -187,25 +264,68 @@ public class DataActivity extends SuperActivity implements
 		}
 	}
 
-	public void dataDeleteAllMP(View v) {
-		List<MeasurePoint> mpList = getStorage().getAllMeasurePoints();
-		boolean success = true;
-		for (MeasurePoint MP : mpList) {
-			if (!getStorage().deleteMeasurePoint(MP)) {
-				success = false;
+	public void dataDeleteBuilding() {
+		if (selectedBuilding != null) {
+			if (getStorage().deleteBuilding(selectedBuilding)) {
+				buildingHelper.refresh();
+				buildingEdit.setText("");
+				makeToast(String.format(getString(R.string.success_delete),
+						getString(R.string.building)));
+			} else {
+				makeToast(String.format(getString(R.string.error_delete),
+						getString(R.string.building)));
 			}
-
-		}
-		if (success) {
-			makeToast(String.format(getString(R.string.success_delete),
-					getString(R.string.measurepoints)));
-		} else {
-			makeToast(String.format(getString(R.string.error_delete),
-					getString(R.string.measurepoints)));
 		}
 	}
 
-	public void dataDeleteFloorMP(View v) {
+	public void dataSaveFloor(View v) {
+		String floorName = floorEdit.getText().toString().trim();
+		long floorLevel = Long.valueOf(
+				floorLevelEdit.getText().toString().trim()).longValue();
+		if (floorName.length() >= 3) {
+			if (selectedBuilding != null) {
+				if (selectedFloor != null) {
+					newFloor = new Floor();
+					newFloor.setId(selectedFloor.getId());
+					newFloor.setBId(selectedFloor.getBId());
+					newFloor.setFile(selectedFloor.getFile());
+					newFloor.setLevel(floorLevel);
+					newFloor.setName(floorName);
+					if (getStorage().changeFloor(newFloor)) {
+						buildingHelper.refresh();
+						floorEdit.setText("");
+						makeToast(String.format(
+								getString(R.string.success_save),
+								getString(R.string.floor)));
+					} else {
+						makeToast(String.format(getString(R.string.error_save),
+								getString(R.string.floor)));
+					}
+				}
+			}
+		} else {
+			makeToast(getString(R.string.error_short_name));
+		}
+	}
+
+	public void dataDeleteFloor() {
+		if (selectedBuilding != null) {
+			// FloorList = storage.getFloors(selectedBuilding);
+			if (selectedFloor != null) {
+				if (getStorage().deleteFloor(selectedFloor)) {
+					buildingHelper.refresh();
+					floorEdit.setText("");
+					makeToast(String.format(getString(R.string.success_delete),
+							getString(R.string.floor)));
+				} else {
+					makeToast(String.format(getString(R.string.error_delete),
+							getString(R.string.floor)));
+				}
+			}
+		}
+	}
+
+	public void dataDeleteFloorMP() {
 		if (selectedBuilding != null) {
 			if (selectedFloor != null) {
 				List<MeasurePoint> mpList = getStorage().getMeasurePoints(
@@ -227,7 +347,7 @@ public class DataActivity extends SuperActivity implements
 		}
 	}
 
-	public void dataDeleteLastMP(View v) {
+	public void dataDeleteLastMP() {
 		List<MeasurePoint> mpList = getStorage().getAllMeasurePoints();
 		if (mpList.size() > 0) {
 			MeasurePoint deleteMP = mpList.get(mpList.size() - 1);
@@ -241,66 +361,39 @@ public class DataActivity extends SuperActivity implements
 		}
 	}
 
-	public void dataDeleteFloor(View v) {
-		if (selectedBuilding != null) {
-			// FloorList = storage.getFloors(selectedBuilding);
-			if (selectedFloor != null) {
-				if (getStorage().deleteFloor(selectedFloor)) {
-					buildingHelper.refresh();
-					floorHelper.refresh();
-					floorEdit.setText("");
-					makeToast(String.format(getString(R.string.success_save),
-							getString(R.string.floor)));
-				} else {
-					makeToast(String.format(getString(R.string.error_save),
-							getString(R.string.floor)));
-				}
+	public void dataDeleteAllMP() {
+		List<MeasurePoint> mpList = getStorage().getAllMeasurePoints();
+		boolean success = true;
+		for (MeasurePoint MP : mpList) {
+			if (!getStorage().deleteMeasurePoint(MP)) {
+				success = false;
 			}
-		}
-	}
 
-	public void dataSaveFloor(View v) {
-		String floorName = floorEdit.getText().toString().trim();
-		long floorLevel = Long.valueOf(
-				floorLevelEdit.getText().toString().trim()).longValue();
-		if (floorName.length() >= 3) {
-			if (selectedBuilding != null) {
-				if (selectedFloor != null) {
-					newFloor = new Floor();
-					newFloor.setId(selectedFloor.getId());
-					newFloor.setLevel(floorLevel);
-					newFloor.setName(floorName);
-					if (getStorage().changeFloor(newFloor)) {
-						buildingHelper.refresh();
-						floorHelper.refresh();
-						floorEdit.setText("");
-						makeToast(String.format(
-								getString(R.string.success_save),
-								getString(R.string.floor)));
-					} else {
-						makeToast(String.format(getString(R.string.error_save),
-								getString(R.string.floor)));
-					}
-				}
-			}
-		} else {
-			makeToast(getString(R.string.error_short_name));
 		}
-	}
-
-	public void dataDeleteLastScan(View v) {
-		List<Scan> scanList = getStorage().getAllScans();
-		Scan sc = scanList.get(scanList.size() - 1);
-		if (getStorage().deleteScan(sc)) {
+		if (success) {
 			makeToast(String.format(getString(R.string.success_delete),
-					getString(R.string.scan)));
+					getString(R.string.measurepoints)));
 		} else {
 			makeToast(String.format(getString(R.string.error_delete),
-					getString(R.string.scan)));
+					getString(R.string.measurepoints)));
 		}
 	}
 
-	public void dataDeleteAllScan(View v) {
+	public void dataDeleteLastScan() {
+		List<Scan> scanList = getStorage().getAllScans();
+		if (scanList.size() > 0) {
+			Scan sc = scanList.get(scanList.size() - 1);
+			if (getStorage().deleteScan(sc)) {
+				makeToast(String.format(getString(R.string.success_delete),
+						getString(R.string.scan)));
+			} else {
+				makeToast(String.format(getString(R.string.error_delete),
+						getString(R.string.scan)));
+			}
+		}
+	}
+
+	public void dataDeleteAllScan() {
 		List<Scan> scanList = getStorage().getAllScans();
 		boolean success = true;
 		for (Scan sc : scanList) {
@@ -310,10 +403,10 @@ public class DataActivity extends SuperActivity implements
 		}
 		if (success) {
 			makeToast(String.format(getString(R.string.success_delete),
-					getString(R.string.scan)));
+					getString(R.string.scans)));
 		} else {
 			makeToast(String.format(getString(R.string.error_delete),
-					getString(R.string.scan)));
+					getString(R.string.scans)));
 		}
 	}
 

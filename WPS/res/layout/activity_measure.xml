@@ -24,6 +24,16 @@
         android:layout_alignParentTop="false"
         android:onClick="measure"
         android:text="@string/text_measure_button" />
+    
+    <Button
+        android:id="@+id/delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="false"
+        android:layout_toLeftOf="@+id/measure_button"
+        android:onClick="deleteMeasureButton"
+        android:text="X" />
 
     <TextView
         android:id="@+id/compass_text"

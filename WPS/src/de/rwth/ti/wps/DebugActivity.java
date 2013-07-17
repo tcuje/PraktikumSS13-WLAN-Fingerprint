@@ -72,14 +72,15 @@ public class DebugActivity extends SuperActivity {
 				sb.append("<br/>Buildings: " + getStorage().countAllBuildings()
 						+ "<br/>");
 				for (Building b : getStorage().getAllBuildings()) {
-					sb.append("Building " + b.getId() + " " + b.getName()
-							+ "<br/>");
+					sb.append("Building " + b.getId() + " \"" + b.getName()
+							+ "\"<br/>");
 				}
 				sb.append("<br/>Floors: " + getStorage().countAllFloors()
 						+ "<br/>");
 				for (Floor m : getStorage().getAllFloors()) {
 					byte[] f = m.getFile();
-					sb.append("Floor " + m.getId() + " " + m.getName() + " "
+					sb.append("Floor " + m.getId() + " " + m.getBId() + " \""
+							+ m.getName() + "\" " + m.getLevel() + " "
 							+ (f != null && f.length != 0) + "<br/>");
 				}
 				sb.append("<br/>MeasurePoints: "
