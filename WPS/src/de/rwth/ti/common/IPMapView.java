@@ -205,10 +205,10 @@ public class IPMapView extends View {
 		}
 		// draw active measure point
 		if (mMeasureMode == true && mMPoint != null) {
-			if(mMPoint.getId()==-1){
-			   mPaint.setColor(android.graphics.Color.GREEN);
-			}else{
-			   mPaint.setColor(android.graphics.Color.RED);
+			if (mMPoint.getId() == -1) {
+				mPaint.setColor(android.graphics.Color.GREEN);
+			} else {
+				mPaint.setColor(android.graphics.Color.RED);
 			}
 			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 			canvas.drawCircle((float) mMPoint.getPosx(),
@@ -536,10 +536,10 @@ public class IPMapView extends View {
 			if (currentapiVersion >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 				// Do something for HonyComb and above versions
 				AnimatorSet anSet = new AnimatorSet();
-				ObjectAnimator objAnX = ObjectAnimator.ofFloat(this, "mXFocus",
-						mXFocus, x);
-				ObjectAnimator objAnY = ObjectAnimator.ofFloat(this, "mYFocus",
-						mYFocus, y);
+				ObjectAnimator objAnX = ObjectAnimator.ofFloat(IPMapView.this,
+						"mXFocus", mXFocus, x);
+				ObjectAnimator objAnY = ObjectAnimator.ofFloat(IPMapView.this,
+						"mYFocus", mYFocus, y);
 				anSet.playTogether(objAnX, objAnY);
 				anSet.setDuration(1000);
 				anSet.start();

@@ -42,7 +42,7 @@ public class MainActivity extends SuperActivity implements
 	private ImageButton btCenter;
 	private Button btZoom;
 	private Button forceBuilding;
-	private boolean forceNextBuilding = false;
+	private boolean forceNextBuilding;
 	private BroadcastReceiver wifiReceiver;
 	private int control;
 	private TextView measureTimeView;
