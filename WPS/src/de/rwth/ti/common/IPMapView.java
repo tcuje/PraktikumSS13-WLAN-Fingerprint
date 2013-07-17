@@ -55,6 +55,7 @@ public class IPMapView extends View {
 	private Paint mPaint;
 	private Rect mRect;
 	private OnScaleChangeListener onScaleChangeListener;
+	private List<PointF> lineList;
 
 	public IPMapView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -69,6 +70,8 @@ public class IPMapView extends View {
 		mPaint.setAntiAlias(true);
 		mPaint.setStrokeWidth(0.432f);
 		mRect = new Rect();
+		//TODO delet
+		lineList = new LinkedList<PointF>();
 	}
 
 	public void setMScaleFactor(float factor) {
@@ -210,6 +213,23 @@ public class IPMapView extends View {
 			canvas.drawCircle((float) mMPoint.getPosx(),
 					(float) mMPoint.getPosy(), 0.5f * mapFactor, mPaint);
 		}
+		//TODO delet
+		// draw lines quadtree
+				if (lineList != null) {
+					mPaint.setColor(android.graphics.Color.MAGENTA);
+					PointF point1 = new PointF();
+					boolean test1 = false; 
+					for (PointF aPoint : lineList) {
+						if(test1 == true){
+						   canvas.drawLine(point1.x,point1.y , aPoint.x, aPoint.y, mPaint);
+						   test1 = false;
+						}else{
+							point1.x = aPoint.x;
+							point1.y = aPoint.y;
+							test1 = true;
+						}
+					}
+				}
 		// restore it
 		canvas.restore();
 	}
@@ -230,6 +250,8 @@ public class IPMapView extends View {
 		mMPoint = null;
 		mHeight = 0;
 		mWidth = 0;
+		
+		lineList.clear();
 	}
 
 	public void newMap(InputStream inputStream) {
@@ -506,11 +528,12 @@ public class IPMapView extends View {
 			}
 		}
 		System.out.println("End document");
-		myOldPoints = new WPSQuadTree(mWidth, mHeight);
+		myOldPoints = new WPSQuadTree(mWidth, mHeight,this);
 		invalidate();
 	}
 
 	public void addOldPoint(MeasurePoint punkt) {
+		System.out.println("neuer mp");
 		myOldPoints.addPoint(punkt);
 		myOldPointsList.add(punkt);
 	}
@@ -737,6 +760,12 @@ public class IPMapView extends View {
 	public void deleteOldMP(MeasurePoint deleteMP) {
 		myOldPointsList.remove(deleteMP);
 		myOldPoints.remove(deleteMP);
+		invalidate();
+	}
+
+	public void drawLine(PointF pointF, PointF pointF2) {
+		lineList.add(pointF);
+		lineList.add(pointF2);
 		invalidate();
 	}
 
