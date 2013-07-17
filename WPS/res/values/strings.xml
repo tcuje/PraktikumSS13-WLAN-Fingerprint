@@ -57,7 +57,7 @@
     <string name="file_not_exist">Die Datei existiert nicht</string>
     <string name="floors">Stockwerke</string>
     <string name="new_name">Neuer Name</string>
-    <string name="rename">Umbennen</string>
+    <string name="rename">Umbenennen</string>
     <string name="delete">Löschen</string>
     <string name="save">Speichern</string>
     <string name="measurepoints">Messpunkte</string>

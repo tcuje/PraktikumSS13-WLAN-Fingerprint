@@ -82,7 +82,7 @@ public class MainActivity extends SuperActivity implements
 	@Override
 	public void onStart() {
 		super.onStart();
-		checkLoc.setChecked(true);
+		checkLoc.setChecked(false);
 		if (checkLoc.isChecked() == true) {
 			getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
 			getWindow()

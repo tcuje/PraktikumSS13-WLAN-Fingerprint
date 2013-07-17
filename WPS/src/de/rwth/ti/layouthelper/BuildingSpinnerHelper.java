@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.StorageHandler;
@@ -21,7 +20,8 @@ public class BuildingSpinnerHelper implements OnItemSelectedListener {
 	private StorageHandler storage;
 	private List<Spinner> spinnerList;
 	private List<Building> buildingList;
-	private ArrayAdapter<String> adapter;
+	// private ArrayAdapter<String> adapter;
+	private SpinnerAdapter adapter;
 	private Building selectedBuilding;
 
 	private BuildingSpinnerHelper(Activity activity, StorageHandler storage,
@@ -31,8 +31,14 @@ public class BuildingSpinnerHelper implements OnItemSelectedListener {
 		spinnerList = spinner;
 		listenerList = new ArrayList<OnBuildingChangedListener>();
 
-		adapter = new ArrayAdapter<String>(activity, R.layout.spinner_item,
+		// adapter = new ArrayAdapter<String>(activity, R.layout.spinner_item,
+		// R.id.spinner_item_text);
+
+		// adapter = new ArrayAdapter<String>(activity,
+		adapter = new SpinnerAdapter(activity, R.layout.spinner_item,
 				R.id.spinner_item_text);
+		// adapter.setDropDownViewResource(R.layout.spinner_item_dropdown_test);
+		adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 		for (Spinner tSpinner : spinnerList) {
 			tSpinner.setAdapter(adapter);
 			tSpinner.setOnItemSelectedListener(this);
