@@ -205,7 +205,11 @@ public class IPMapView extends View {
 		}
 		// draw active measure point
 		if (mMeasureMode == true && mMPoint != null) {
-			mPaint.setColor(android.graphics.Color.GREEN);
+			if(mMPoint.getId()==-1){
+			   mPaint.setColor(android.graphics.Color.GREEN);
+			}else{
+			   mPaint.setColor(android.graphics.Color.RED);
+			}
 			mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 			canvas.drawCircle((float) mMPoint.getPosx(),
 					(float) mMPoint.getPosy(), 0.5f * mapFactor, mPaint);
