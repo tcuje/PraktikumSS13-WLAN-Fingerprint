@@ -7,11 +7,13 @@ public class WPSQuadTree {
 //	private float xMax;
 //	private float yMax;
 	private WPSQuadKnot root = null;
+	private IPMapView mapView;
 
-	public WPSQuadTree(float x, float y) {
+	public WPSQuadTree(float x, float y, IPMapView mView) {
 //		xMax = x;
 //		yMax = y;
-		root = new WPSQuadKnot(0, x, 0, y);
+		mapView = mView;
+		root = new WPSQuadKnot(0, x, 0, y, mapView);
 	}
 
 	public void addPoint(MeasurePoint mp) {
