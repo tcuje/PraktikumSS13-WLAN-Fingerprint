@@ -51,7 +51,7 @@ public class IPMapView extends View {
 	private List<Path> myPaths;
 	private List<Path> myFillPaths;
 	private List<MeasurePoint> myOldPointsList;
-	private WPSQuadTree myOldPoints;
+//	private List<MeasurePoint> myOldPoints;
 	private Paint mPaint;
 	private Rect mRect;
 	private OnScaleChangeListener onScaleChangeListener;
@@ -61,7 +61,7 @@ public class IPMapView extends View {
 		myPaths = new LinkedList<Path>();
 		myFillPaths = new LinkedList<Path>();
 		myOldPointsList = new LinkedList<MeasurePoint>();
-		myOldPoints = null;
+//		myOldPoints = null;
 		mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
 		mGestureDetector = new GestureDetector(context, new MyGestureListener());
 		mPaint = new Paint();
@@ -221,7 +221,7 @@ public class IPMapView extends View {
 	public void clearMap() {
 		myPaths.clear();
 		myFillPaths.clear();
-		myOldPoints = null;
+//		myOldPoints = null;
 		myOldPointsList.clear();
 		setScaleFactor(1.0f);
 		mXFocus = 0;
@@ -510,12 +510,12 @@ public class IPMapView extends View {
 			}
 		}
 		System.out.println("End document");
-		myOldPoints = new WPSQuadTree(mWidth, mHeight);
+//		myOldPoints = new WPSQuadTree(mWidth, mHeight);
 		invalidate();
 	}
 
 	public void addOldPoint(MeasurePoint punkt) {
-		myOldPoints.addPoint(punkt);
+//		myOldPoints.addPoint(punkt);
 		myOldPointsList.add(punkt);
 	}
 
@@ -611,21 +611,21 @@ public class IPMapView extends View {
 	}
 
 	protected void setMeasurePoint(float x, float y) {
-		if (myOldPoints != null) {
-			mMPoint = myOldPoints.getMPoint(x, y);
-			if (mMPoint == null) {
-				mMPoint = new MeasurePoint();
-				mMPoint.setPosx(x);
-				mMPoint.setPosy(y);
-				mMPoint.setId(-1);
-			} else if (Math.abs(mMPoint.getPosx() - x) > mapFactor
-					|| Math.abs(mMPoint.getPosy() - y) > mapFactor) {
-				mMPoint = new MeasurePoint();
-				mMPoint.setPosx(x);
-				mMPoint.setPosy(y);
-				mMPoint.setId(-1);
-			}
-		}
+//		if (myOldPoints != null) {
+//			mMPoint = myOldPoints.getMPoint(x, y);
+//			if (mMPoint == null) {
+		mMPoint = new MeasurePoint();
+		mMPoint.setPosx(x);
+		mMPoint.setPosy(y);
+		mMPoint.setId(-1);
+//			} else if (Math.abs(mMPoint.getPosx() - x) > mapFactor
+//					|| Math.abs(mMPoint.getPosy() - y) > mapFactor) {
+//				mMPoint = new MeasurePoint();
+//				mMPoint.setPosx(x);
+//				mMPoint.setPosy(y);
+//				mMPoint.setId(-1);
+//			}
+//		}
 	}
 
 	protected void setMeasurePointTouch(float x, float y) {
@@ -744,7 +744,7 @@ public class IPMapView extends View {
 
 	public void deleteOldMP(MeasurePoint deleteMP) {
 		myOldPointsList.remove(deleteMP);
-		myOldPoints.remove(deleteMP);
+//		myOldPoints.remove(deleteMP);
 		invalidate();
 	}
 

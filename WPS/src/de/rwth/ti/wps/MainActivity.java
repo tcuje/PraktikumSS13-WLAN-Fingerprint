@@ -11,15 +11,14 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.CompassManager;
 import de.rwth.ti.common.Constants;
@@ -28,26 +27,24 @@ import de.rwth.ti.common.QualityCheck;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
 import de.rwth.ti.loc.Location;
+import de.rwth.ti.loc.Location.CONTROL_STATE;
 import de.rwth.ti.loc.LocationResult;
 
 /**
  * This is the main activity class
  * 
  */
-public class MainActivity extends SuperActivity implements
-		OnCheckedChangeListener {
+public class MainActivity extends SuperActivity {
 
-	private ToggleButton checkLoc;
 	private IPMapView viewMap;
 	private ImageButton btCenter;
 	private Button btZoom;
-	private Button forceBuilding;
-	private boolean forceNextBuilding;
 	private BroadcastReceiver wifiReceiver;
-	private int control;
+	private Location.CONTROL_STATE control;
 	private TextView measureTimeView;
-	private TextView errormessageView;
+	private TextView locInfoView;
 	private Location myLoc;
+	private boolean locEnabled;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -62,43 +59,34 @@ public class MainActivity extends SuperActivity implements
 						.show();
 			}
 		}
-		checkLoc = (ToggleButton) findViewById(R.id.toggleLocalization);
-		checkLoc.setOnCheckedChangeListener(this);
 		viewMap = (IPMapView) findViewById(R.id.viewMap);
 		viewMap.setMeasureMode(false);
 		viewMap.setOnScaleChangeListener(new ScaleChangeListener());
 		btCenter = (ImageButton) findViewById(R.id.centerButton);
 		btZoom = (Button) findViewById(R.id.zoomButton);
-		forceBuilding = (Button) findViewById(R.id.forceBuilding);
 		measureTimeView = (TextView) findViewById(R.id.measureTime);
-		errormessageView = (TextView) findViewById(R.id.debugInfo);
+		locInfoView = (TextView) findViewById(R.id.locInfo);
 		btZoom.setText("x1.0");
 		wifiReceiver = new MyReceiver();
-		control = 0;
+		control = CONTROL_STATE.NONE;
 		myLoc = new Location(getStorage());
+		locEnabled = false;
 	}
 
 	/** Called when the activity is first created or restarted */
 	@Override
 	public void onStart() {
 		super.onStart();
-		checkLoc.setChecked(true);
-		if (checkLoc.isChecked() == true) {
-			getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
-			getWindow()
-					.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-			this.registerReceiver(wifiReceiver, new IntentFilter(
-					WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-		}
+		enableLocalisation();
+		this.registerReceiver(wifiReceiver, new IntentFilter(
+				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 	}
 
 	/** Called when the activity is finishing or being destroyed by the system */
 	@Override
 	public void onStop() {
-		checkLoc.setChecked(false);
 		super.onStop();
-		getScanManager().stopAutoScan();
-		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		disableLocalisation();
 		try {
 			this.unregisterReceiver(wifiReceiver);
 		} catch (IllegalArgumentException ex) {
@@ -107,20 +95,20 @@ public class MainActivity extends SuperActivity implements
 	}
 
 	@Override
-	public void onCheckedChanged(CompoundButton view, boolean state) {
-		if (view == checkLoc) {
-			if (state == true) {
-				getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
-				getWindow().addFlags(
-						WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-			} else {
-				getScanManager().stopAutoScan();
-				getWindow().clearFlags(
-						WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-			}
-			// research for building and floor
-			control = 1;
-		}
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+		MenuItem locToggle = menu.findItem(R.id.menu_toggle_localisation);
+		locToggle.setChecked(locEnabled);
+		MenuItem showDebug = menu.findItem(R.id.menu_toggle_show_debug);
+		showDebug.setChecked(measureTimeView.getVisibility() == View.VISIBLE);
+		return true;
 	}
 
 	private class MyReceiver extends BroadcastReceiver {
@@ -131,7 +119,7 @@ public class MainActivity extends SuperActivity implements
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (checkLoc != null && checkLoc.isChecked() == true) {
+			if (locEnabled == true) {
 				try {
 					final List<ScanResult> results = wifi.getScanResults();
 					final Cardinal direction = Cardinal.getFromAzimuth(comp
@@ -139,16 +127,10 @@ public class MainActivity extends SuperActivity implements
 					Thread t = new Thread(new Runnable() {
 						@Override
 						public void run() {
-							if (forceNextBuilding == true) {
-								control = 1;
-								forceNextBuilding = false;
-							} else {
-								control = 0;
-							}
 							final long start = System.currentTimeMillis();
 							final LocationResult myLocRes = myLoc.getLocation(
 									results, direction, control);
-							control = 0;
+							control = CONTROL_STATE.NONE;
 							final long stop = System.currentTimeMillis();
 							runOnUiThread(new Runnable() {
 								@Override
@@ -180,7 +162,7 @@ public class MainActivity extends SuperActivity implements
 													+ errorCode;
 											break;
 										}
-										errormessageView.setText(errorMessage);
+										locInfoView.setText(errorMessage);
 									} else {
 										Floor map = myLocRes.getFloor();
 										long mStart = System
@@ -225,11 +207,10 @@ public class MainActivity extends SuperActivity implements
 										measureTime += "\nMap: "
 												+ (mStop - mStart) + "ms";
 										String locationInfo = myLocRes
-												.getFloor().getName()
-												+ " in "
-												+ myLocRes.getBuilding()
-														.getName();
-										errormessageView.setText(locationInfo);
+												.getBuilding().getName()
+												+ " - "
+												+ myLocRes.getFloor().getName();
+										locInfoView.setText(locationInfo);
 									}
 									measureTimeView.setText(measureTime);
 								}
@@ -238,7 +219,7 @@ public class MainActivity extends SuperActivity implements
 					});
 					t.start();
 				} catch (Exception ex) {
-					errormessageView.setText(ex.toString());
+					locInfoView.setText(ex.toString());
 				}
 			}
 		}
@@ -253,12 +234,6 @@ public class MainActivity extends SuperActivity implements
 	public void zoomPosition(View view) {
 		if (view == btZoom) {
 			viewMap.zoomPoint();
-		}
-	}
-
-	public void forceBuilding(View view) {
-		if (view == forceBuilding) {
-			forceNextBuilding = true;
 		}
 	}
 
@@ -289,6 +264,48 @@ public class MainActivity extends SuperActivity implements
 			});
 		}
 
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		boolean result = super.onOptionsItemSelected(item);
+		switch (item.getItemId()) {
+		case R.id.menu_toggle_localisation:
+			if (item.isChecked() == false) {
+				enableLocalisation();
+				item.setChecked(true);
+			} else {
+				disableLocalisation();
+				item.setChecked(false);
+			}
+			break;
+		case R.id.menu_toggle_show_debug:
+			if (item.isChecked() == false) {
+				measureTimeView.setVisibility(View.VISIBLE);
+				item.setChecked(true);
+			} else {
+				measureTimeView.setVisibility(View.GONE);
+				item.setChecked(false);
+			}
+			break;
+		case R.id.menu_force_change_building:
+			control = CONTROL_STATE.FORCE_CHECK_BUILDING;
+			break;
+		}
+		return result;
+	}
+
+	private void enableLocalisation() {
+		getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		locEnabled = true;
+		locInfoView.setText(R.string.loc_started);
+	}
+
+	private void disableLocalisation() {
+		getScanManager().stopAutoScan();
+		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		locEnabled = false;
 	}
 
 }

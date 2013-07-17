@@ -18,6 +18,10 @@ import de.rwth.ti.share.IMeasureDataHandler;
 
 public class Location {
 
+	public enum CONTROL_STATE {
+		NONE, FORCE_CHECK_BUILDING, FORCE_CHECK_FLOOR
+	}
+
 	private static IMeasureDataHandler dataHandler;
 	private static long timeSinceFloor = 0;
 	private static long timeSinceBuilding = 0;
@@ -39,12 +43,10 @@ public class Location {
 	 * @param aps
 	 * @param compass
 	 * @param kontrollvariable
-	 *            0,1,2 steuert das Verhalten der Funktion 0 ueberlaesst den
-	 *            Ablauf den Zeitvariablen
 	 * @return
 	 */
 	public LocationResult getLocation(List<ScanResult> aps, Cardinal direction,
-			int kontrollvariable) {
+			CONTROL_STATE kontrollvariable) {
 		if (aps.size() == 0) {
 			LocationResult returnResult = new LocationResult(null, null, 0, 0,
 					0);
@@ -54,7 +56,8 @@ public class Location {
 		theTime = Calendar.getInstance().getTimeInMillis();
 		aps = deleteDoubles(aps);
 		aps = DataHelper.sortScanResults(aps);
-		if (theTime > timeSinceBuilding + 40000 || kontrollvariable == 1) {
+		if (theTime > timeSinceBuilding + 40000
+				|| kontrollvariable == CONTROL_STATE.FORCE_CHECK_BUILDING) {
 			Building lastBuilding = tempBuilding;
 			Floor lastFloor = tempFloor;
 			tempBuilding = findBuilding(aps);
@@ -84,7 +87,8 @@ public class Location {
 				return returnResult;
 			}
 
-		} else if (theTime > timeSinceFloor + 10000 || kontrollvariable == 2) {
+		} else if (theTime > timeSinceFloor + 10000
+				|| kontrollvariable == CONTROL_STATE.FORCE_CHECK_FLOOR) {
 			Floor lastFloor = tempFloor;
 			tempFloor = findFloor(aps, tempBuilding);
 			if (tempFloor != null) {

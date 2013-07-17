@@ -13,27 +13,17 @@
         android:layout_alignParentTop="true" />
 
     <TextView
-        android:id="@+id/measureTime"
-        android:layout_width="wrap_content"
+        android:id="@+id/locInfo"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/toggleLocalization" />
-
-    <ToggleButton
-        android:id="@+id/toggleLocalization"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:checked="true"
-        android:text="@string/toggle_localisation" />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <ImageButton
         android:id="@+id/centerButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
         android:contentDescription="@+string/button_center"
         android:onClick="centerPosition"
         android:src="@android:drawable/ic_menu_mylocation" />
@@ -43,23 +33,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/centerButton"
         android:onClick="zoomPosition" />
 
-    <Button
-        android:id="@+id/forceBuilding"
+    <TextView
+        android:id="@+id/measureTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:onClick="forceBuilding"
-        android:text="@string/force_building" />
-
-    <TextView
-        android:id="@+id/debugInfo"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/toggleLocalization"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/locInfo" />
 
 </RelativeLayout>

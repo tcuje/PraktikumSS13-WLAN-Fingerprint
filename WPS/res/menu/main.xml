@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_toggle_localisation"
+        android:checkable="true"
+        android:title="@string/toggle_localisation"/>
+    <item
+        android:id="@+id/menu_toggle_show_debug"
+        android:checkable="true"
+        android:title="@string/menu_toggle_show_debug"/>
+    <item
+        android:id="@+id/menu_force_change_building"
+        android:title="@string/menu_force_change_building"/>
+
+</menu>
