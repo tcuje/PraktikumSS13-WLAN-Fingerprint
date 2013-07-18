@@ -202,7 +202,7 @@ public class MainActivity extends SuperActivity {
 											// map has changed focus position
 											// once
 											lastMap = map;
-											viewMap.zoomPoint();
+											viewMap.zoomLocationPoint();
 										}
 										measureTime += "\nMap: "
 												+ (mStop - mStart) + "ms";
@@ -227,13 +227,13 @@ public class MainActivity extends SuperActivity {
 
 	public void centerPosition(View view) {
 		if (view == btCenter) {
-			viewMap.focusPoint();
+			viewMap.focusLocationPoint();
 		}
 	}
 
 	public void zoomPosition(View view) {
 		if (view == btZoom) {
-			viewMap.zoomPoint();
+			viewMap.zoomLocationPoint();
 		}
 	}
 
