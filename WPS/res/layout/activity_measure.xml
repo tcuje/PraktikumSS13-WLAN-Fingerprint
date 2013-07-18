@@ -14,57 +14,72 @@
         android:id="@+id/buildingSelectSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/measure_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="false"
-        android:onClick="measure"
-        android:text="@string/text_measure_button" />
-
-    <TextView
-        android:id="@+id/compass_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
+    
     <Spinner
         android:id="@+id/floorSelectSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/buildingSelectSpinner" />
+        android:layout_below="@id/buildingSelectSpinner" />
+
+    <Button
+        android:id="@+id/measure_button"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/icon_button_height"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:onClick="measure"
+        android:text="@string/text_measure_button" />
 
     <TextView
         android:id="@+id/direction_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/floorSelectSpinner"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/floorSelectSpinner"
+        android:layout_marginTop="@dimen/spinner_item_margin_top"
+        android:paddingLeft="@dimen/spinner_item_padding_left"
         android:text="@string/measure_mark_point"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+    
+	<TextView
+	    android:id="@+id/compass_text"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentRight="true"
+	    android:layout_alignTop="@id/direction_text_view"
+	    android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Button
-        android:id="@+id/button_next_line"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/floorSelectSpinner"
+    <ImageButton
+        android:id="@+id/deleteLastMPButton"
+        android:layout_width="@dimen/icon_button_width"
+        android:layout_height="@dimen/icon_button_height"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/measure_button"
+        android:contentDescription="@string/delete_last_measurepoint"
+        android:onClick="deleteMeasureButton"
+        android:src="@android:drawable/ic_menu_delete" />
+
+    <ImageButton
+        android:id="@+id/buttonNext"
+        android:layout_width="@dimen/icon_button_width"
+        android:layout_height="@dimen/icon_button_height"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:onClick="nextLine"
-        android:text="@string/next_line" />
-        
-    <Button
-        android:id="@+id/button_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/floorSelectSpinner"
-        android:layout_alignParentRight="true"
+        android:contentDescription="@string/next"
         android:onClick="next"
-        android:text="@string/next" />
+        android:src="@drawable/next" />
+
+    <ImageButton
+        android:id="@+id/buttonNextLine"
+        android:layout_width="@dimen/icon_button_width"
+        android:layout_height="@dimen/icon_button_height"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/buttonNext"
+        android:contentDescription="@string/next_line"
+        android:maxHeight="20dp"
+        android:maxWidth="20dp"
+        android:onClick="nextLine"
+        android:src="@drawable/next_line" />
 
 </RelativeLayout>

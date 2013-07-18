@@ -3,11 +3,10 @@ package de.rwth.ti.layouthelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Context;
+import android.app.Activity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.StorageHandler;
@@ -17,42 +16,53 @@ public class BuildingSpinnerHelper implements OnItemSelectedListener {
 
 	private List<OnBuildingChangedListener> listenerList;
 
+	private Activity activity;
 	private StorageHandler storage;
 	private List<Spinner> spinnerList;
 	private List<Building> buildingList;
-	private ArrayAdapter<String> adapter;
+	// private ArrayAdapter<String> adapter;
+	private SpinnerAdapter adapter;
 	private Building selectedBuilding;
 
-	private BuildingSpinnerHelper(Context context, StorageHandler storage,
+	private BuildingSpinnerHelper(Activity activity, StorageHandler storage,
 			List<Spinner> spinner) {
+		this.activity = activity;
 		this.storage = storage;
 		spinnerList = spinner;
 		listenerList = new ArrayList<OnBuildingChangedListener>();
 
-		adapter = new ArrayAdapter<String>(context, R.layout.spinner_item,
+		// adapter = new ArrayAdapter<String>(activity, R.layout.spinner_item,
+		// R.id.spinner_item_text);
+
+		// adapter = new ArrayAdapter<String>(activity,
+		adapter = new SpinnerAdapter(activity, R.layout.spinner_item,
 				R.id.spinner_item_text);
+		// adapter.setDropDownViewResource(R.layout.spinner_item_dropdown_test);
+		adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 		for (Spinner tSpinner : spinnerList) {
 			tSpinner.setAdapter(adapter);
 			tSpinner.setOnItemSelectedListener(this);
+			tSpinner.setEmptyView(activity
+					.findViewById(R.id.spinner_view_empty));
 		}
 	}
 
-	public static BuildingSpinnerHelper createInstance(Context context,
+	public static BuildingSpinnerHelper createInstance(Activity activity,
 			OnBuildingChangedListener listener, StorageHandler storage,
 			Spinner spinner) {
 		ArrayList<Spinner> spinnerList = new ArrayList<Spinner>();
 		spinnerList.add(spinner);
 
-		BuildingSpinnerHelper helper = new BuildingSpinnerHelper(context,
+		BuildingSpinnerHelper helper = new BuildingSpinnerHelper(activity,
 				storage, spinnerList);
 		helper.addListener(listener);
 		return helper;
 	}
 
-	public static BuildingSpinnerHelper createInstance(Context context,
+	public static BuildingSpinnerHelper createInstance(Activity activity,
 			OnBuildingChangedListener listener, StorageHandler storage,
 			List<Spinner> spinnerList) {
-		BuildingSpinnerHelper helper = new BuildingSpinnerHelper(context,
+		BuildingSpinnerHelper helper = new BuildingSpinnerHelper(activity,
 				storage, spinnerList);
 		helper.addListener(listener);
 		return helper;
@@ -77,6 +87,8 @@ public class BuildingSpinnerHelper implements OnItemSelectedListener {
 			if (spinnerList.add(spinner)) {
 				spinner.setAdapter(adapter);
 				spinner.setOnItemSelectedListener(this);
+				spinner.setEmptyView(activity
+						.findViewById(R.id.spinner_view_empty));
 				return true;
 			}
 		}
@@ -88,6 +100,7 @@ public class BuildingSpinnerHelper implements OnItemSelectedListener {
 			if (spinnerList.remove(spinner)) {
 				spinner.setAdapter(null);
 				spinner.setOnItemSelectedListener(null);
+				spinner.setEmptyView(null);
 				return true;
 			}
 		}
@@ -111,7 +124,12 @@ public class BuildingSpinnerHelper implements OnItemSelectedListener {
 		}
 
 		if (buildingList.size() == 0) {
-			setSelectedBuilding(null);
+			// setSelectedBuilding(null);
+
+			// adapter.add(activity.getString(R.string.spinner_empty));
+			for (Spinner tSpinner : spinnerList) {
+				tSpinner.setEnabled(false);
+			}
 		} else {
 			setSelectedBuilding(buildingList.get(0));
 		}
@@ -126,7 +144,11 @@ public class BuildingSpinnerHelper implements OnItemSelectedListener {
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int pos,
 			long id) {
-		setSelectedBuilding(buildingList.get(pos));
+		if (buildingList.size() > 0) {
+			setSelectedBuilding(buildingList.get(pos));
+		} else {
+			setSelectedBuilding(null);
+		}
 
 		for (Spinner tSpinner : spinnerList) {
 			tSpinner.setSelection(pos);
@@ -147,5 +169,10 @@ public class BuildingSpinnerHelper implements OnItemSelectedListener {
 		for (Spinner tSpinner : spinnerList) {
 			tSpinner.setSelection(position);
 		}
+	}
+
+	public void setSelectedPosition(String text) {
+		int position = adapter.getPosition(text);
+		setSelectedPosition(position);
 	}
 }

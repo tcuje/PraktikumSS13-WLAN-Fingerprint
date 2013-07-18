@@ -16,5 +16,13 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
+    
+    <style name="spinnerItemStyle" parent="android:Widget.TextView.SpinnerItem">
+
+ 	</style>
+
+ 	<style name="spinnerDropDownItemStyle" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
+
+ 	</style>
 
 </resources>

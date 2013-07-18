@@ -18,7 +18,6 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.CompassManager;
@@ -41,10 +40,8 @@ public class MainActivity extends SuperActivity implements
 	private IPMapView viewMap;
 	private ImageButton btCenter;
 	private Button btZoom;
-	private Button forceBuilding;
-	private Button forceFloor;
+	private ImageButton forceRefresh;
 	private boolean forceNextBuilding = false;
-	private boolean forceNextFloor = false;
 	private BroadcastReceiver wifiReceiver;
 	private int control;
 	private TextView measureTimeView;
@@ -60,8 +57,7 @@ public class MainActivity extends SuperActivity implements
 		File sdDir = new File(Constants.SD_APP_DIR);
 		if (sdDir.exists() == false) {
 			if (sdDir.mkdirs() == false) {
-				Toast.makeText(this, R.string.error_sd_dir, Toast.LENGTH_LONG)
-						.show();
+				makeToast(R.string.error_sd_dir);
 			}
 		}
 		checkLoc = (ToggleButton) findViewById(R.id.toggleLocalization);
@@ -71,8 +67,7 @@ public class MainActivity extends SuperActivity implements
 		viewMap.setOnScaleChangeListener(new ScaleChangeListener());
 		btCenter = (ImageButton) findViewById(R.id.centerButton);
 		btZoom = (Button) findViewById(R.id.zoomButton);
-		forceBuilding = (Button) findViewById(R.id.forceBuilding);
-		forceFloor = (Button) findViewById(R.id.forceFloor);
+		forceRefresh = (ImageButton) findViewById(R.id.forceRefreshButton);
 		measureTimeView = (TextView) findViewById(R.id.measureTime);
 		errormessageView = (TextView) findViewById(R.id.debugInfo);
 		btZoom.setText("x1.0");
@@ -145,10 +140,6 @@ public class MainActivity extends SuperActivity implements
 							if (forceNextBuilding == true) {
 								control = 1;
 								forceNextBuilding = false;
-								forceNextFloor = false;
-							} else if (forceNextFloor == true) {
-								control = 2;
-								forceNextFloor = false;
 							} else {
 								control = 0;
 							}
@@ -168,10 +159,14 @@ public class MainActivity extends SuperActivity implements
 										String errorMessage = "";
 										switch (errorCode) {
 										case 1:
-											errorMessage = getString(R.string.error_loc_building_not_found);
+											errorMessage = String
+													.format(getString(R.string.error_not_found),
+															getString(R.string.building));
 											break;
 										case 2:
-											errorMessage = getString(R.string.error_loc_floor_not_found);
+											errorMessage = String
+													.format(getString(R.string.error_not_found),
+															getString(R.string.floor));
 											break;
 										case 3:
 											errorMessage = getString(R.string.error_loc_aps_not_found);
@@ -180,7 +175,9 @@ public class MainActivity extends SuperActivity implements
 											errorMessage = getString(R.string.error_loc_empty_map);
 											break;
 										case 5:
-											errorMessage = getString(R.string.error_loc_position_not_found);
+											errorMessage = String
+													.format(getString(R.string.error_not_found),
+															getString(R.string.position));
 											break;
 										default:
 											errorMessage = "Error: "
@@ -212,11 +209,7 @@ public class MainActivity extends SuperActivity implements
 													viewMap.addOldPoint(mp);
 												}
 											} else {
-												Toast.makeText(
-														MainActivity.this,
-														R.string.error_no_floor_file,
-														Toast.LENGTH_LONG)
-														.show();
+												makeToast(R.string.error_no_floor_file);
 											}
 										}
 										long mStop = System.currentTimeMillis();
@@ -263,15 +256,9 @@ public class MainActivity extends SuperActivity implements
 		}
 	}
 
-	public void forceBuilding(View view) {
-		if (view == forceBuilding) {
+	public void forceRefresh(View view) {
+		if (view == forceRefresh) {
 			forceNextBuilding = true;
-		}
-	}
-
-	public void forceFloor(View view) {
-		if (view == forceFloor) {
-			forceNextFloor = true;
 		}
 	}
 

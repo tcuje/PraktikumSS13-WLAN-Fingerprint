@@ -11,7 +11,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -92,45 +91,46 @@ public class MeasureActivity extends SuperActivity implements
 		lastAzimuth = this.getCompassManager().getMeanAzimut();
 		compassText.setText("N " + (int) lastAzimuth + "°");
 		// compare azimuth to direction
-		int color = Color.RED;
+
 		if (mapView.getMeasurePoint() == null) {
 			// don't enable measure button with no measure point
 			directionText.setText(R.string.measure_mark_point);
-			btMeasure.setBackgroundColor(color);
+			btMeasure.setTextColor(Constants.COLOR_MEASURE_BUTTON_NEUTRAL);
 			return;
 		}
 		updateDirectionText();
 		// update face text
+		int color = Constants.COLOR_MEASURE_BUTTON_BAD;
 		switch (direction) {
 		case NORTH:
 			if (DataHelper.isInRange(lastAzimuth, 0, Constants.ANGLE_DIFF) == true) {
-				color = Color.GREEN;
+				color = Constants.COLOR_MEASURE_BUTTON_GOOD;
 			}
 			break;
 		case EAST:
 			if (DataHelper.isInRange(lastAzimuth, 90, Constants.ANGLE_DIFF) == true) {
-				color = Color.GREEN;
+				color = Constants.COLOR_MEASURE_BUTTON_GOOD;
 			}
 			break;
 		case SOUTH:
 			if (DataHelper.isInRange(lastAzimuth, 180, Constants.ANGLE_DIFF) == true) {
-				color = Color.GREEN;
+				color = Constants.COLOR_MEASURE_BUTTON_GOOD;
 			}
 			break;
 		case WEST:
 			if (DataHelper.isInRange(lastAzimuth, 270, Constants.ANGLE_DIFF) == true) {
-				color = Color.GREEN;
+				color = Constants.COLOR_MEASURE_BUTTON_GOOD;
 			}
 			break;
 		}
-		btMeasure.setBackgroundColor(color);
+		btMeasure.setTextColor(color);
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
 		buildingHelper.refresh();
-//		floorHelper.refresh();
+		// floorHelper.refresh();
 		this.registerReceiver(this.wifiReceiver, new IntentFilter(
 				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 		updateComp = new TimerTask() {
@@ -171,29 +171,36 @@ public class MeasureActivity extends SuperActivity implements
 		mapView.nextLine();
 	}
 
+	public void deleteMeasureButton(View view) {
+		MeasurePoint deleteMP = mapView.getMeasurePoint();
+		if (deleteMP != null) {
+			if (deleteMP.getId() != -1) {
+				getStorage().deleteMeasurePoint(deleteMP);
+				mapView.deleteOldMP(deleteMP);
+			}
+		}
+
+	}
+
 	public void measure(View view) {
 		if (view.getId() == R.id.measure_button) {
 			// check if building/floor is selected
 			if (selectedBuilding == null) {
-				Toast.makeText(this, R.string.error_empty_input,
-						Toast.LENGTH_LONG).show();
+				makeToast(R.string.error_empty_input);
 				return;
 			}
 			if (selectedFloor == null) {
-				Toast.makeText(this, R.string.error_empty_input,
-						Toast.LENGTH_LONG).show();
+				makeToast(R.string.error_empty_input);
 				return;
 			}
 			MeasurePoint p = mapView.getMeasurePoint();
 			if (p == null) {
-				Toast.makeText(this, R.string.error_no_measure_point,
-						Toast.LENGTH_LONG).show();
+				makeToast(R.string.error_no_measure_point);
 				return;
 			}
 			boolean check = getScanManager().startSingleScan();
 			if (check == false) {
-				Toast.makeText(this, R.string.error_scanning, Toast.LENGTH_LONG)
-						.show();
+				makeToast(R.string.error_scanning);
 			} else {
 				if (p.getId() == -1) {
 					lastMP = getStorage().createMeasurePoint(selectedFloor,
@@ -232,11 +239,10 @@ public class MeasureActivity extends SuperActivity implements
 					mapView.addOldPoint(mp);
 				}
 			} else {
-				Toast.makeText(this, R.string.error_no_floor_file,
-						Toast.LENGTH_LONG).show();
+				makeToast(R.string.error_no_floor_file);
 			}
 		} else {
-//			mapView.clearMap();
+			// mapView.clearMap();
 		}
 	}
 
@@ -271,36 +277,44 @@ public class MeasureActivity extends SuperActivity implements
 					Toast.makeText(MeasureActivity.this, msg,
 							Toast.LENGTH_SHORT).show();
 					// update direction instruction
-					if (direction.ordinal() + 1 > Cardinal.values().length) {
+					if (direction.ordinal() + 1 == Cardinal.values().length) {
 						lastMP = null;
+						mapView.setMMPoint(null);
+						mapView.invalidate();
 					}
 					direction = Cardinal.values()[(direction.ordinal() + 1) % 4];
 					updateDirectionText();
 				} else {
 					Toast.makeText(MeasureActivity.this, R.string.scan_no_ap,
-							Toast.LENGTH_LONG).show();
+							Toast.LENGTH_SHORT).show();
 				}
 			}
 		}
 	}
 
 	private void updateDirectionText() {
+		int directionId = -1;
 		switch (direction) {
 		case NORTH:
-			directionText.setText(R.string.measure_face_north);
+			directionId = R.string.north;
 			break;
 		case EAST:
-			directionText.setText(R.string.measure_face_east);
+			directionId = R.string.east;
 			break;
 		case SOUTH:
-			directionText.setText(R.string.measure_face_south);
+			directionId = R.string.south;
 			break;
 		case WEST:
-			directionText.setText(R.string.measure_face_west);
+			directionId = R.string.west;
 			break;
 		default:
 			break;
 		}
-	}
 
+		if (directionId != -1) {
+			directionText.setText(String.format(
+					getString(R.string.measure_face_direction),
+					getString(directionId)));
+		}
+	}
 }

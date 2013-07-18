@@ -26,12 +26,15 @@ public class Constants {
 	// MapView color schema
 	public static final int COLOR_FLOOR_FILL = Color.WHITE;
 	public static final int COLOR_FLOOR_WALL = Color.GRAY;
-	public static final int COLOR_MEASURE_POINTS = Color.LTGRAY;
+	public static final int COLOR_MEASURE_POINTS = Color.WHITE;
 	public static final int COLOR_MEASURE_POINTS_BEST = Color.GREEN;
 	public static final int COLOR_MEASURE_POINTS_MEDIUM = Color.YELLOW;
 	public static final int COLOR_MEASURE_POINTS_BAD = Color.RED;
 	public static final int COLOR_POSITION = Color.BLUE;
 	public static final int COLOR_ACTIVE_POINT = Color.GREEN;
+	public static final int COLOR_MEASURE_BUTTON_GOOD = Color.GREEN;
+	public static final int COLOR_MEASURE_BUTTON_NEUTRAL = Color.BLACK;
+	public static final int COLOR_MEASURE_BUTTON_BAD = Color.RED;
 	public static final String PACKAGE_NAME = "de.rwth.ti.wps";
 
 }
