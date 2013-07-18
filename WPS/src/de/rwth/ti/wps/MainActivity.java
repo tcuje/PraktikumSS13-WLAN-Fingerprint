@@ -41,11 +41,10 @@ public class MainActivity extends SuperActivity implements
 	private ImageButton btCenter;
 	private Button btZoom;
 	private ImageButton forceRefresh;
-	private boolean forceNextBuilding = false;
 	private BroadcastReceiver wifiReceiver;
 	private int control;
 	private TextView measureTimeView;
-	private TextView errormessageView;
+	private TextView locInfoView;
 	private Location myLoc;
 
 	/** Called when the activity is first created. */
@@ -69,7 +68,7 @@ public class MainActivity extends SuperActivity implements
 		btZoom = (Button) findViewById(R.id.zoomButton);
 		forceRefresh = (ImageButton) findViewById(R.id.forceRefreshButton);
 		measureTimeView = (TextView) findViewById(R.id.measureTime);
-		errormessageView = (TextView) findViewById(R.id.debugInfo);
+		locInfoView = (TextView) findViewById(R.id.debugInfo);
 		btZoom.setText("x1.0");
 		wifiReceiver = new MyReceiver();
 		control = 0;
@@ -137,12 +136,6 @@ public class MainActivity extends SuperActivity implements
 					Thread t = new Thread(new Runnable() {
 						@Override
 						public void run() {
-							if (forceNextBuilding == true) {
-								control = 1;
-								forceNextBuilding = false;
-							} else {
-								control = 0;
-							}
 							final long start = System.currentTimeMillis();
 							final LocationResult myLocRes = myLoc.getLocation(
 									results, direction, control);
@@ -184,7 +177,7 @@ public class MainActivity extends SuperActivity implements
 													+ errorCode;
 											break;
 										}
-										errormessageView.setText(errorMessage);
+										locInfoView.setText(errorMessage);
 									} else {
 										Floor map = myLocRes.getFloor();
 										long mStart = System
@@ -220,7 +213,7 @@ public class MainActivity extends SuperActivity implements
 											// map has changed focus position
 											// once
 											lastMap = map;
-											viewMap.zoomPoint();
+											viewMap.zoomLocationPoint();
 										}
 										measureTime += "\nMap: "
 												+ (mStop - mStart) + "ms";
@@ -229,7 +222,7 @@ public class MainActivity extends SuperActivity implements
 												+ " in "
 												+ myLocRes.getBuilding()
 														.getName();
-										errormessageView.setText(locationInfo);
+										locInfoView.setText(locationInfo);
 									}
 									measureTimeView.setText(measureTime);
 								}
@@ -238,7 +231,7 @@ public class MainActivity extends SuperActivity implements
 					});
 					t.start();
 				} catch (Exception ex) {
-					errormessageView.setText(ex.toString());
+					locInfoView.setText(ex.toString());
 				}
 			}
 		}
@@ -246,19 +239,19 @@ public class MainActivity extends SuperActivity implements
 
 	public void centerPosition(View view) {
 		if (view == btCenter) {
-			viewMap.focusPoint();
+			viewMap.focusLocationPoint();
 		}
 	}
 
 	public void zoomPosition(View view) {
 		if (view == btZoom) {
-			viewMap.zoomPoint();
+			viewMap.zoomLocationPoint();
 		}
 	}
 
-	public void forceRefresh(View view) {
+	public void forceBuilding(View view) {
 		if (view == forceRefresh) {
-			forceNextBuilding = true;
+			control = 1;
 		}
 	}
 
