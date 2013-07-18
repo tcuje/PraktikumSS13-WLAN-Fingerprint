@@ -631,7 +631,6 @@ public class IPMapView extends View {
 	}
 
 	protected void setMeasurePointTouch(float x, float y) {
-
 		float xP = (x / mScaleFactor) - (mViewWidth / (2 * mScaleFactor))
 				+ mAccXPoint;
 		float yP = (y / mScaleFactor) - (mViewHeight / (2 * mScaleFactor))
@@ -642,7 +641,6 @@ public class IPMapView extends View {
 			mMPointOld.x = (float) mMPoint.getPosx();
 			mMPointOld.y = (float) mMPoint.getPosy();
 		}
-
 		// mXMPoint = (x-mXFocus)/mScaleFactor;
 		// mYMPoint = (y-mYFocus)/mScaleFactor;
 		invalidate();

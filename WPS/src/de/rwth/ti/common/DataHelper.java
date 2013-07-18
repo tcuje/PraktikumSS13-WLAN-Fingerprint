@@ -36,4 +36,11 @@ public class DataHelper {
 		return results;
 	}
 
+	public static String addLeadingZeros(String text, int length) {
+		while (text.length() < length) {
+			text = '0' + text;
+		}
+		return text;
+	}
+
 }

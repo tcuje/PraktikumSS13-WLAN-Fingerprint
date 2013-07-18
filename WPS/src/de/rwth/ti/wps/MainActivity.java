@@ -18,7 +18,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 import de.rwth.ti.common.Cardinal;
 import de.rwth.ti.common.CompassManager;
 import de.rwth.ti.common.Constants;
@@ -55,8 +54,7 @@ public class MainActivity extends SuperActivity {
 		File sdDir = new File(Constants.SD_APP_DIR);
 		if (sdDir.exists() == false) {
 			if (sdDir.mkdirs() == false) {
-				Toast.makeText(this, R.string.error_sd_dir, Toast.LENGTH_SHORT)
-						.show();
+				makeToast(R.string.error_sd_dir);
 			}
 		}
 		viewMap = (IPMapView) findViewById(R.id.viewMap);
@@ -143,10 +141,14 @@ public class MainActivity extends SuperActivity {
 										String errorMessage = "";
 										switch (errorCode) {
 										case 1:
-											errorMessage = getString(R.string.error_loc_building_not_found);
+											errorMessage = String
+													.format(getString(R.string.error_not_found),
+															getString(R.string.building));
 											break;
 										case 2:
-											errorMessage = getString(R.string.error_loc_floor_not_found);
+											errorMessage = String
+													.format(getString(R.string.error_not_found),
+															getString(R.string.floor));
 											break;
 										case 3:
 											errorMessage = getString(R.string.error_loc_aps_not_found);
@@ -155,7 +157,9 @@ public class MainActivity extends SuperActivity {
 											errorMessage = getString(R.string.error_loc_empty_map);
 											break;
 										case 5:
-											errorMessage = getString(R.string.error_loc_position_not_found);
+											errorMessage = String
+													.format(getString(R.string.error_not_found),
+															getString(R.string.position));
 											break;
 										default:
 											errorMessage = "Error: "
@@ -187,11 +191,7 @@ public class MainActivity extends SuperActivity {
 													viewMap.addOldPoint(mp);
 												}
 											} else {
-												Toast.makeText(
-														MainActivity.this,
-														R.string.error_no_floor_file,
-														Toast.LENGTH_SHORT)
-														.show();
+												makeToast(R.string.error_no_floor_file);
 											}
 										}
 										long mStop = System.currentTimeMillis();

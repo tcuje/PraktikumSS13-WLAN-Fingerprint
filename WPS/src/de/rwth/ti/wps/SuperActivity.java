@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 import de.rwth.ti.common.CompassManager;
 import de.rwth.ti.common.Constants;
 import de.rwth.ti.common.ScanManager;
@@ -113,6 +114,14 @@ public abstract class SuperActivity extends Activity {
 			tString = getString(R.string.floor_ground);
 		}
 		return tString;
+	}
+
+	protected void makeToast(int messageId) {
+		Toast.makeText(this, messageId, Toast.LENGTH_SHORT).show();
+	}
+
+	protected void makeToast(String message) {
+		Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
