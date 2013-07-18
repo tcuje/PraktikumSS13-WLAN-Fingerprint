@@ -218,10 +218,9 @@ public class MainActivity extends SuperActivity implements
 										measureTime += "\nMap: "
 												+ (mStop - mStart) + "ms";
 										String locationInfo = myLocRes
-												.getFloor().getName()
-												+ " in "
-												+ myLocRes.getBuilding()
-														.getName();
+												.getBuilding().getName()
+												+ " - "
+												+ myLocRes.getFloor().getName();
 										locInfoView.setText(locationInfo);
 									}
 									measureTimeView.setText(measureTime);
