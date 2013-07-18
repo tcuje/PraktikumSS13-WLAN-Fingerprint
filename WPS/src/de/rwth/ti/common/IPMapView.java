@@ -51,7 +51,7 @@ public class IPMapView extends View {
 	private List<Path> myPaths;
 	private List<Path> myFillPaths;
 	private List<MeasurePoint> myOldPointsList;
-//	private List<MeasurePoint> myOldPoints;
+//	private WPSQuadTree myOldPoints;
 	private Paint mPaint;
 	private Rect mRect;
 	private OnScaleChangeListener onScaleChangeListener;
