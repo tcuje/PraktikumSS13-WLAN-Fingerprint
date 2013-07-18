@@ -249,7 +249,7 @@ public class MainActivity extends SuperActivity implements
 		}
 	}
 
-	public void forceBuilding(View view) {
+	public void forceRefresh(View view) {
 		if (view == forceRefresh) {
 			control = 1;
 		}
