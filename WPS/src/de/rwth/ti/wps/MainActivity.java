@@ -40,7 +40,7 @@ public class MainActivity extends SuperActivity implements
 	private IPMapView viewMap;
 	private ImageButton btCenter;
 	private Button btZoom;
-	private Button forceBuilding;
+	private ImageButton forceRefresh;
 	private boolean forceNextBuilding = false;
 	private BroadcastReceiver wifiReceiver;
 	private int control;
@@ -67,7 +67,7 @@ public class MainActivity extends SuperActivity implements
 		viewMap.setOnScaleChangeListener(new ScaleChangeListener());
 		btCenter = (ImageButton) findViewById(R.id.centerButton);
 		btZoom = (Button) findViewById(R.id.zoomButton);
-		forceBuilding = (Button) findViewById(R.id.forceBuilding);
+		forceRefresh = (ImageButton) findViewById(R.id.forceRefreshButton);
 		measureTimeView = (TextView) findViewById(R.id.measureTime);
 		errormessageView = (TextView) findViewById(R.id.debugInfo);
 		btZoom.setText("x1.0");
@@ -80,7 +80,7 @@ public class MainActivity extends SuperActivity implements
 	@Override
 	public void onStart() {
 		super.onStart();
-		checkLoc.setChecked(false);
+		checkLoc.setChecked(true);
 		if (checkLoc.isChecked() == true) {
 			getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
 			getWindow()
@@ -256,8 +256,8 @@ public class MainActivity extends SuperActivity implements
 		}
 	}
 
-	public void forceBuilding(View view) {
-		if (view == forceBuilding) {
+	public void forceRefresh(View view) {
+		if (view == forceRefresh) {
 			forceNextBuilding = true;
 		}
 	}

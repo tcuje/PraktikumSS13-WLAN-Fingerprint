@@ -90,5 +90,6 @@
     <string name="confirm_delete_question">%1$s wirklich löschen?</string>
     <string name="confirm">Bestätigen</string>
     <string name="spinner_empty">- Leer -</string>
+    <string name="loc_force_refresh">Gebäude/Stockwerk refreshen</string>
 
 </resources>

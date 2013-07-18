@@ -8,5 +8,8 @@
     <dimen name="activity_data_content_margin_bottom">10dp</dimen>
     <dimen name="spinner_item_padding_left">7dp</dimen>
     <dimen name="spinner_item_margin_top">5dp</dimen>
+    <dimen name="button_size">50dp</dimen>
+    <dimen name="icon_button_width">56dp</dimen>
+    <dimen name="icon_button_height">48dp</dimen>
 
 </resources>

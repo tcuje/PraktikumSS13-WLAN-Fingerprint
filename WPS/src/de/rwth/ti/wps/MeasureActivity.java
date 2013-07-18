@@ -11,7 +11,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -92,38 +91,39 @@ public class MeasureActivity extends SuperActivity implements
 		lastAzimuth = this.getCompassManager().getMeanAzimut();
 		compassText.setText("N " + (int) lastAzimuth + "°");
 		// compare azimuth to direction
-		int color = Color.RED;
+
 		if (mapView.getMeasurePoint() == null) {
 			// don't enable measure button with no measure point
 			directionText.setText(R.string.measure_mark_point);
-			btMeasure.setBackgroundColor(color);
+			btMeasure.setTextColor(Constants.COLOR_MEASURE_BUTTON_NEUTRAL);
 			return;
 		}
 		updateDirectionText();
 		// update face text
+		int color = Constants.COLOR_MEASURE_BUTTON_BAD;
 		switch (direction) {
 		case NORTH:
 			if (DataHelper.isInRange(lastAzimuth, 0, Constants.ANGLE_DIFF) == true) {
-				color = Color.GREEN;
+				color = Constants.COLOR_MEASURE_BUTTON_GOOD;
 			}
 			break;
 		case EAST:
 			if (DataHelper.isInRange(lastAzimuth, 90, Constants.ANGLE_DIFF) == true) {
-				color = Color.GREEN;
+				color = Constants.COLOR_MEASURE_BUTTON_GOOD;
 			}
 			break;
 		case SOUTH:
 			if (DataHelper.isInRange(lastAzimuth, 180, Constants.ANGLE_DIFF) == true) {
-				color = Color.GREEN;
+				color = Constants.COLOR_MEASURE_BUTTON_GOOD;
 			}
 			break;
 		case WEST:
 			if (DataHelper.isInRange(lastAzimuth, 270, Constants.ANGLE_DIFF) == true) {
-				color = Color.GREEN;
+				color = Constants.COLOR_MEASURE_BUTTON_GOOD;
 			}
 			break;
 		}
-		btMeasure.setBackgroundColor(color);
+		btMeasure.setTextColor(color);
 	}
 
 	@Override
