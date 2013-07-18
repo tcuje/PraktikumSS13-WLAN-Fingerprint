@@ -89,14 +89,6 @@ public abstract class SuperActivity extends Activity {
 		}
 	}
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		if (storage != null) {
-			storage.onDestroy();
-		}
-	}
-
 	public CompassManager getCompassManager() {
 		return cmgr;
 	}
