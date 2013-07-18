@@ -44,8 +44,8 @@ public class StorageHandler implements IGUIDataHandler, IMeasureDataHandler {
 		return true;
 	}
 
-	public void onDestroy() {
-		if (db != null && db.isOpen()) {
+	public void close() {
+		if (db != null && db.isOpen() == true) {
 			db.close();
 			db = null;
 		}
