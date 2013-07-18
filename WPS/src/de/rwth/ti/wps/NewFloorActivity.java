@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 import de.rwth.ti.common.ChooseFileDialog;
 import de.rwth.ti.common.Constants;
 import de.rwth.ti.db.Building;
@@ -90,41 +89,44 @@ public class NewFloorActivity extends SuperActivity implements
 	}
 
 	public void createBuilding(View view) {
-		String tBuildingName = createBuildingEdit.getText().toString().trim();
+		String buildingName = createBuildingEdit.getText().toString().trim();
 		String message = null;
-		int e = 0;
-		Building b = null;
+		Building newBuilding = null;
+		boolean nameExists = false;
 		// check name
-		if (tBuildingName.length() != 0) {
+		if (buildingName.length() != 0) {
 			List<Building> buildingList = getStorage().getAllBuildings();
-			for (Building bi : buildingList) {
-				if (tBuildingName.equals(bi.getName())) {
-					message = getString(R.string.same_name_building);
-					Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-					e = 1;
+			for (Building tBuilding : buildingList) {
+				if (buildingName.equals(tBuilding.getName())) {
+					message = String.format(getString(R.string.name_existing),
+							getString(R.string.building));
+					nameExists = true;
 					break;
 				}
 			}
-			if (e == 0) {
-				b = getStorage().createBuilding(tBuildingName);
-			}
+			if (!nameExists) {
+				newBuilding = getStorage().createBuilding(buildingName);
 
-			// Gebäude konnte erfolgreich erstellt werden?
-			if (b != null) {
-				message = getString(R.string.success_create_building);
-				// Löscht den eingegeben Text
-				createBuildingEdit.setText("");
-				// Lädt die Liste der Gebäude neu
-				buildingHelper.refresh();
-			} else {
-				message = getString(R.string.error_create_building);
+				// Gebäude konnte erfolgreich erstellt werden?
+				if (newBuilding != null) {
+					message = String.format(getString(R.string.success_create),
+							getString(R.string.building));
+					// Löscht den eingegeben Text
+					createBuildingEdit.setText("");
+					// Lädt die Liste der Gebäude neu
+					buildingHelper.refresh();
+					buildingHelper.setSelectedPosition(buildingName);
+				} else {
+					message = String.format(getString(R.string.error_create),
+							getString(R.string.building));
+				}
 			}
 		} else {
 			message = getString(R.string.error_empty_input);
 		}
 		if (message != null) {
 			// User message
-			Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+			makeToast(message);
 		}
 	}
 
@@ -155,8 +157,8 @@ public class NewFloorActivity extends SuperActivity implements
 		floorName = floorNameEdit.getText().toString().trim();
 		String tFloorLevelText = floorLevelEdit.getText().toString().trim();
 		String tNorthText = northEdit.getText().toString().trim();
-		int e = 0;
-		Floor f = null;
+		Floor newFloor = null;
+		boolean nameExists = false;
 
 		// Kontrolliert, ob alle Inputs vernünftig gefüllt sind
 		if (floorName.length() != 0 && tFloorLevelText.length() != 0
@@ -167,39 +169,43 @@ public class NewFloorActivity extends SuperActivity implements
 			if (selectedBuilding != null) {
 				// Kartendatei ausgewählt
 				if (floorFile != null) {
-					List<Floor> floorList = getStorage().getAllFloors();
-					for (Floor fi : floorList) {
-						if (floorName.equals(fi.getName())) {
-							message = getString(R.string.same_name_floor);
-							Toast.makeText(this, message, Toast.LENGTH_SHORT)
-									.show();
-							e = 1;
+					List<Floor> floorList = getStorage().getFloors(
+							selectedBuilding);
+					for (Floor tFloor : floorList) {
+						if (floorName.equals(tFloor.getName())) {
+							message = String.format(
+									getString(R.string.name_existing),
+									getString(R.string.floor));
+							nameExists = true;
 							break;
 						}
 					}
-					if (e == 0) {
-						f = getStorage().createFloor(selectedBuilding,
+					if (!nameExists) {
+						newFloor = getStorage().createFloor(selectedBuilding,
 								floorName, floorFile, floorLevel, north);
-					}
-					// Floor erfolgreich erstellt
-					if (f != null) {
-						message = getString(R.string.success_create_floor);
-						// Eingaben löschen
-						floorLevelEdit.setText("");
-						floorLevelEdit.requestFocus();
-						floorNameEdit.setText("");
-						northEdit.setText("0");
-						floorFilenameView.setText("");
-						floorLevel = 0;
-						floorName = null;
-						north = -1;
-						floorFile = null;
-					} else {
-						message = getString(R.string.error_create_floor);
-					}
-				}
 
-				else {
+						// Floor erfolgreich erstellt
+						if (newFloor != null) {
+							message = String.format(
+									getString(R.string.success_create),
+									getString(R.string.floor));
+							// Eingaben löschen
+							floorLevelEdit.setText("");
+							floorLevelEdit.requestFocus();
+							floorNameEdit.setText("");
+							northEdit.setText("0");
+							floorFilenameView.setText("");
+							floorLevel = 0;
+							floorName = null;
+							north = -1;
+							floorFile = null;
+						} else {
+							message = String.format(
+									getString(R.string.error_create),
+									getString(R.string.floor));
+						}
+					}
+				} else {
 					message = getString(R.string.error_no_floor_file);
 				}
 			} else {
@@ -210,7 +216,7 @@ public class NewFloorActivity extends SuperActivity implements
 		}
 		if (message != null) {
 			// User message
-			Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+			makeToast(message);
 		}
 	}
 

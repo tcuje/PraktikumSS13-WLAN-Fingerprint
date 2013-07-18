@@ -10,7 +10,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 import de.rwth.ti.db.Building;
 import de.rwth.ti.db.Floor;
 import de.rwth.ti.db.MeasurePoint;
@@ -167,10 +166,6 @@ public class DataActivity extends SuperActivity implements
 
 	// ///////////////////////////////////////////////////////////////
 	// //////////////////////////////////////////////////////////////
-	private void makeToast(String message) {
-		Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-	}
-
 	public void onDeleteButtonClick(View v) {
 		int objectId = -1;
 		int actionId = -1;
@@ -260,7 +255,7 @@ public class DataActivity extends SuperActivity implements
 						getString(R.string.building)));
 			}
 		} else {
-			makeToast(getString(R.string.error_short_name));
+			makeToast(R.string.error_short_name);
 		}
 	}
 
@@ -304,7 +299,7 @@ public class DataActivity extends SuperActivity implements
 				}
 			}
 		} else {
-			makeToast(getString(R.string.error_short_name));
+			makeToast(R.string.error_short_name);
 		}
 	}
 

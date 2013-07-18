@@ -12,54 +12,68 @@
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true" />
 
-    <TextView
-        android:id="@+id/measureTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/toggleLocalization" />
-
-    <ToggleButton
+    <!--
+         <CheckBox
         android:id="@+id/toggleLocalization"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:checked="true"
         android:text="@string/toggle_localisation" />
-
-    <ImageButton
-        android:id="@+id/centerButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:contentDescription="@+string/button_center"
-        android:onClick="centerPosition"
-        android:src="@android:drawable/ic_menu_mylocation" />
+    -->
 
     <Button
         android:id="@+id/zoomButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/icon_button_height"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:onClick="zoomPosition" />
-
-    <Button
-        android:id="@+id/forceBuilding"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+    
+    <ToggleButton
+        android:id="@+id/toggleLocalization"
+        android:layout_width="@dimen/icon_button_width"
+        android:layout_height="@dimen/icon_button_height"
         android:layout_alignParentRight="true"
-        android:onClick="forceBuilding"
-        android:text="@string/force_building" />
+        android:layout_alignParentTop="true"
+        android:checked="true"
+        android:text="@string/toggle_localisation" />
 
     <TextView
         android:id="@+id/debugInfo"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/toggleLocalization"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@id/toggleLocalization"
+        android:gravity="center_vertical"
         android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+	<TextView
+        android:id="@+id/measureTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/debugInfo" />
+
+    <ImageButton
+        android:id="@+id/centerButton"
+        android:layout_width="@dimen/icon_button_width"
+        android:layout_height="@dimen/icon_button_height"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:contentDescription="@string/button_center"
+        android:onClick="centerPosition"
+        android:src="@android:drawable/ic_menu_mylocation" />
+
+    <ImageButton
+        android:id="@+id/forceRefreshButton"
+        android:layout_width="@dimen/icon_button_width"
+        android:layout_height="@dimen/icon_button_height"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/centerButton"
+        android:contentDescription="@string/loc_force_refresh"
+        android:onClick="forceRefresh"
+        android:src="@android:drawable/ic_popup_sync" />
 
 </RelativeLayout>
