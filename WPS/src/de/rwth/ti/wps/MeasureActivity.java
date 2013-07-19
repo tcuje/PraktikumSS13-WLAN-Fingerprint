@@ -278,7 +278,7 @@ public class MeasureActivity extends SuperActivity implements
 							Toast.LENGTH_SHORT).show();
 					// update direction instruction
 					if (direction.ordinal() + 1 == Cardinal.values().length) {
-						lastMP = null;
+						// lastMP = null;
 						mapView.setMMPoint(null);
 						mapView.invalidate();
 					}
