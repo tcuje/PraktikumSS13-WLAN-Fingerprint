@@ -61,8 +61,8 @@ public class MainActivity extends SuperActivity implements
 		}
 		checkLoc = (ToggleButton) findViewById(R.id.toggleLocalization);
 		checkLoc.setOnCheckedChangeListener(this);
-		// checkLoc.setChecked(true);
-		checkLoc.setChecked(false);
+		checkLoc.setChecked(true);
+		// checkLoc.setChecked(false);
 		viewMap = (IPMapView) findViewById(R.id.viewMap);
 		viewMap.setMeasureMode(false);
 		viewMap.setOnScaleChangeListener(new ScaleChangeListener());
