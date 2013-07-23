@@ -43,6 +43,7 @@ public class IPMapView extends View {
 	private float mapFactor = 6.7f;
 	private MeasurePoint mMPoint = null;
 	private PointF mMPointOld = null;
+	private PointF mMPointLast = null;
 	private float mHeight = 0;
 	private float mWidth = 0;
 	private float mViewHeight = 0;
@@ -594,17 +595,18 @@ public class IPMapView extends View {
 	}
 
 	public void next() {
-		if (mMPoint != null) {
-			setMeasurePoint((float) mMPoint.getPosx() + 2 * mapFactor,
-					(float) mMPoint.getPosy());
+		if (mMPointLast != null) {
+			mMPointLast.x = mMPointLast.x + 2 * mapFactor;
+			setMeasurePoint(mMPointLast.x, mMPointLast.y);
 			invalidate();
 		}
 	}
 
 	public void nextLine() {
-		if (mMPointOld != null && mMPoint != null) {
+		if (mMPointOld != null) {
 			mMPointOld.y = mMPointOld.y + 2 * mapFactor;
-			setMeasurePoint(mMPointOld.x, mMPointOld.y);
+			mMPointLast.set(mMPointOld);
+			setMeasurePoint(mMPointLast.x, mMPointLast.y);
 			invalidate();
 		}
 	}
@@ -639,8 +641,10 @@ public class IPMapView extends View {
 		setMeasurePoint(xP, yP);
 		if (mMPoint != null) {
 			mMPointOld = new PointF();
+			mMPointLast = new PointF();
 			mMPointOld.x = (float) mMPoint.getPosx();
 			mMPointOld.y = (float) mMPoint.getPosy();
+			mMPointLast.set(mMPointOld);
 		}
 		// mXMPoint = (x-mXFocus)/mScaleFactor;
 		// mYMPoint = (y-mYFocus)/mScaleFactor;

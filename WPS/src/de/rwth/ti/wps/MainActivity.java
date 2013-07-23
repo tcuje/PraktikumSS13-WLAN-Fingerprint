@@ -61,6 +61,8 @@ public class MainActivity extends SuperActivity implements
 		}
 		checkLoc = (ToggleButton) findViewById(R.id.toggleLocalization);
 		checkLoc.setOnCheckedChangeListener(this);
+		// checkLoc.setChecked(true);
+		checkLoc.setChecked(false);
 		viewMap = (IPMapView) findViewById(R.id.viewMap);
 		viewMap.setMeasureMode(false);
 		viewMap.setOnScaleChangeListener(new ScaleChangeListener());
@@ -79,7 +81,6 @@ public class MainActivity extends SuperActivity implements
 	@Override
 	public void onStart() {
 		super.onStart();
-		checkLoc.setChecked(true);
 		if (checkLoc.isChecked() == true) {
 			getScanManager().startAutoScan(Constants.AUTO_SCAN_SEC);
 			getWindow()
